@@ -1,0 +1,20 @@
+{
+  "name": "@hanazuki/node-jsonnet",
+  "version": "0.0.0",
+  "description": "Jsonnet addon for nodejs",
+  "bugs": "https://github.com/hanazuki/node-jsonnet/issues",
+  "homepage": "https://github.com/hanazuki/node-jsonnet",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hanazuki/node-jsonnet"
+  },
+  "gypfile": true,
+  "main": "./build/Release/node-jsonnet",
+  "license": "MIT",
+  "keywords": [
+    "jsonnet"
+  ],
+  "dependencies": {
+    "nan": "^2.14.0"
+  }
+}
