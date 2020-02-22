@@ -14,7 +14,11 @@
   "keywords": [
     "jsonnet"
   ],
+  "scripts": {
+    "install": "cmake-js compile"
+  },
   "dependencies": {
+    "cmake-js": "^6.0.0",
     "nan": "^2.14.0"
   }
 }
