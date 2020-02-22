@@ -9,17 +9,23 @@
     "url": "https://github.com/hanazuki/node-jsonnet"
   },
   "gypfile": true,
-  "main": "src/index.js",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "license": "MIT",
   "keywords": [
     "jsonnet"
   ],
   "scripts": {
-    "install": "cmake-js compile"
+    "install": "cmake-js compile",
+    "build": "tsc"
   },
   "dependencies": {
+    "@types/node": "^13.7.4",
     "bindings": "^1.5.0",
     "cmake-js": "^6.0.0",
     "node-addon-api": "*"
+  },
+  "devDependencies": {
+    "typescript": "^3.8.2"
   }
 }
