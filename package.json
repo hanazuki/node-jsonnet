@@ -8,10 +8,29 @@
     "type": "git",
     "url": "https://github.com/hanazuki/node-jsonnet"
   },
-  "gypfile": true,
+  "license": "(MIT AND Apache-2.0)",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "license": "MIT",
+  "files": [
+    "CMakeLists.txt",
+    "/lib/*",
+    "/binding/*",
+    "/jsonnet/CMakeLists.txt.in",
+    "/jsonnet/include/*.h",
+    "/jsonnet/core/*.c",
+    "/jsonnet/core/*.cpp",
+    "/jsonnet/core/*.h",
+    "/jsonnet/cmd/*.cpp",
+    "/jsonnet/cmd/*.h",
+    "/jsonnet/cpp/*.cpp",
+    "/jsonnet/cpp/*.h",
+    "/jsonnet/third_party/json/*.hpp",
+    "/jsonnet/third_party/md5/*.cpp",
+    "/jsonnet/third_party/md5/*.h",
+    "/jsonnet/stdlib/*.cpp",
+    "/jsonnet/stdlib/*.jsonnet",
+    "/jsonnet/test_suite/*"
+  ],
   "keywords": [
     "jsonnet"
   ],
