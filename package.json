@@ -35,8 +35,9 @@
     "jsonnet"
   ],
   "scripts": {
-    "install": "cmake-js compile",
-    "build": "tsc"
+    "install": "cmake-js build",
+    "build": "tsc",
+    "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
   },
   "dependencies": {
     "@types/node": "^13.7.4",
