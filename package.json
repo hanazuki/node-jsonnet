@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "cmake-js": "^6.0.0",
-    "nan": "^2.14.0"
+    "node-addon-api": "*"
   }
 }
