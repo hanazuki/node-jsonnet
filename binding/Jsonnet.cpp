@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "Jsonnet.hpp"
 #include "JsonnetWorker.hpp"
 
