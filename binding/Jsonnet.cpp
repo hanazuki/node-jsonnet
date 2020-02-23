@@ -1,4 +1,5 @@
 #include "Jsonnet.hpp"
+#include "JsonnetWorker.hpp"
 
 namespace nodejsonnet {
 
@@ -33,13 +34,10 @@ namespace nodejsonnet {
     auto const env = info.Env();
     std::string const filename = info[0].As<Napi::String>();
 
-    int error;
-    auto result = borrowBuffer(jsonnet_evaluate_file(vm.get(), filename.c_str(), &error));
-    if(error != 0) {
-      throw Napi::Error::New(env, result.get());
-    }
-
-    return Napi::String::New(env, result.get());
+    auto worker = new JsonnetWorker(env, vm, std::make_unique<JsonnetWorker::EvaluateFileOp>(filename));
+    auto promise = worker->Promise();
+    worker->Queue();
+    return promise;
   }
 
   Napi::Value Jsonnet::evaluateSnippet(const Napi::CallbackInfo& info) {
@@ -47,13 +45,10 @@ namespace nodejsonnet {
     std::string const snippet = info[0].As<Napi::String>();
     std::string const filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
 
-    int error;
-    auto const result = borrowBuffer(jsonnet_evaluate_snippet(vm.get(), filename.c_str(), snippet.c_str(), &error));
-    if(error != 0) {
-      throw Napi::Error::New(env, result.get());
-    }
-
-    return Napi::String::New(env, result.get());
+    auto worker = new JsonnetWorker(env, vm, std::make_unique<JsonnetWorker::EvaluateSnippetOp>(snippet, filename));
+    auto promise = worker->Promise();
+    worker->Queue();
+    return promise;
   }
 
   Napi::Value Jsonnet::extString(const Napi::CallbackInfo& info) {

@@ -9,9 +9,9 @@ type Jsonnet = {
 
     addJpath(path: string): void;
 
-    evaluateFile(filename: string): string;
-    evaluateSnippet(snippet: string): string;
-    evaluateSnippet(snippet: string, filename: string): string;
+    evaluateFile(filename: string): Promise<string>;
+    evaluateSnippet(snippet: string): Promise<string>;
+    evaluateSnippet(snippet: string, filename: string): Promise<string>;
   };
 }
 
@@ -21,4 +21,5 @@ console.log(Jsonnet.version);
 
 const jsonnet = new Jsonnet();
 jsonnet.tlaCode("a", "{a:1+2}");
-console.log(jsonnet.evaluateSnippet("function(a) {a: a}"));
+
+jsonnet.evaluateSnippet("function(a) {a: a}").then(console.log).catch(console.log);

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <napi.h>
 extern "C" {
 #include <libjsonnet.h>
