@@ -1,9 +1,7 @@
 #pragma once
 
 #include <napi.h>
-extern "C" {
-#include <libjsonnet.h>
-}
+#include "JsonnetVm.hpp"
 
 namespace nodejsonnet {
 
@@ -17,7 +15,7 @@ namespace nodejsonnet {
     static Napi::FunctionReference constructor;
     static Napi::Value getVersion(const Napi::CallbackInfo &info);
 
-    std::shared_ptr<JsonnetVm> vm;
+    JsonnetVm vm;
     Napi::Value evaluateFile(const Napi::CallbackInfo &info);
     Napi::Value evaluateSnippet(const Napi::CallbackInfo &info);
     Napi::Value extString(const Napi::CallbackInfo &info);
@@ -25,10 +23,6 @@ namespace nodejsonnet {
     Napi::Value tlaString(const Napi::CallbackInfo &info);
     Napi::Value tlaCode(const Napi::CallbackInfo &info);
     Napi::Value addJpath(const Napi::CallbackInfo &info);
-
-    std::shared_ptr<char> borrowBuffer(char *buf) {
-      return {buf, [vm = vm](char *buf){ jsonnet_realloc(vm.get(), buf, 0); }};
-    }
   };
 
 }

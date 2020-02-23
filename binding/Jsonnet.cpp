@@ -22,7 +22,7 @@ namespace nodejsonnet {
   }
 
   Jsonnet::Jsonnet(const Napi::CallbackInfo &info):
-    Napi::ObjectWrap<Jsonnet>(info), vm{jsonnet_make(), jsonnet_destroy} {
+    Napi::ObjectWrap<Jsonnet>(info), vm() {
   }
 
   Napi::Value Jsonnet::getVersion(const Napi::CallbackInfo& info) {
@@ -56,7 +56,7 @@ namespace nodejsonnet {
     std::string const key = info[0].As<Napi::String>();
     std::string const val = info[1].As<Napi::String>();
 
-    jsonnet_ext_var(vm.get(), key.c_str(), val.c_str());
+    vm.extVar(key.c_str(), val.c_str());
 
     return env.Undefined();
   }
@@ -66,7 +66,7 @@ namespace nodejsonnet {
     std::string const key = info[0].As<Napi::String>();
     std::string const val = info[1].As<Napi::String>();
 
-    jsonnet_ext_code(vm.get(), key.c_str(), val.c_str());
+    vm.extCode(key.c_str(), val.c_str());
 
     return env.Undefined();
   }
@@ -76,7 +76,7 @@ namespace nodejsonnet {
     std::string const key = info[0].As<Napi::String>();
     std::string const val = info[1].As<Napi::String>();
 
-    jsonnet_tla_var(vm.get(), key.c_str(), val.c_str());
+    vm.tlaVar(key.c_str(), val.c_str());
 
     return env.Undefined();
   }
@@ -86,7 +86,7 @@ namespace nodejsonnet {
     std::string const key = info[0].As<Napi::String>();
     std::string const val = info[1].As<Napi::String>();
 
-    jsonnet_tla_code(vm.get(), key.c_str(), val.c_str());
+    vm.tlaCode(key.c_str(), val.c_str());
 
     return env.Undefined();
   }
@@ -95,7 +95,7 @@ namespace nodejsonnet {
     auto const env = info.Env();
     std::string const path = info[0].As<Napi::String>();
 
-    jsonnet_jpath_add(vm.get(), path.c_str());
+    vm.jpathAdd(path.c_str());
 
     return env.Undefined();
   }

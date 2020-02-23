@@ -2,7 +2,7 @@
 
 namespace nodejsonnet {
 
-  JsonnetWorker::JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> &&op):
+  JsonnetWorker::JsonnetWorker(Napi::Env env, JsonnetVm vm, std::unique_ptr<Op> &&op):
     Napi::AsyncWorker(env), vm(vm), op(std::move(op)),
     deferred(Napi::Promise::Deferred::New(env)) {
   }
@@ -19,22 +19,12 @@ namespace nodejsonnet {
     deferred.Reject(error.Value());
   }
 
-  std::shared_ptr<char> JsonnetWorker::EvaluateFileOp::execute(std::shared_ptr<JsonnetVm> vm) {
-    int error;
-    auto result = borrowBuffer(vm, jsonnet_evaluate_file(vm.get(), filename.c_str(), &error));
-    if(error != 0) {
-      throw std::runtime_error(std::string(result.get()));
-    }
-    return result;
+  JsonnetVm::Buffer JsonnetWorker::EvaluateFileOp::execute(JsonnetVm vm) {
+    return vm.evaluateFile(filename);
   }
 
-  std::shared_ptr<char> JsonnetWorker::EvaluateSnippetOp::execute(std::shared_ptr<JsonnetVm> vm) {
-    int error;
-    auto result = borrowBuffer(vm, jsonnet_evaluate_snippet(vm.get(), filename.c_str(), snippet.c_str(), &error));
-    if(error != 0) {
-      throw std::runtime_error(std::string(result.get()));
-    }
-    return result;
+  JsonnetVm::Buffer JsonnetWorker::EvaluateSnippetOp::execute(JsonnetVm vm) {
+    return vm.evaluateSnippet(filename, snippet);
   }
 
 }
