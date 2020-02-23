@@ -17,6 +17,10 @@ private:
   std::shared_ptr<JsonnetVm> vm;
   Napi::Value evaluateFile(const Napi::CallbackInfo &info);
   Napi::Value evaluateSnippet(const Napi::CallbackInfo &info);
+  Napi::Value extString(const Napi::CallbackInfo &info);
+  Napi::Value extCode(const Napi::CallbackInfo &info);
+  Napi::Value tlaString(const Napi::CallbackInfo &info);
+  Napi::Value tlaCode(const Napi::CallbackInfo &info);
 
   std::shared_ptr<char> borrowBuffer(char *buf) {
     return {buf, [vm = vm](char *buf){ jsonnet_realloc(vm.get(), buf, 0); }};
@@ -30,6 +34,10 @@ Napi::Object Jsonnet::init(Napi::Env env) {
       StaticAccessor("version", &Jsonnet::getVersion, nullptr),
       InstanceMethod("evaluateFile", &Jsonnet::evaluateSnippet),
       InstanceMethod("evaluateSnippet", &Jsonnet::evaluateSnippet),
+      InstanceMethod("extString", &Jsonnet::extString),
+      InstanceMethod("extCode", &Jsonnet::extCode),
+      InstanceMethod("tlaString", &Jsonnet::tlaString),
+      InstanceMethod("tlaCode", &Jsonnet::tlaCode),
     });
 
   constructor = Napi::Persistent(func);
@@ -62,7 +70,7 @@ Napi::Value Jsonnet::evaluateFile(const Napi::CallbackInfo& info) {
 Napi::Value Jsonnet::evaluateSnippet(const Napi::CallbackInfo& info) {
   auto const env = info.Env();
   std::string const snippet = info[0].As<Napi::String>();
-  std::string const filename = info.Length() < 2 ? "(snippet)" : static_cast<std::string>(info[1].As<Napi::String>());
+  std::string const filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
 
   int error;
   auto const result = borrowBuffer(jsonnet_evaluate_snippet(vm.get(), filename.c_str(), snippet.c_str(), &error));
@@ -71,6 +79,46 @@ Napi::Value Jsonnet::evaluateSnippet(const Napi::CallbackInfo& info) {
   }
 
   return Napi::String::New(env, result.get());
+}
+
+Napi::Value Jsonnet::extString(const Napi::CallbackInfo& info) {
+  auto const env = info.Env();
+  std::string const key = info[0].As<Napi::String>();
+  std::string const val = info[1].As<Napi::String>();
+
+  jsonnet_ext_var(vm.get(), key.c_str(), val.c_str());
+
+  return env.Undefined();
+}
+
+Napi::Value Jsonnet::extCode(const Napi::CallbackInfo& info) {
+  auto const env = info.Env();
+  std::string const key = info[0].As<Napi::String>();
+  std::string const val = info[1].As<Napi::String>();
+
+  jsonnet_ext_code(vm.get(), key.c_str(), val.c_str());
+
+  return env.Undefined();
+}
+
+Napi::Value Jsonnet::tlaString(const Napi::CallbackInfo& info) {
+  auto const env = info.Env();
+  std::string const key = info[0].As<Napi::String>();
+  std::string const val = info[1].As<Napi::String>();
+
+  jsonnet_tla_var(vm.get(), key.c_str(), val.c_str());
+
+  return env.Undefined();
+}
+
+Napi::Value Jsonnet::tlaCode(const Napi::CallbackInfo& info) {
+  auto const env = info.Env();
+  std::string const key = info[0].As<Napi::String>();
+  std::string const val = info[1].As<Napi::String>();
+
+  jsonnet_tla_code(vm.get(), key.c_str(), val.c_str());
+
+  return env.Undefined();
 }
 
 static Napi::Object init_node_jsonnet(Napi::Env env, Napi::Object _exports) {
