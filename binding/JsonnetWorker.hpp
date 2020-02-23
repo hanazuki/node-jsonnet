@@ -40,9 +40,9 @@ namespace nodejsonnet {
     Napi::Promise Promise() { return deferred.Promise(); }
 
   private:
-    Napi::Promise::Deferred deferred;
-    std::unique_ptr<Op> op;
     JsonnetVm vm;
+    std::unique_ptr<Op> op;
+    Napi::Promise::Deferred deferred;
     JsonnetVm::Buffer result;
   };
 
