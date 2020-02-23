@@ -1,5 +1,5 @@
-type Jsonnet = {
-  version: string;
+interface Jsonnet {
+  readonly version: string;
 
   new(): {
     extString(key: string, value: string): void;
