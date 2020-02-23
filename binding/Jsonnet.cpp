@@ -8,7 +8,7 @@ namespace nodejsonnet {
   Napi::Object Jsonnet::init(Napi::Env env) {
     auto const func = DefineClass(env, "Jsonnet", {
         StaticAccessor("version", &Jsonnet::getVersion, nullptr),
-        InstanceMethod("evaluateFile", &Jsonnet::evaluateSnippet),
+        InstanceMethod("evaluateFile", &Jsonnet::evaluateFile),
         InstanceMethod("evaluateSnippet", &Jsonnet::evaluateSnippet),
         InstanceMethod("extString", &Jsonnet::extString),
         InstanceMethod("extCode", &Jsonnet::extCode),
