@@ -21,6 +21,7 @@ private:
   Napi::Value extCode(const Napi::CallbackInfo &info);
   Napi::Value tlaString(const Napi::CallbackInfo &info);
   Napi::Value tlaCode(const Napi::CallbackInfo &info);
+  Napi::Value addJpath(const Napi::CallbackInfo &info);
 
   std::shared_ptr<char> borrowBuffer(char *buf) {
     return {buf, [vm = vm](char *buf){ jsonnet_realloc(vm.get(), buf, 0); }};
@@ -117,6 +118,15 @@ Napi::Value Jsonnet::tlaCode(const Napi::CallbackInfo& info) {
   std::string const val = info[1].As<Napi::String>();
 
   jsonnet_tla_code(vm.get(), key.c_str(), val.c_str());
+
+  return env.Undefined();
+}
+
+Napi::Value Jsonnet::addJpath(const Napi::CallbackInfo& info) {
+  auto const env = info.Env();
+  std::string const path = info[0].As<Napi::String>();
+
+  jsonnet_jpath_add(vm.get(), path.c_str());
 
   return env.Undefined();
 }

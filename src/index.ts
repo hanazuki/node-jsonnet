@@ -7,6 +7,8 @@ type Jsonnet = {
     tlaString(key: string, value: string): void;
     tlaCode(key: string, value: string): void;
 
+    addJpath(path: string): void;
+
     evaluateFile(filename: string): string;
     evaluateSnippet(snippet: string): string;
     evaluateSnippet(snippet: string, filename: string): string;
