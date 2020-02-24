@@ -16,6 +16,7 @@ namespace nodejsonnet {
         InstanceMethod("extCode", &Jsonnet::extCode),
         InstanceMethod("tlaString", &Jsonnet::tlaString),
         InstanceMethod("tlaCode", &Jsonnet::tlaCode),
+        InstanceMethod("addJpath", &Jsonnet::addJpath),
       });
 
     constructor = Napi::Persistent(func);
