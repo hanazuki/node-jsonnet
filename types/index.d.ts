@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // TypeScript Version: 3.0
 
-declare class Jsonnet {
+export class Jsonnet {
   /**
    * Returns the version of linked libjsonnet.
    */

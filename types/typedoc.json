@@ -1,0 +1,9 @@
+{
+  "inputFiles": ["index.d.ts"],
+  "exclude": ["test*.ts"],
+  "mode": "file",
+  "out": "../docs",
+  "includeDeclarations": true,
+  "excludeExternals": true,
+  "excludeNotExported": true
+}
