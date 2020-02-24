@@ -15,7 +15,7 @@ namespace nodejsonnet {
     };
 
     struct EvaluateFileOp: public Op {
-      EvaluateFileOp(std::string const &filename): filename(filename) {
+      explicit EvaluateFileOp(std::string const &filename): filename(filename) {
       }
       JsonnetVm::Buffer execute(JsonnetVm vm) override;
 
