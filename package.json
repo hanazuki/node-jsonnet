@@ -37,7 +37,6 @@
   ],
   "scripts": {
     "install": "cmake-js build",
-    "dtslint": "dtslint types",
     "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
   },
   "dependencies": {
