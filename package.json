@@ -10,10 +10,11 @@
   },
   "license": "(MIT AND Apache-2.0)",
   "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "types": "types/index.d.ts",
   "files": [
     "CMakeLists.txt",
     "/lib/*",
+    "/types/*.d.ts",
     "/binding/*",
     "/jsonnet/CMakeLists.txt.in",
     "/jsonnet/include/*.h",
@@ -36,7 +37,7 @@
   ],
   "scripts": {
     "install": "cmake-js build",
-    "build": "tsc",
+    "dtslint": "dtslint types",
     "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
   },
   "dependencies": {
@@ -46,6 +47,7 @@
     "node-addon-api": "*"
   },
   "devDependencies": {
-    "typescript": "^3.8.2"
+    "dtslint": "^3.0.0",
+    "typedoc": "^0.16.10"
   }
 }
