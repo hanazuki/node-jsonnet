@@ -2,8 +2,8 @@
 #pragma once
 
 #include <napi.h>
-#include <string>
 #include <memory>
+#include <string>
 #include "JsonnetVm.hpp"
 
 namespace nodejsonnet {

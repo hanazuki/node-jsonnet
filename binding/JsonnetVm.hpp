@@ -4,8 +4,8 @@
 extern "C" {
 #include <libjsonnet.h>
 }
-#include <string>
 #include <memory>
+#include <string>
 
 namespace nodejsonnet {
 
