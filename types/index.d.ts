@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
-// TypeScript Version: 3.0
+// TypeScript Version: 3.1
+
+export type JsonnetPrimitiveValue = null | boolean | number | string;
 
 export class Jsonnet {
   /**
@@ -50,6 +52,25 @@ export class Jsonnet {
    * @param path - Path to add.
    */
   addJpath(path: string): void;
+
+  /**
+   * Registers a native callback function.
+   *
+   * @example
+   * ```typescript
+   * const jsonnet = new Jsonnet();
+   * jsonnet.nativeCallback("add", (a, b) => Number(a) + Number(b), "a", "b");
+   * jsonnet.evaluateSnippet('std.native("add")(2, 3)'); // => 5
+   * ```
+   *
+   * @param name - Name of the callback function.
+   * @param fun - The function to register as a callback. `fun` must be a pure function or it must not have any side effects.
+   * @param params - Names of the function parameters. `params` must have the equal number of elements as the number of the parameters of the function `fun`.
+   */
+  nativeCallback<T extends string[]>(
+    name: string,
+    fun: (...args: JsonnetPrimitiveValue[] & { [K in keyof T]: JsonnetPrimitiveValue }) => any,
+    ...params: T): void;
 
   /**
    * Evaluates a Jsonnet script in a file.

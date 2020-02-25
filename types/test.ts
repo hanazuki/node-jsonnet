@@ -10,6 +10,8 @@ local b = 7;
 function(c) {answer: a * b * c}
 `;
 
+jsonnet.nativeCallback("add", (a, b) => Number(a) + Number(b), "a", "b");
+
 jsonnet.evaluateSnippet(snippet)
        .then(json => console.log(JSON.parse(json)))
        .catch(error => console.log(error));
