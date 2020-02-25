@@ -11,13 +11,13 @@ namespace nodejsonnet {
   class JsonnetWorker: public Napi::AsyncWorker {
   public:
     struct Op {
-      virtual JsonnetVm::Buffer execute(JsonnetVm vm) = 0;
+      virtual JsonnetVm::Buffer execute(std::shared_ptr<JsonnetVm> vm) = 0;
     };
 
     struct EvaluateFileOp: public Op {
       explicit EvaluateFileOp(std::string const &filename): filename(filename) {
       }
-      JsonnetVm::Buffer execute(JsonnetVm vm) override;
+      JsonnetVm::Buffer execute(std::shared_ptr<JsonnetVm> vm) override;
 
     private:
       std::string filename;
@@ -27,14 +27,14 @@ namespace nodejsonnet {
       EvaluateSnippetOp(std::string const &snippet, std::string const &filename):
         snippet(snippet), filename(filename) {
       }
-      JsonnetVm::Buffer execute(JsonnetVm vm) override;
+      JsonnetVm::Buffer execute(std::shared_ptr<JsonnetVm> vm) override;
 
     private:
       std::string snippet;
       std::string filename;
     };
 
-    JsonnetWorker(Napi::Env env, JsonnetVm vm, std::unique_ptr<Op> &&op);
+    JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> &&op);
 
     void Execute() override;
     void OnOK() override;
@@ -43,7 +43,7 @@ namespace nodejsonnet {
     Napi::Promise Promise() { return deferred.Promise(); }
 
   private:
-    JsonnetVm vm;
+    std::shared_ptr<JsonnetVm> vm;
     std::unique_ptr<Op> op;
     Napi::Promise::Deferred deferred;
     JsonnetVm::Buffer result;

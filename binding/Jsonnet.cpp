@@ -25,7 +25,7 @@ namespace nodejsonnet {
   }
 
   Jsonnet::Jsonnet(const Napi::CallbackInfo &info):
-    Napi::ObjectWrap<Jsonnet>(info), vm() {
+    Napi::ObjectWrap<Jsonnet>(info), vm(JsonnetVm::make()) {
   }
 
   Napi::Value Jsonnet::getVersion(const Napi::CallbackInfo& info) {
@@ -59,7 +59,7 @@ namespace nodejsonnet {
     auto const key = info[0].As<Napi::String>();
     auto const val = info[1].As<Napi::String>();
 
-    vm.extVar(key, val);
+    vm->extVar(key, val);
 
     return env.Undefined();
   }
@@ -69,7 +69,7 @@ namespace nodejsonnet {
     auto const key = info[0].As<Napi::String>();
     auto const val = info[1].As<Napi::String>();
 
-    vm.extCode(key, val);
+    vm->extCode(key, val);
 
     return env.Undefined();
   }
@@ -79,7 +79,7 @@ namespace nodejsonnet {
     auto const key = info[0].As<Napi::String>();
     auto const val = info[1].As<Napi::String>();
 
-    vm.tlaVar(key, val);
+    vm->tlaVar(key, val);
 
     return env.Undefined();
   }
@@ -89,7 +89,7 @@ namespace nodejsonnet {
     auto const key = info[0].As<Napi::String>();
     auto const val = info[1].As<Napi::String>();
 
-    vm.tlaCode(key, val);
+    vm->tlaCode(key, val);
 
     return env.Undefined();
   }
@@ -98,7 +98,7 @@ namespace nodejsonnet {
     auto const env = info.Env();
     auto const path = info[0].As<Napi::String>();
 
-    vm.jpathAdd(path);
+    vm->jpathAdd(path);
 
     return env.Undefined();
   }

@@ -16,7 +16,7 @@ namespace nodejsonnet {
     static Napi::FunctionReference constructor;
     static Napi::Value getVersion(const Napi::CallbackInfo &info);
 
-    JsonnetVm vm;
+    std::shared_ptr<JsonnetVm> vm;
     Napi::Value evaluateFile(const Napi::CallbackInfo &info);
     Napi::Value evaluateSnippet(const Napi::CallbackInfo &info);
     Napi::Value extString(const Napi::CallbackInfo &info);
