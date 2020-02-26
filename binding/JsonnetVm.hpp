@@ -6,7 +6,9 @@ extern "C" {
 }
 #include <forward_list>
 #include <memory>
+#include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace nodejsonnet {
@@ -67,6 +69,52 @@ namespace nodejsonnet {
         throw std::runtime_error(std::string(result.get()));
       }
       return result;
+    }
+
+    JsonnetJsonValue *makeJsonString(std::string const &v) {
+      return ::jsonnet_json_make_string(vm, v.c_str());
+    }
+
+    JsonnetJsonValue *makeJsonNumber(double v) {
+      return ::jsonnet_json_make_number(vm, v);
+    }
+
+    JsonnetJsonValue *makeJsonBool(bool v) {
+      return ::jsonnet_json_make_bool(vm, v);
+    }
+
+    JsonnetJsonValue *makeJsonNull() {
+      return ::jsonnet_json_make_null(vm);
+    }
+
+    std::optional<std::string_view> extractJsonString(JsonnetJsonValue const *json) {
+      if(auto const p = ::jsonnet_json_extract_string(vm, json); p) {
+        return p;
+      }
+      return std::nullopt;
+    }
+
+    std::optional<double> extractJsonNumber(JsonnetJsonValue const *json) {
+      double n;
+      if(::jsonnet_json_extract_number(vm, json, &n)) {
+        return n;
+      }
+      return std::nullopt;
+    }
+
+    std::optional<bool> extractJsonBool(JsonnetJsonValue const *json) {
+      switch(::jsonnet_json_extract_bool(vm, json)) {
+      case 0:
+        return false;
+      case 1:
+        return true;
+      default:
+        return std::nullopt;
+      }
+    }
+
+    bool extractJsonNull(JsonnetJsonValue const *json) {
+      return ::jsonnet_json_extract_null(vm, json);
     }
 
   private:
