@@ -63,52 +63,47 @@ namespace nodejsonnet {
   }
 
   Napi::Value Jsonnet::extString(const Napi::CallbackInfo& info) {
-    auto const env = info.Env();
     auto const key = info[0].As<Napi::String>().Utf8Value();
     auto const val = info[1].As<Napi::String>().Utf8Value();
 
     ext.push_back({false, key, val});
 
-    return env.Undefined();
+    return info.This();
   }
 
   Napi::Value Jsonnet::extCode(const Napi::CallbackInfo& info) {
-    auto const env = info.Env();
     auto const key = info[0].As<Napi::String>().Utf8Value();
     auto const val = info[1].As<Napi::String>().Utf8Value();
 
     ext.push_back({true, key, val});
 
-    return env.Undefined();
+    return info.This();
   }
 
   Napi::Value Jsonnet::tlaString(const Napi::CallbackInfo& info) {
-    auto const env = info.Env();
     auto const key = info[0].As<Napi::String>().Utf8Value();
     auto const val = info[1].As<Napi::String>().Utf8Value();
 
     tla.push_back({false, key, val});
 
-    return env.Undefined();
+    return info.This();
   }
 
   Napi::Value Jsonnet::tlaCode(const Napi::CallbackInfo& info) {
-    auto const env = info.Env();
     auto const key = info[0].As<Napi::String>().Utf8Value();
     auto const val = info[1].As<Napi::String>().Utf8Value();
 
     tla.push_back({true, key, val});
 
-    return env.Undefined();
+    return info.This();
   }
 
   Napi::Value Jsonnet::addJpath(const Napi::CallbackInfo& info) {
-    auto const env = info.Env();
     auto const path = info[0].As<Napi::String>().Utf8Value();
 
     jpath.push_back(path);
 
-    return env.Undefined();
+    return info.This();
   }
 
   namespace {
@@ -186,7 +181,6 @@ namespace nodejsonnet {
   }
 
   Napi::Value Jsonnet::nativeCallback(const Napi::CallbackInfo &info) {
-    auto const env = info.Env();
     auto const name = info[0].As<Napi::String>().Utf8Value();
     auto const fun = info[1].As<Napi::Function>();
     auto const params =
@@ -200,7 +194,7 @@ namespace nodejsonnet {
 
     nativeCallbacks.push_back({name, Napi::Persistent(fun), std::move(params)});
 
-    return env.Undefined();
+    return info.This();
   }
 
   std::shared_ptr<JsonnetVm> Jsonnet::createVm(Napi::Env const &env) {
