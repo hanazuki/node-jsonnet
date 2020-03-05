@@ -325,13 +325,7 @@ namespace nodejsonnet {
       auto const fun = x.fun;
       auto const params = x.params;
 
-      TsfnWrap tsfn = Napi::ThreadSafeFunction::New(
-        env,
-        *fun,
-        "jsonnet native callback",
-        0,
-        1
-        );
+      TsfnWrap tsfn = Napi::ThreadSafeFunction::New(env, *fun, "Jsonnet Native Callback", 0, 1);
 
       auto callback =
         [](Napi::Env env, Napi::Function fun, Payload *payload) {
