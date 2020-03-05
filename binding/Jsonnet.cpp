@@ -15,6 +15,10 @@ namespace nodejsonnet {
   Napi::Object Jsonnet::init(Napi::Env env) {
     auto const func = DefineClass(env, "Jsonnet", {
         StaticAccessor("version", &Jsonnet::getVersion, nullptr),
+        InstanceMethod("setMaxStack", &Jsonnet::setMaxStack),
+        InstanceMethod("setMaxTrace", &Jsonnet::setMaxTrace),
+        InstanceMethod("setGcMinObjects", &Jsonnet::setGcMinObjects),
+        InstanceMethod("setGcGrowthTrigger", &Jsonnet::setGcGrowthTrigger),
         InstanceMethod("evaluateFile", &Jsonnet::evaluateFile),
         InstanceMethod("evaluateSnippet", &Jsonnet::evaluateSnippet),
         InstanceMethod("extString", &Jsonnet::extString),
@@ -37,6 +41,26 @@ namespace nodejsonnet {
   Napi::Value Jsonnet::getVersion(const Napi::CallbackInfo& info) {
     auto const env = info.Env();
     return Napi::String::New(env, ::jsonnet_version());
+  }
+
+  Napi::Value Jsonnet::setMaxStack(const Napi::CallbackInfo &info) {
+    maxStack = info[0].As<Napi::Number>();
+    return info.This();
+  }
+
+  Napi::Value Jsonnet::setMaxTrace(const Napi::CallbackInfo &info) {
+    maxTrace = info[0].As<Napi::Number>();
+    return info.This();
+  }
+
+  Napi::Value Jsonnet::setGcMinObjects(const Napi::CallbackInfo &info) {
+    gcMinObjects = info[0].As<Napi::Number>();
+    return info.This();
+  }
+
+  Napi::Value Jsonnet::setGcGrowthTrigger(const Napi::CallbackInfo &info) {
+    gcGrowthTrigger = info[0].As<Napi::Number>();
+    return info.This();
   }
 
   Napi::Value Jsonnet::evaluateFile(const Napi::CallbackInfo& info) {
@@ -227,6 +251,19 @@ namespace nodejsonnet {
 
   std::shared_ptr<JsonnetVm> Jsonnet::createVm(Napi::Env const &env) {
     auto vm = JsonnetVm::make();
+
+    if(maxStack) {
+      vm->maxStack(*maxStack);
+    }
+    if(maxTrace) {
+      vm->maxTrace(*maxTrace);
+    }
+    if(gcMinObjects) {
+      vm->gcMinObjects(*gcMinObjects);
+    }
+    if(gcGrowthTrigger) {
+      vm->gcGrowthTrigger(*gcGrowthTrigger);
+    }
 
     for(auto const &x: ext) {
       if(x.isCode) {

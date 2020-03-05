@@ -15,6 +15,34 @@ export class Jsonnet {
   constructor();
 
   /**
+   * Set the maximum stack depth.
+   *
+   * @param value - The stack depth.
+   */
+  maxStack(value: number): this;
+
+  /**
+   * Set the number of lines of back trace to display.
+   *
+   * @param value - The number of lines.
+   */
+  maxTrace(value: number): this;
+
+  /**
+   * Set the minimal number of objects required to trigger a garbage collection.
+   *
+   * @param value - The number of objects.
+   */
+  maxGcMinObjects(value: number): this;
+
+  /**
+   * Set the growth rate of the number of objects to trigger a garbage collection.
+   *
+   * @param value - The growth rate.
+   */
+  maxGcGrowthTrigger(value: number): this;
+
+  /**
    * Binds external variable named as `key` to string `value`.
    *
    * @param key - Name of the external variable

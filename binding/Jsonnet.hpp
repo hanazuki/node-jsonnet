@@ -54,6 +54,10 @@ namespace nodejsonnet {
       std::vector<std::string> params;
     };
 
+    std::optional<unsigned> maxStack, maxTrace;
+    std::optional<unsigned> gcMinObjects;
+    std::optional<double> gcGrowthTrigger;
+
     std::vector<VariableAssignment> ext, tla;
     std::vector<std::string> jpath;
     std::vector<NativeCallback> nativeCallbacks;
@@ -69,6 +73,10 @@ namespace nodejsonnet {
     static Napi::FunctionReference constructor;
     static Napi::Value getVersion(const Napi::CallbackInfo &info);
 
+    Napi::Value setMaxStack(const Napi::CallbackInfo &info);
+    Napi::Value setMaxTrace(const Napi::CallbackInfo &info);
+    Napi::Value setGcMinObjects(const Napi::CallbackInfo &info);
+    Napi::Value setGcGrowthTrigger(const Napi::CallbackInfo &info);
     Napi::Value evaluateFile(const Napi::CallbackInfo &info);
     Napi::Value evaluateSnippet(const Napi::CallbackInfo &info);
     Napi::Value extString(const Napi::CallbackInfo &info);

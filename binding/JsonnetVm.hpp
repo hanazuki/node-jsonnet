@@ -36,6 +36,22 @@ namespace nodejsonnet {
       jsonnet_destroy(vm);
     }
 
+    void maxStack(unsigned v) {
+      ::jsonnet_max_stack(vm, v);
+    }
+
+    void maxTrace(unsigned v) {
+      ::jsonnet_max_trace(vm, v);
+    }
+
+    void gcMinObjects(unsigned v) {
+      ::jsonnet_gc_min_objects(vm, v);
+    }
+
+    void gcGrowthTrigger(double v) {
+      ::jsonnet_gc_growth_trigger(vm, v);
+    }
+
     void extVar(std::string const &key, std::string const &val) {
       ::jsonnet_ext_var(vm, key.c_str(), val.c_str());
     }
