@@ -21,4 +21,4 @@ jsonnet.evaluateSnippet(`std.native("add")(1,2) * std.extVar("c")`)
        .then(json => JSON.parse(json)); // => 12
 ```
 
-The complete library is documented in the TypeScript type definitions at [`types/index.d.ts`](types/index.d.ts).
+The library is documented in the TypeScript type definitions at [`types/index.d.ts`](types/index.d.ts).

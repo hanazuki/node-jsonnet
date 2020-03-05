@@ -104,7 +104,7 @@ export class Jsonnet {
    * Evaluates a Jsonnet script in a file.
    *
    * @param filename - Path to the file.
-   * @returns The evaluation result in JSON representation.
+   * @returns A Promise for the evaluation result in JSON representation.
    */
   evaluateFile(filename: string): Promise<string>;
 
@@ -113,7 +113,7 @@ export class Jsonnet {
    *
    * @param snippet - Jsonnet script to evaluate.
    * @param filename - Filename used for error reporting.
-   * @returns The evaluation result in JSON representation.
+   * @returns A Promise for the evaluation result in JSON representation.
    */
   evaluateSnippet(snippet: string, filename?: string): Promise<string>;
 }
