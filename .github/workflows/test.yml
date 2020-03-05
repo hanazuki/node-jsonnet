@@ -35,7 +35,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-dtslint-
     - name: Install
-      run: npm install --no-save @types/node
+      run: npm install --no-save "@types/node@$(node -p 'process.versions.node.split(".")[0]')"
     - name: Lint
       run: |
         npx dtslint --version
