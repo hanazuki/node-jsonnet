@@ -187,7 +187,7 @@ namespace nodejsonnet {
       [&]{
         std::vector<std::string> params;
         for(size_t i = 2; i < info.Length(); ++i) {
-          params.push_back(std::move(info[i].As<Napi::String>().Utf8Value()));
+          params.push_back(info[i].As<Napi::String>().Utf8Value());
         }
         return params;
       }();
