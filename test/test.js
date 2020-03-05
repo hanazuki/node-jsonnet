@@ -10,11 +10,26 @@ const Jsonnet = require("../lib/index.js");
 }
 
 {
-  const jsonnet = new Jsonnet();
-  jsonnet.addJpath(`${__dirname}/fixtures`);
+  const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
 
   jsonnet.evaluateFile(`${__dirname}/fixtures/fruits.jsonnet`).then(
     j => assert.deepEqual(JSON.parse(j), [{name: "Kiwi"}, {name: "Orange"}])
+  );
+}
+
+{
+  const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
+
+  jsonnet.evaluateFile(`${__dirname}/fixtures/utf8.jsonnet`).then(
+    j => assert.deepEqual(JSON.parse(j), {"あ": "あいうえお", "🍔": "🐧"})
+  );
+
+  jsonnet.evaluateSnippet(`import "utf8.jsonnet"`).then(
+    j => assert.deepEqual(JSON.parse(j), {"あ": "あいうえお", "🍔": "🐧"})
+  );
+
+  jsonnet.evaluateSnippet(`{"あ": "あいうえお", "🍔": "🐧"}`).then(
+    j => assert.deepEqual(JSON.parse(j), {"あ": "あいうえお", "🍔": "🐧"})
   );
 }
 
