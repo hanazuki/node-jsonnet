@@ -114,3 +114,10 @@ const Jsonnet = require("../lib/index.js");
     j => assert.equal(JSON.parse(j), "test2")
   );
 }
+
+{
+  const jsonnet = new Jsonnet();
+
+  assert.rejects(jsonnet.evaluateSnippet(`var1`), {message: /^STATIC ERROR: .* Unknown variable/});
+  assert.rejects(jsonnet.evaluateSnippet(`1 / 0`), {message: /^RUNTIME ERROR: division by zero/});
+}
