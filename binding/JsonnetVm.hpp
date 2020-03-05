@@ -103,6 +103,22 @@ namespace nodejsonnet {
       return ::jsonnet_json_make_null(vm);
     }
 
+    JsonnetJsonValue *makeJsonArray() {
+      return ::jsonnet_json_make_array(vm);
+    }
+
+    void appendJsonArray(JsonnetJsonValue *array, JsonnetJsonValue *value) {
+      ::jsonnet_json_array_append(vm, array, value);
+    }
+
+    JsonnetJsonValue *makeJsonObject() {
+      return ::jsonnet_json_make_object(vm);
+    }
+
+    void appendJsonObject(JsonnetJsonValue *array, std::string const &field, JsonnetJsonValue *value) {
+      ::jsonnet_json_object_append(vm, array, field.c_str(), value);
+    }
+
     std::optional<std::string_view> extractJsonString(JsonnetJsonValue const *json) {
       if(auto const p = ::jsonnet_json_extract_string(vm, json); p) {
         return p;

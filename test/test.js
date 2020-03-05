@@ -55,11 +55,12 @@ const Jsonnet = require("../lib/index.js");
 
 {
   const jsonnet = new Jsonnet();
-  jsonnet.nativeCallback("double", (x) => x * 2, "x")
-  jsonnet.nativeCallback("negate", (b) => !b, "b")
-  jsonnet.nativeCallback("concat", (s, t) => s + t, "s", "t")
-  jsonnet.nativeCallback("isNull", (v) => v === null, "v")
-  jsonnet.nativeCallback("null", () => null)
+  jsonnet.nativeCallback("double", (x) => x * 2, "x");
+  jsonnet.nativeCallback("negate", (b) => !b, "b");
+  jsonnet.nativeCallback("concat", (s, t) => s + t, "s", "t");
+  jsonnet.nativeCallback("isNull", (v) => v === null, "v");
+  jsonnet.nativeCallback("null", () => null);
+  jsonnet.nativeCallback("arrayOfObjects", () => [{name: "Kiwi"}, {name: "Orange"}]);
 
   jsonnet.evaluateSnippet(`std.native("double")(4)`).then(
     j => assert.equal(JSON.parse(j), 8)
@@ -79,6 +80,29 @@ const Jsonnet = require("../lib/index.js");
 
   jsonnet.evaluateSnippet(`std.native("null")()`).then(
     j => assert.equal(JSON.parse(j), null)
+  );
+
+  jsonnet.evaluateSnippet(`std.native("arrayOfObjects")()`).then(
+    j => assert.deepEqual(JSON.parse(j), [{name: "Kiwi"}, {name: "Orange"}])
+  );
+}
+
+{
+  const jsonnet = new Jsonnet();
+
+  jsonnet.nativeCallback("int8array", () => new Int8Array([1,2,3]));
+  jsonnet.evaluateSnippet(`std.native("int8array")()`).then(
+    j => assert.deepEqual(JSON.parse(j), [1,2,3])
+  );
+
+  jsonnet.nativeCallback("int32array", () => new Int32Array([1,2,3]));
+  jsonnet.evaluateSnippet(`std.native("int32array")()`).then(
+    j => assert.deepEqual(JSON.parse(j), [1,2,3])
+  );
+
+  jsonnet.nativeCallback("float64array", () => new Float64Array([1.1,2.2,3.3]));
+  jsonnet.evaluateSnippet(`std.native("float64array")()`).then(
+    j => assert.deepEqual(JSON.parse(j), [1.1,2.2,3.3])
   );
 }
 

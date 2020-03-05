@@ -135,6 +135,34 @@ namespace nodejsonnet {
       if(v.IsString()) {
         return vm->makeJsonString(v.As<Napi::String>().Utf8Value().c_str());
       }
+      if(v.IsArray()) {
+        auto const array = v.As<Napi::Array>();
+        auto const json = vm->makeJsonArray();
+        for(size_t i = 0, len = array.Length(); i < len; ++i) {
+          vm->appendJsonArray(json, toJsonnetJson(vm, array[i]));
+        }
+        return json;
+      }
+      if(v.IsTypedArray()) {
+        auto const array = v.As<Napi::TypedArray>();
+        auto const json = vm->makeJsonArray();
+        for(size_t i = 0, len = array.ElementLength(); i < len; ++i) {
+          vm->appendJsonArray(json, toJsonnetJson(vm, array[i]));
+        }
+        return json;
+      }
+      if(v.IsObject()) {
+        auto const object = v.As<Napi::Object>();
+        auto const json = vm->makeJsonObject();
+        auto const props = object.GetPropertyNames();
+        for(size_t i = 0, len = props.Length(); i < len; ++i) {
+          auto const prop = props[i].ToString();
+          if(object.HasOwnProperty(prop)) {
+            vm->appendJsonObject(json, prop, toJsonnetJson(vm, object.Get(prop)));
+          }
+        }
+        return json;
+      }
       return vm->makeJsonNull();
     }
 
