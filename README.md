@@ -2,7 +2,13 @@
 
 `@hanazuki/node-jsonnet` is a [libjsonnet](https://jsonnet.org) binding for [Node.js](https://nodejs.org) (native addon), which supports all the basic Jsonnet functionality including `import` and native callbacks (`std.native`). It also comes with TypeScript type definitions.
 
-## Usage
+## Install Requirements
+
+- Node.js v10 or later
+- GCC or Clang C++ compiler that supports C++17
+- CMake
+
+## Usage Example
 
 ```typescript
 import { Jsonnet } from "@hanazuki/node-jsonnet";
