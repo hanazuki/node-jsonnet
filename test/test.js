@@ -135,3 +135,14 @@ const Jsonnet = require("../lib/index.js");
   assert.rejects(jsonnet.evaluateSnippet(`var1`), {message: /^STATIC ERROR: .* Unknown variable/});
   assert.rejects(jsonnet.evaluateSnippet(`1 / 0`), {message: /^RUNTIME ERROR: division by zero/});
 }
+
+{
+  const jsonnet = new Jsonnet();
+
+  // TODO: Exception propagation
+  jsonnet.nativeCallback("fail", (msg) => { throw msg; }, "msg");
+  // assert.rejects(jsonnet.evaluateSnippet(`std.native("fail")("kimagure")`), {message: /^RUNTIME ERROR: kimagure/});
+
+  jsonnet.nativeCallback("failAsync", async (msg) => { throw msg; }, "msg");
+  assert.rejects(jsonnet.evaluateSnippet(`std.native("failAsync")("kimagure")`), {message: /^RUNTIME ERROR: kimagure/});
+}
