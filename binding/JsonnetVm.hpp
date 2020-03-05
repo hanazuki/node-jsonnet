@@ -186,9 +186,9 @@ namespace nodejsonnet {
         auto result = func(vm->shared_from_this(), std::move(args));
         *success = 1;
         return result;
-      } catch(...) {
+      } catch(std::exception const &e) {
         *success = 0;
-        return nullptr;
+        return vm->makeJsonString(e.what());
       }
     }
   };

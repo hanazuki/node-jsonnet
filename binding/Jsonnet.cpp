@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <variant>
 #include <vector>
 #include "Jsonnet.hpp"
 #include "JsonnetWorker.hpp"
@@ -287,7 +288,7 @@ namespace nodejsonnet {
 
     struct Payload {
       Payload(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> &&args)
-        : m{}, cv{}, args{std::move(args)}, vm{vm}, result{nullptr} {
+        : m{}, cv{}, args{std::move(args)}, vm{vm}, result{} {
       }
 
       std::vector<JsonnetJsonValue const *> const &getArgs() const {
@@ -306,10 +307,23 @@ namespace nodejsonnet {
         cv.notify_one();
       }
 
+      void setError(std::exception_ptr e) {
+        {
+          std::lock_guard<std::mutex> lk(m);
+          result = e;
+        }
+        cv.notify_one();
+      }
+
       JsonnetJsonValue *getResult() {
         std::unique_lock<std::mutex> lk(m);
-        cv.wait(lk, [this] { return result; });
-        return result;
+        cv.wait(lk, [this] { return result.index() != 0; });
+
+        if(auto json = std::get_if<JsonnetJsonValue *>(&result)) {
+          return *json;
+        }
+
+        std::rethrow_exception(std::get<std::exception_ptr>(result));
       }
 
     private:
@@ -317,7 +331,7 @@ namespace nodejsonnet {
       std::condition_variable cv;
       std::vector<JsonnetJsonValue const *> args;
       std::shared_ptr<JsonnetVm> vm;
-      JsonnetJsonValue *result;
+      std::variant<std::monostate, JsonnetJsonValue *, std::exception_ptr> result;
     };
 
     for(auto const &x: nativeCallbacks) {
@@ -361,7 +375,8 @@ namespace nodejsonnet {
             [](Napi::CallbackInfo const &info){
               auto const payload = static_cast<Payload *>(info.Data());
               auto const vm = payload->getVm();
-              payload->setResult(vm->makeJsonNull());
+              auto const error = info[0].ToString();
+              payload->setError(std::make_exception_ptr(std::runtime_error(error)));
             },
             "onFailure",
             payload

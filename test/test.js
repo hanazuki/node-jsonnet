@@ -123,9 +123,10 @@ const Jsonnet = require("../lib/index.js");
     j => assert.equal(JSON.parse(j), `"🦔"\n`)
   );
 
-  jsonnet.evaluateSnippet(`std.native("readFile")("non-existent")`).then(
-    j => assert.equal(JSON.parse(j), null)  // TODO
-  );
+  assert.rejects(
+    jsonnet.evaluateSnippet(`std.native("readFile")("non-existent")`),
+    {message: /^RUNTIME ERROR: .* ENOENT/}
+  )
 }
 
 {
