@@ -11,6 +11,7 @@ namespace nodejsonnet {
   class JsonnetWorker: public Napi::AsyncWorker {
   public:
     struct Op {
+      virtual ~Op() = default;
       virtual JsonnetVm::Buffer execute(std::shared_ptr<JsonnetVm> vm) = 0;
     };
 
