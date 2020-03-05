@@ -92,7 +92,7 @@ export class Jsonnet {
    * ```
    *
    * @param name - Name of the callback function.
-   * @param fun - The function to register as a callback. `fun` must be a pure function or it must not have any side effects.
+   * @param fun - The function to register as a callback. `fun` can return an Object as the callback result or a Promise for it.
    * @param params - Names of the function parameters. `params` must have the equal number of elements as the number of the parameters of the function `fun`.
    */
   nativeCallback<T extends string[]>(

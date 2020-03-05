@@ -339,8 +339,36 @@ namespace nodejsonnet {
             args.push_back(toNapiValue(env, vm, arg));
           }
 
-          auto const result = toJsonnetJson(vm, fun.Call(args));
-          payload->setResult(result);
+          auto const result = fun.Call(args);
+          if(!result.IsPromise()) {
+            payload->setResult(toJsonnetJson(vm, result));
+            return;
+          }
+
+          auto const on_success = Napi::Function::New(
+            env,
+            [](Napi::CallbackInfo const &info){
+              auto const payload = static_cast<Payload *>(info.Data());
+              auto const vm = payload->getVm();
+              payload->setResult(toJsonnetJson(vm, info[0]));
+            },
+            "onSuccess",
+            payload
+            );
+
+          auto const on_failure = Napi::Function::New(
+            env,
+            [](Napi::CallbackInfo const &info){
+              auto const payload = static_cast<Payload *>(info.Data());
+              auto const vm = payload->getVm();
+              payload->setResult(vm->makeJsonNull());
+            },
+            "onFailure",
+            payload
+            );
+
+          auto const promise = result.As<Napi::Object>();
+          promise.Get("then").As<Napi::Function>().Call(promise, {on_success, on_failure});
         };
 
       auto const native_callback =

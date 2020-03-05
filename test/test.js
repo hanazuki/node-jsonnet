@@ -117,6 +117,19 @@ const Jsonnet = require("../lib/index.js");
 
 {
   const jsonnet = new Jsonnet();
+  jsonnet.nativeCallback("readFile", (name) => require("fs").promises.readFile(`${__dirname}/fixtures/${name}.jsonnet`, "utf8"), "name")
+
+  jsonnet.evaluateSnippet(`std.native("readFile")("🦔")`).then(
+    j => assert.equal(JSON.parse(j), `"🦔"\n`)
+  );
+
+  jsonnet.evaluateSnippet(`std.native("readFile")("non-existent")`).then(
+    j => assert.equal(JSON.parse(j), null)  // TODO
+  );
+}
+
+{
+  const jsonnet = new Jsonnet();
 
   assert.rejects(jsonnet.evaluateSnippet(`var1`), {message: /^STATIC ERROR: .* Unknown variable/});
   assert.rejects(jsonnet.evaluateSnippet(`1 / 0`), {message: /^RUNTIME ERROR: division by zero/});
