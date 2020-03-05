@@ -9,6 +9,9 @@ jobs:
       matrix:
         os: [ubuntu-18.04, macos-10.15]
         node: [10, 12, 13]
+        exclude:
+          - {os: macos-10.15, node: 10}
+          - {os: macos-10.15, node: 12}
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v1
