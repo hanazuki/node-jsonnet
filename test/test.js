@@ -31,6 +31,14 @@ const Jsonnet = require("../lib/index.js");
   jsonnet.evaluateSnippet(`{"あ": "あいうえお", "🍔": "🐧"}`).then(
     j => assert.deepEqual(JSON.parse(j), {"あ": "あいうえお", "🍔": "🐧"})
   );
+
+  jsonnet.evaluateFile(`${__dirname}/fixtures/🦔.jsonnet`).then(
+    j => assert.deepEqual(JSON.parse(j), "🦔")
+  );
+
+  jsonnet.evaluateSnippet(`import "🦔.jsonnet"`).then(
+    j => assert.deepEqual(JSON.parse(j), "🦔")
+  );
 }
 
 {
