@@ -88,7 +88,21 @@ export class Jsonnet {
    * ```typescript
    * const jsonnet = new Jsonnet();
    * jsonnet.nativeCallback("add", (a, b) => Number(a) + Number(b), "a", "b");
-   * jsonnet.evaluateSnippet('std.native("add")(2, 3)'); // => 5
+   * jsonnet.evaluateSnippet('std.native("add")(2, 3)')
+   *        .then(result => console.log(JSON.parse(result)));  // => 5
+   * ```
+   *
+   * @bug If the native callback throws an error, the entire Node.js process panics.
+   *   To avoid this, use async function for operations that may throw.
+   * ```typescript
+   * // Node.js crashes
+   * jsonnet.nativeCallback("failBad", () => { throw "fail"; });
+   * jsonnet.evaluateSnippet(`std.native("failBad")()`);
+   *
+   * // OK
+   * jsonnet.nativeCallback("failGood", async () => { throw "fail"; });
+   * jsonnet.evaluateSnippet(`std.native("failGood")()`)
+   *        .catch(error => console.log(error));  // => "fail"
    * ```
    *
    * @param name - Name of the callback function.
