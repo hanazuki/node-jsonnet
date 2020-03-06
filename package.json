@@ -1,7 +1,7 @@
 {
   "name": "@hanazuki/node-jsonnet",
-  "version": "0.0.0",
-  "description": "Jsonnet addon for nodejs",
+  "version": "0.1.0",
+  "description": "Jsonnet addon for Node.js",
   "bugs": "https://github.com/hanazuki/node-jsonnet/issues",
   "homepage": "https://github.com/hanazuki/node-jsonnet",
   "repository": {
@@ -34,7 +34,8 @@
     "/jsonnet/test_suite/*"
   ],
   "keywords": [
-    "jsonnet"
+    "jsonnet",
+    "node-addon"
   ],
   "scripts": {
     "install": "cmake-js build",
