@@ -11,6 +11,29 @@ const {Jsonnet} = require("../lib/index.js");
 
 {
   const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
+  jsonnet.extString("var1", "str");
+  jsonnet.extCode("var2", `{a: [0]}`);
+
+  jsonnet.evaluateSnippet(`std.extVar("var1")`).then(
+    j => assert.equal(JSON.parse(j), "str")
+  );
+  jsonnet.evaluateSnippet(`std.extVar("var2")`).then(
+    j => assert.deepEqual(JSON.parse(j), {a: [0]})
+  );
+}
+
+{
+  const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
+  jsonnet.extString("var1", "str1");
+  jsonnet.extCode("var1", `"str2"`);
+
+  jsonnet.evaluateSnippet(`std.extVar("var1")`).then(
+    j => assert.equal(JSON.parse(j), "str2")
+  );
+}
+
+{
+  const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
 
   jsonnet.evaluateFile(`${__dirname}/fixtures/fruits.jsonnet`).then(
     j => assert.deepEqual(JSON.parse(j), [{name: "Kiwi"}, {name: "Orange"}])
