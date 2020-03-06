@@ -22,7 +22,9 @@ jobs:
       with:
         node-version: ${{ matrix.node }}
     - name: Test
-      run: bash ./scripts/test-packaging.sh
+      run: |
+        CC=gcc CXX=g++ bash ./scripts/test-packaging.sh
+        CC=clang CXX=clang++ bash ./scripts/test-packaging.sh
 
   lint:
     runs-on: ubuntu-18.04

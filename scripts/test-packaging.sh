@@ -6,5 +6,7 @@ rm -f *.tgz
 npm pack
 tmpdir=$(mktemp -d)
 tar xf hanazuki-node-jsonnet-*.tgz -C "$tmpdir"
-cd "$tmpdir/package"
+pushd "$tmpdir/package"
 npm install-test
+popd
+rm -rf "$tmpdir"
