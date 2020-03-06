@@ -18,6 +18,17 @@ const {Jsonnet} = require("../lib/index.js");
 }
 
 {
+  // jpath added later takes precedence
+  const jsonnet = new Jsonnet();
+  jsonnet.addJpath(`${__dirname}/fixtures/a`);
+  jsonnet.addJpath(`${__dirname}/fixtures/b`);
+
+  jsonnet.evaluateSnippet(`import "lib.jsonnet"`).then(
+    j => assert.deepEqual(JSON.parse(j), "b")
+  );
+}
+
+{
   const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
 
   jsonnet.evaluateFile(`${__dirname}/fixtures/utf8.jsonnet`).then(
