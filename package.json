@@ -44,14 +44,14 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "cmake-js": "^6.0.0",
+    "cmake-js": "^6.1.0",
     "node-addon-api": "^2.0.0"
   },
   "peerDependencies": {
     "@types/node": "*"
   },
   "devDependencies": {
-    "dtslint": "^3.0.0",
-    "typedoc": "^0.16.10"
+    "dtslint": "^3.3.0",
+    "typedoc": "^0.16.11"
   }
 }
