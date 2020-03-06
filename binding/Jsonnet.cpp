@@ -66,10 +66,10 @@ namespace nodejsonnet {
 
   Napi::Value Jsonnet::evaluateFile(const Napi::CallbackInfo& info) {
     auto const env = info.Env();
-    auto const filename = info[0].As<Napi::String>().Utf8Value();
+    auto filename = info[0].As<Napi::String>().Utf8Value();
 
     auto vm = createVm(env);
-    auto const worker = new JsonnetWorker(env, vm, std::make_unique<JsonnetWorker::EvaluateFileOp>(filename));
+    auto const worker = new JsonnetWorker(env, vm, std::make_unique<JsonnetWorker::EvaluateFileOp>(std::move(filename)));
     auto const promise = worker->Promise();
     worker->Queue();
     return promise;
@@ -77,56 +77,50 @@ namespace nodejsonnet {
 
   Napi::Value Jsonnet::evaluateSnippet(const Napi::CallbackInfo& info) {
     auto const env = info.Env();
-    auto const snippet = info[0].As<Napi::String>().Utf8Value();
-    auto const filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
+    auto snippet = info[0].As<Napi::String>().Utf8Value();
+    auto filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
 
     auto vm = createVm(env);
-    auto const worker = new JsonnetWorker(env, vm, std::make_unique<JsonnetWorker::EvaluateSnippetOp>(snippet, filename));
+    auto const worker = new JsonnetWorker(env, vm, std::make_unique<JsonnetWorker::EvaluateSnippetOp>(std::move(snippet), std::move(filename)));
     auto const promise = worker->Promise();
     worker->Queue();
     return promise;
   }
 
   Napi::Value Jsonnet::extString(const Napi::CallbackInfo& info) {
-    auto const key = info[0].As<Napi::String>().Utf8Value();
-    auto const val = info[1].As<Napi::String>().Utf8Value();
-
-    ext[key] = {false, val};
+    ext.insert_or_assign(
+      info[0].As<Napi::String>().Utf8Value(),
+      Variable{false, info[1].As<Napi::String>().Utf8Value()});
 
     return info.This();
   }
 
   Napi::Value Jsonnet::extCode(const Napi::CallbackInfo& info) {
-    auto const key = info[0].As<Napi::String>().Utf8Value();
-    auto const val = info[1].As<Napi::String>().Utf8Value();
-
-    ext[key] = {true, val};
+    ext.insert_or_assign(
+      info[0].As<Napi::String>().Utf8Value(),
+      Variable{true, info[1].As<Napi::String>().Utf8Value()});
 
     return info.This();
   }
 
   Napi::Value Jsonnet::tlaString(const Napi::CallbackInfo& info) {
-    auto const key = info[0].As<Napi::String>().Utf8Value();
-    auto const val = info[1].As<Napi::String>().Utf8Value();
-
-    tla[key] = {false, val};
+    tla.insert_or_assign(
+      info[0].As<Napi::String>().Utf8Value(),
+      Variable{false, info[1].As<Napi::String>().Utf8Value()});
 
     return info.This();
   }
 
   Napi::Value Jsonnet::tlaCode(const Napi::CallbackInfo& info) {
-    auto const key = info[0].As<Napi::String>().Utf8Value();
-    auto const val = info[1].As<Napi::String>().Utf8Value();
-
-    tla[key] = {true, val};
+    tla.insert_or_assign(
+      info[0].As<Napi::String>().Utf8Value(),
+      Variable{true, info[1].As<Napi::String>().Utf8Value()});
 
     return info.This();
   }
 
   Napi::Value Jsonnet::addJpath(const Napi::CallbackInfo& info) {
-    auto const path = info[0].As<Napi::String>().Utf8Value();
-
-    jpath.push_back(path);
+    jpath.push_back(info[0].As<Napi::String>().Utf8Value());
 
     return info.This();
   }
@@ -158,7 +152,7 @@ namespace nodejsonnet {
         return vm->makeJsonNumber(v.As<Napi::Number>());
       }
       if(v.IsString()) {
-        return vm->makeJsonString(v.As<Napi::String>().Utf8Value().c_str());
+        return vm->makeJsonString(v.As<Napi::String>());
       }
       if(v.IsArray()) {
         auto const array = v.As<Napi::Array>();
@@ -234,22 +228,15 @@ namespace nodejsonnet {
   }
 
   Napi::Value Jsonnet::nativeCallback(const Napi::CallbackInfo &info) {
-    auto const name = info[0].As<Napi::String>().Utf8Value();
+    auto name = info[0].As<Napi::String>().Utf8Value();
     auto const fun = info[1].As<Napi::Function>();
-    auto const params =
-      [&]{
-        std::vector<std::string> params;
-        for(size_t i = 2; i < info.Length(); ++i) {
-          params.push_back(info[i].As<Napi::String>().Utf8Value());
-        }
-        return params;
-      }();
 
-    if(auto it = nativeCallbacks.find(name); it != nativeCallbacks.end()) {
-      it->second = {Napi::Persistent(fun), std::move(params)};
-    } else {
-      nativeCallbacks.insert({name, {Napi::Persistent(fun), std::move(params)}});
+    std::vector<std::string> params;
+    for(size_t i = 2; i < info.Length(); ++i) {
+      params.push_back(info[i].As<Napi::String>().Utf8Value());
     }
+
+    nativeCallbacks.insert_or_assign(std::move(name), NativeCallback{Napi::Persistent(fun), std::move(params)});
 
     return info.This();
   }
@@ -339,8 +326,8 @@ namespace nodejsonnet {
     };
 
     for(auto const &[name, cb]: nativeCallbacks) {
-      auto const fun = cb.fun;
-      auto const params = cb.params;
+      auto const &fun = cb.fun;
+      auto const &params = cb.params;
 
       TsfnWrap tsfn = Napi::ThreadSafeFunction::New(env, *fun, "Jsonnet Native Callback", 0, 1);
 
