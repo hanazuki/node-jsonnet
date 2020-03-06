@@ -76,7 +76,8 @@ namespace nodejsonnet {
     void nativeCallback(std::string const &name, NativeCallback &&cb, std::vector<std::string> const &params) {
       // Construct NULL-terminated array
       std::vector<char const *> params_cstr(params.size() + 1);
-      std::transform(cbegin(params), cend(params), begin(params_cstr), mem_fun_ref(&std::string::c_str));
+      std::transform(cbegin(params), cend(params), begin(params_cstr),
+                     std::function<char const *(std::string const &)>(&std::string::c_str));
 
       auto ptr = &callbacks.emplace_front(this, params.size(), std::move(cb));
       ::jsonnet_native_callback(vm, name.c_str(), &trampoline, ptr, params_cstr.data());
