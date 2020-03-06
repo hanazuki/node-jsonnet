@@ -165,6 +165,21 @@ const {Jsonnet} = require("../lib/index.js");
 
 {
   const jsonnet = new Jsonnet();
+  jsonnet.nativeCallback("func1", () => 1);
+
+  jsonnet.evaluateSnippet(`std.native("func1")()`).then(
+    j => assert.equal(JSON.parse(j), 1)
+  )
+
+  jsonnet.nativeCallback("func1", () => 2);
+
+  jsonnet.evaluateSnippet(`std.native("func1")()`).then(
+    j => assert.equal(JSON.parse(j), 2)
+  )
+}
+
+{
+  const jsonnet = new Jsonnet();
 
   assert.rejects(jsonnet.evaluateSnippet(`var1`), {message: /^STATIC ERROR: .* Unknown variable/});
   assert.rejects(jsonnet.evaluateSnippet(`1 / 0`), {message: /^RUNTIME ERROR: division by zero/});
