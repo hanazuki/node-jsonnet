@@ -4,6 +4,7 @@
 extern "C" {
 #include <libjsonnet.h>
 }
+#include <algorithm>
 #include <forward_list>
 #include <memory>
 #include <optional>
@@ -17,7 +18,7 @@ namespace nodejsonnet {
 
   class JsonnetVm: public std::enable_shared_from_this<JsonnetVm> {
   public:
-    using NativeCallback = std::function<JsonnetJsonValue *(std::shared_ptr<JsonnetVm>, std::vector<JsonnetJsonValue const *> &&args)>;
+    using NativeCallback = std::function<JsonnetJsonValue *(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> &&args)>;
     using Buffer = std::unique_ptr<char, std::function<void(char *)>>;
 
     static std::shared_ptr<JsonnetVm> make() {
@@ -29,8 +30,8 @@ namespace nodejsonnet {
     }
 
   public:
-    JsonnetVm(const JsonnetVm&) = delete;
-    JsonnetVm& operator=(const JsonnetVm&) = delete;
+    JsonnetVm(JsonnetVm const &) = delete;
+    JsonnetVm &operator=(JsonnetVm const &) = delete;
 
     ~JsonnetVm() {
       jsonnet_destroy(vm);
@@ -74,12 +75,8 @@ namespace nodejsonnet {
 
     void nativeCallback(std::string const &name, NativeCallback &&cb, std::vector<std::string> const &params) {
       // Construct NULL-terminated array
-      std::vector<char const *> params_cstr;
-      params_cstr.reserve(params.size() + 1);
-      for(auto &param: params) {
-        params_cstr.push_back(param.c_str());
-      }
-      params_cstr.push_back(nullptr);
+      std::vector<char const *> params_cstr(params.size() + 1);
+      std::transform(cbegin(params), cend(params), begin(params_cstr), mem_fun_ref(&std::string::c_str));
 
       auto ptr = &callbacks.emplace_front(this, params.size(), std::move(cb));
       ::jsonnet_native_callback(vm, name.c_str(), &trampoline, ptr, params_cstr.data());
@@ -98,7 +95,7 @@ namespace nodejsonnet {
       int error;
       auto result = buffer(::jsonnet_evaluate_snippet(vm, filename.c_str(), snippet.c_str(), &error));
       if(error != 0) {
-        throw std::runtime_error(std::string(result.get()));
+        throw std::runtime_error(result.get());
       }
       return result;
     }
@@ -166,24 +163,20 @@ namespace nodejsonnet {
     }
 
   private:
+    using CallbackEntry = std::tuple<JsonnetVm *, size_t, NativeCallback>;
+
     ::JsonnetVm *vm;
-    std::forward_list<std::tuple<JsonnetVm *, size_t, NativeCallback>> callbacks;  // [(this, arity, fun)]
+    std::forward_list<CallbackEntry> callbacks;  // [(this, arity, fun)]
 
     Buffer buffer(char *buf) {
-      auto self = shared_from_this();
-      return {buf, [self](char *buf){ ::jsonnet_realloc(self->vm, buf, 0); }};
+      return {buf, [self = shared_from_this()](char *buf){ ::jsonnet_realloc(self->vm, buf, 0); }};
     }
 
     static JsonnetJsonValue *trampoline(void *ctx, JsonnetJsonValue const *const *argv, int *success) {
-      auto [vm, arity, func] = *reinterpret_cast<std::tuple<JsonnetVm *, size_t, NativeCallback> *>(ctx);
-
-      std::vector<JsonnetJsonValue const*> args;
-      for(size_t i = 0; i < arity; ++i) {
-        args.push_back(argv[i]);
-      }
+      auto [vm, arity, func] = *static_cast<CallbackEntry *>(ctx);
 
       try {
-        auto result = func(vm->shared_from_this(), std::move(args));
+        auto result = func(vm->shared_from_this(), {argv, argv + arity});
         *success = 1;
         return result;
       } catch(std::exception const &e) {
