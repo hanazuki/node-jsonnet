@@ -65,7 +65,7 @@ namespace nodejsonnet {
     int error;
     auto result = buffer(::jsonnet_evaluate_file(vm, filename.c_str(), &error));
     if(error != 0) {
-      throw std::runtime_error(std::string(result.get()));
+      throw std::runtime_error(result.get());
     }
     return result;
   }
