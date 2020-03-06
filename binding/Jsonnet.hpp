@@ -2,6 +2,7 @@
 #pragma once
 
 #include <napi.h>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -42,14 +43,12 @@ namespace nodejsonnet {
   };
 
   struct JsonnetVmParam {
-    struct VariableAssignment {
+    struct Variable {
       bool isCode;
-      std::string key;
       std::string value;
     };
 
     struct NativeCallback {
-      std::string name;
       SharedFunRef fun;
       std::vector<std::string> params;
     };
@@ -58,9 +57,9 @@ namespace nodejsonnet {
     std::optional<unsigned> gcMinObjects;
     std::optional<double> gcGrowthTrigger;
 
-    std::vector<VariableAssignment> ext, tla;
+    std::map<std::string, Variable> ext, tla;
     std::vector<std::string> jpath;
-    std::vector<NativeCallback> nativeCallbacks;
+    std::map<std::string, NativeCallback> nativeCallbacks;
   };
 
   class Jsonnet: public Napi::ObjectWrap<Jsonnet>, private JsonnetVmParam {

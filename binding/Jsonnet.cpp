@@ -91,7 +91,7 @@ namespace nodejsonnet {
     auto const key = info[0].As<Napi::String>().Utf8Value();
     auto const val = info[1].As<Napi::String>().Utf8Value();
 
-    ext.push_back({false, key, val});
+    ext[key] = {false, val};
 
     return info.This();
   }
@@ -100,7 +100,7 @@ namespace nodejsonnet {
     auto const key = info[0].As<Napi::String>().Utf8Value();
     auto const val = info[1].As<Napi::String>().Utf8Value();
 
-    ext.push_back({true, key, val});
+    ext[key] = {true, val};
 
     return info.This();
   }
@@ -109,7 +109,7 @@ namespace nodejsonnet {
     auto const key = info[0].As<Napi::String>().Utf8Value();
     auto const val = info[1].As<Napi::String>().Utf8Value();
 
-    tla.push_back({false, key, val});
+    tla[key] = {false, val};
 
     return info.This();
   }
@@ -118,7 +118,7 @@ namespace nodejsonnet {
     auto const key = info[0].As<Napi::String>().Utf8Value();
     auto const val = info[1].As<Napi::String>().Utf8Value();
 
-    tla.push_back({true, key, val});
+    tla[key] = {true, val};
 
     return info.This();
   }
@@ -245,7 +245,11 @@ namespace nodejsonnet {
         return params;
       }();
 
-    nativeCallbacks.push_back({name, Napi::Persistent(fun), std::move(params)});
+    if(auto it = nativeCallbacks.find(name); it != nativeCallbacks.end()) {
+      it->second = {Napi::Persistent(fun), std::move(params)};
+    } else {
+      nativeCallbacks.insert({name, {Napi::Persistent(fun), std::move(params)}});
+    }
 
     return info.This();
   }
@@ -266,19 +270,19 @@ namespace nodejsonnet {
       vm->gcGrowthTrigger(*gcGrowthTrigger);
     }
 
-    for(auto const &x: ext) {
-      if(x.isCode) {
-        vm->extCode(x.key, x.value);
+    for(auto const &[name, var]: ext) {
+      if(var.isCode) {
+        vm->extCode(name, var.value);
       } else {
-        vm->extVar(x.key, x.value);
+        vm->extVar(name, var.value);
       }
     }
 
-    for(auto const &x: tla) {
-      if(x.isCode) {
-        vm->tlaCode(x.key, x.value);
+    for(auto const &[name, var]: tla) {
+      if(var.isCode) {
+        vm->tlaCode(name, var.value);
       } else {
-        vm->tlaVar(x.key, x.value);
+        vm->tlaVar(name, var.value);
       }
     }
 
@@ -334,10 +338,9 @@ namespace nodejsonnet {
       std::variant<std::monostate, JsonnetJsonValue *, std::exception_ptr> result;
     };
 
-    for(auto const &x: nativeCallbacks) {
-      auto const name = x.name;
-      auto const fun = x.fun;
-      auto const params = x.params;
+    for(auto const &[name, cb]: nativeCallbacks) {
+      auto const fun = cb.fun;
+      auto const params = cb.params;
 
       TsfnWrap tsfn = Napi::ThreadSafeFunction::New(env, *fun, "Jsonnet Native Callback", 0, 1);
 
