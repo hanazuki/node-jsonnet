@@ -195,3 +195,9 @@ const {Jsonnet} = require("../lib/index.js");
   jsonnet.nativeCallback("failAsync", async (msg) => { throw msg; }, "msg");
   assert.rejects(jsonnet.evaluateSnippet(`std.native("failAsync")("kimagure")`), {message: /^RUNTIME ERROR: kimagure/});
 }
+
+{
+  const jsonnet = new Jsonnet();
+
+  assert.rejects(jsonnet.evaluateSnippet(`1 +`, "snippet-filename"), {message: /^STATIC ERROR: snippet-filename:1:4/});
+}
