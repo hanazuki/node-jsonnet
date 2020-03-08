@@ -5,7 +5,7 @@
 
 namespace nodejsonnet {
 
-  JsonnetWorker::JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> &&op):
+  JsonnetWorker::JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> op):
     Napi::AsyncWorker(env), vm(vm), op(std::move(op)),
     deferred(Napi::Promise::Deferred::New(env)) {
   }

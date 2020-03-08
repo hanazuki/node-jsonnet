@@ -35,7 +35,7 @@ namespace nodejsonnet {
       std::string filename;
     };
 
-    JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> &&op);
+    JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> op);
 
     void Execute() override;
     void OnOK() override;
