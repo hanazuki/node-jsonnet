@@ -234,7 +234,9 @@ namespace nodejsonnet {
       params.push_back(info[i].As<Napi::String>().Utf8Value());
     }
 
-    nativeCallbacks.insert_or_assign(std::move(name), NativeCallback{Napi::Persistent(fun), std::move(params)});
+    nativeCallbacks.insert_or_assign(
+      std::move(name),
+      NativeCallback{std::make_shared<Napi::FunctionReference>(Napi::Persistent(fun)), std::move(params)});
 
     return info.This();
   }
@@ -310,7 +312,7 @@ namespace nodejsonnet {
       auto const &fun = cb.fun;
       auto const &params = cb.params;
 
-      TsfnWrap tsfn = Napi::ThreadSafeFunction::New(env, *fun, "Jsonnet Native Callback", 0, 1);
+      TsfnWrap tsfn = Napi::ThreadSafeFunction::New(env, fun->Value(), "Jsonnet Native Callback", 0, 1);
 
       auto callback =
         [](Napi::Env env, Napi::Function fun, Payload *payload) {

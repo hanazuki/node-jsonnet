@@ -11,37 +11,6 @@
 
 namespace nodejsonnet {
 
-  struct SharedFunRef {
-    SharedFunRef(Napi::FunctionReference &&ref)
-      : ref{std::make_shared<Napi::FunctionReference>(std::move(ref))} {
-    }
-
-    SharedFunRef(SharedFunRef const &other) {
-      *this = other;
-    }
-
-    SharedFunRef(SharedFunRef &&other) {
-      *this = std::move(other);
-    }
-
-    SharedFunRef &operator=(SharedFunRef const &other) {
-      ref = other.ref;
-      return *this;
-    }
-
-    SharedFunRef &operator=(SharedFunRef &&other) {
-      ref = std::move(other.ref);
-      return *this;
-    }
-
-    Napi::Function operator*() const {
-      return ref->Value();
-    }
-
-  private:
-    std::shared_ptr<Napi::FunctionReference> ref;
-  };
-
   struct JsonnetVmParam {
     struct Variable {
       bool isCode;
@@ -49,7 +18,7 @@ namespace nodejsonnet {
     };
 
     struct NativeCallback {
-      SharedFunRef fun;
+      std::shared_ptr<Napi::FunctionReference> fun;
       std::vector<std::string> params;
     };
 
