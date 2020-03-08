@@ -6,6 +6,7 @@
 #include <vector>
 #include "Jsonnet.hpp"
 #include "JsonnetWorker.hpp"
+#include "JsonValueConverter.hpp"
 
 namespace nodejsonnet {
 
@@ -125,64 +126,6 @@ namespace nodejsonnet {
 
   namespace {
 
-    Napi::Value toNapiValue(Napi::Env const &env, std::shared_ptr<JsonnetVm> vm, JsonnetJsonValue const *json) {
-      if(vm->extractJsonNull(json)) {
-        return env.Null();
-      }
-      if(auto const b = vm->extractJsonBool(json)) {
-        return Napi::Boolean::New(env, *b);
-      }
-      if(auto const n = vm->extractJsonNumber(json)) {
-        return Napi::Number::New(env, *n);
-      }
-      if(auto const s = vm->extractJsonString(json)) {
-        return Napi::String::New(env, s->data(), s->size());
-      }
-
-      return env.Undefined();
-    }
-
-    JsonnetJsonValue *toJsonnetJson(std::shared_ptr<JsonnetVm> vm, Napi::Value v) {
-      if(v.IsBoolean()) {
-        return vm->makeJsonBool(v.As<Napi::Boolean>());
-      }
-      if(v.IsNumber()) {
-        return vm->makeJsonNumber(v.As<Napi::Number>());
-      }
-      if(v.IsString()) {
-        return vm->makeJsonString(v.As<Napi::String>());
-      }
-      if(v.IsArray()) {
-        auto const array = v.As<Napi::Array>();
-        auto const json = vm->makeJsonArray();
-        for(size_t i = 0, len = array.Length(); i < len; ++i) {
-          vm->appendJsonArray(json, toJsonnetJson(vm, array[i]));
-        }
-        return json;
-      }
-      if(v.IsTypedArray()) {
-        auto const array = v.As<Napi::TypedArray>();
-        auto const json = vm->makeJsonArray();
-        for(size_t i = 0, len = array.ElementLength(); i < len; ++i) {
-          vm->appendJsonArray(json, toJsonnetJson(vm, array[i]));
-        }
-        return json;
-      }
-      if(v.IsObject()) {
-        auto const object = v.As<Napi::Object>();
-        auto const json = vm->makeJsonObject();
-        auto const props = object.GetPropertyNames();
-        for(size_t i = 0, len = props.Length(); i < len; ++i) {
-          auto const prop = props[i].ToString();
-          if(object.HasOwnProperty(prop)) {
-            vm->appendJsonObject(json, prop, toJsonnetJson(vm, object.Get(prop)));
-          }
-        }
-        return json;
-      }
-      return vm->makeJsonNull();
-    }
-
     struct TsfnWrap {
       TsfnWrap(Napi::ThreadSafeFunction &&tsfn): tsfn{tsfn} {
       }
@@ -278,7 +221,7 @@ namespace nodejsonnet {
     }
 
     struct Payload {
-      Payload(std::shared_ptr<JsonnetVm> &&vm, std::vector<JsonnetJsonValue const *> &&args)
+      Payload(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args)
         : args{std::move(args)}, vm{std::move(vm)} {
       }
 
@@ -318,17 +261,17 @@ namespace nodejsonnet {
         [](Napi::Env env, Napi::Function fun, Payload *payload) {
           // This functions runs in the Node main thread.
 
-          auto const vm = payload->getVm();
+          JsonValueConverter const conv{payload->getVm()};
 
           std::vector<napi_value> args;
           args.reserve(payload->getArgs().size());
           for(auto const arg: payload->getArgs()) {
-            args.push_back(toNapiValue(env, vm, arg));
+            args.push_back(conv.toNapiValue(env, arg));
           }
 
           auto const result = fun.Call(args);
           if(!result.IsPromise()) {
-            payload->setResult(toJsonnetJson(vm, result));
+            payload->setResult(conv.toJsonnetJson(result));
             return;
           }
 
@@ -336,8 +279,8 @@ namespace nodejsonnet {
             env,
             [](Napi::CallbackInfo const &info){
               auto const payload = static_cast<Payload *>(info.Data());
-              auto const vm = payload->getVm();
-              payload->setResult(toJsonnetJson(vm, info[0]));
+              JsonValueConverter const conv{payload->getVm()};
+              payload->setResult(conv.toJsonnetJson(info[0]));
             },
             "onSuccess",
             payload
@@ -347,7 +290,6 @@ namespace nodejsonnet {
             env,
             [](Napi::CallbackInfo const &info){
               auto const payload = static_cast<Payload *>(info.Data());
-              auto const vm = payload->getVm();
               auto const error = info[0].ToString();
               payload->setError(std::make_exception_ptr(std::runtime_error(error)));
             },
