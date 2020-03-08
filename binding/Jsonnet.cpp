@@ -129,13 +129,13 @@ namespace nodejsonnet {
       if(vm->extractJsonNull(json)) {
         return env.Null();
       }
-      if(auto const b = vm->extractJsonBool(json); b) {
+      if(auto const b = vm->extractJsonBool(json)) {
         return Napi::Boolean::New(env, *b);
       }
-      if(auto const n = vm->extractJsonNumber(json); n) {
+      if(auto const n = vm->extractJsonNumber(json)) {
         return Napi::Number::New(env, *n);
       }
-      if(auto const s = vm->extractJsonString(json); s) {
+      if(auto const s = vm->extractJsonString(json)) {
         return Napi::String::New(env, s->data(), s->size());
       }
 

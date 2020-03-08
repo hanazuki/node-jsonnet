@@ -112,15 +112,14 @@ namespace nodejsonnet {
   }
 
   std::optional<std::string_view> JsonnetVm::extractJsonString(JsonnetJsonValue const *json) {
-    if(auto const p = ::jsonnet_json_extract_string(vm, json); p) {
+    if(auto const p = ::jsonnet_json_extract_string(vm, json)) {
       return p;
     }
     return std::nullopt;
   }
 
   std::optional<double> JsonnetVm::extractJsonNumber(JsonnetJsonValue const *json) {
-    double n;
-    if(::jsonnet_json_extract_number(vm, json, &n)) {
+    if(double n; ::jsonnet_json_extract_number(vm, json, &n)) {
       return n;
     }
     return std::nullopt;
