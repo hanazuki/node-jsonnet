@@ -44,8 +44,8 @@ namespace nodejsonnet {
     void jpathAdd(std::string const &path);
     void nativeCallback(std::string const &name, NativeCallback cb, std::vector<std::string> const &params);
 
-    Buffer evaluateFile(std::string const &filename);
-    Buffer evaluateSnippet(std::string const &filename, std::string const &snippet);
+    Buffer evaluateFile(std::string const &filename) const;
+    Buffer evaluateSnippet(std::string const &filename, std::string const &snippet) const;
 
     JsonnetJsonValue *makeJsonString(std::string const &v);
     JsonnetJsonValue *makeJsonNumber(double v);
@@ -66,7 +66,7 @@ namespace nodejsonnet {
     ::JsonnetVm *vm;
     std::forward_list<CallbackEntry> callbacks;  // [(this, arity, fun)]
 
-    Buffer buffer(char *buf);
+    Buffer buffer(char *buf) const;
     static JsonnetJsonValue *trampoline(void *ctx, JsonnetJsonValue const *const *argv, int *success);
   };
 

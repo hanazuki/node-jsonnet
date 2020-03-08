@@ -62,7 +62,7 @@ namespace nodejsonnet {
     ::jsonnet_native_callback(vm, name.c_str(), &trampoline, ptr, params_cstr.data());
   }
 
-  JsonnetVm::Buffer JsonnetVm::evaluateFile(std::string const &filename) {
+  JsonnetVm::Buffer JsonnetVm::evaluateFile(std::string const &filename) const {
     int error;
     auto result = buffer(::jsonnet_evaluate_file(vm, filename.c_str(), &error));
     if(error != 0) {
@@ -71,7 +71,7 @@ namespace nodejsonnet {
     return result;
   }
 
-  JsonnetVm::Buffer JsonnetVm::evaluateSnippet(std::string const &filename, std::string const &snippet) {
+  JsonnetVm::Buffer JsonnetVm::evaluateSnippet(std::string const &filename, std::string const &snippet)const {
     int error;
     auto result = buffer(::jsonnet_evaluate_snippet(vm, filename.c_str(), snippet.c_str(), &error));
     if(error != 0) {
@@ -141,7 +141,7 @@ namespace nodejsonnet {
     return ::jsonnet_json_extract_null(vm, json);
   }
 
-  JsonnetVm::Buffer JsonnetVm::buffer(char *buf) {
+  JsonnetVm::Buffer JsonnetVm::buffer(char *buf) const {
     return {buf, [self = shared_from_this()](char *buf){ ::jsonnet_realloc(self->vm, buf, 0); }};
   }
 

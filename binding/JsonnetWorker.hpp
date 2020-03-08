@@ -12,23 +12,20 @@ namespace nodejsonnet {
   public:
     struct Op {
       virtual ~Op() = default;
-      virtual JsonnetVm::Buffer execute(std::shared_ptr<JsonnetVm> vm) = 0;
+      virtual JsonnetVm::Buffer execute(JsonnetVm const &vm) = 0;
     };
 
     struct EvaluateFileOp: public Op {
-      explicit EvaluateFileOp(std::string filename): filename(std::move(filename)) {
-      }
-      JsonnetVm::Buffer execute(std::shared_ptr<JsonnetVm> vm) override;
+      explicit EvaluateFileOp(std::string filename);
+      JsonnetVm::Buffer execute(JsonnetVm const &vm) override;
 
     private:
       std::string filename;
     };
 
     struct EvaluateSnippetOp: public Op {
-      EvaluateSnippetOp(std::string snippet, std::string filename):
-        snippet(std::move(snippet)), filename(std::move(filename)) {
-      }
-      JsonnetVm::Buffer execute(std::shared_ptr<JsonnetVm> vm) override;
+      EvaluateSnippetOp(std::string snippet, std::string filename);
+      JsonnetVm::Buffer execute(JsonnetVm const &vm) override;
 
     private:
       std::string snippet;
