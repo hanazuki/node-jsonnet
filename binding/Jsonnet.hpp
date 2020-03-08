@@ -13,7 +13,7 @@ namespace nodejsonnet {
 
   struct SharedFunRef {
     SharedFunRef(Napi::FunctionReference &&ref)
-      : ref{new Napi::FunctionReference(std::move(ref))} {
+      : ref{std::make_shared<Napi::FunctionReference>(std::move(ref))} {
     }
 
     SharedFunRef(SharedFunRef const &other) {

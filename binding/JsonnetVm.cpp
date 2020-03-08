@@ -5,7 +5,8 @@
 namespace nodejsonnet {
 
   std::shared_ptr<JsonnetVm> JsonnetVm::make() {
-    return std::shared_ptr<JsonnetVm>(new JsonnetVm());
+    struct Constructible: public JsonnetVm {};
+    return std::make_shared<Constructible>();
   }
 
   JsonnetVm::JsonnetVm(): vm{jsonnet_make()} {
