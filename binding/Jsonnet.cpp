@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
-#include <cassert>
 #include <future>
 #include <memory>
 #include <string>
 #include <utility>
-#include <variant>
 #include <vector>
 #include "Jsonnet.hpp"
 #include "JsonnetWorker.hpp"
