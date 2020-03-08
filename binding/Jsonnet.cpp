@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 #include <cassert>
-#include <condition_variable>
+#include <future>
 #include <memory>
 #include <string>
 #include <utility>
@@ -278,8 +278,8 @@ namespace nodejsonnet {
     }
 
     struct Payload {
-      Payload(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> &&args)
-        : m{}, cv{}, args{std::move(args)}, vm{vm}, result{} {
+      Payload(std::shared_ptr<JsonnetVm> &&vm, std::vector<JsonnetJsonValue const *> &&args)
+        : args{std::move(args)}, vm{std::move(vm)} {
       }
 
       std::vector<JsonnetJsonValue const *> const &getArgs() const {
@@ -291,38 +291,21 @@ namespace nodejsonnet {
       }
 
       void setResult(JsonnetJsonValue *value) {
-        {
-          std::lock_guard<std::mutex> lk(m);
-          result = value;
-        }
-        cv.notify_one();
+        result.set_value(value);
       }
 
       void setError(std::exception_ptr e) {
-        {
-          std::lock_guard<std::mutex> lk(m);
-          result = e;
-        }
-        cv.notify_one();
+        result.set_exception(e);
       }
 
-      JsonnetJsonValue *getResult() {
-        std::unique_lock<std::mutex> lk(m);
-        cv.wait(lk, [this] { return result.index() != 0; });
-
-        if(auto json = std::get_if<JsonnetJsonValue *>(&result)) {
-          return *json;
-        }
-
-        std::rethrow_exception(std::get<std::exception_ptr>(result));
+      std::future<JsonnetJsonValue *> getFuture() {
+        return result.get_future();
       }
 
     private:
-      std::mutex m;
-      std::condition_variable cv;
       std::vector<JsonnetJsonValue const *> args;
       std::shared_ptr<JsonnetVm> vm;
-      std::variant<std::monostate, JsonnetJsonValue *, std::exception_ptr> result;
+      std::promise<JsonnetJsonValue *> result;
     };
 
     for(auto const &[name, cb]: nativeCallbacks) {
@@ -382,7 +365,7 @@ namespace nodejsonnet {
 
           Payload payload(std::move(vm), std::move(args));
           tsfn->BlockingCall(&payload, callback);
-          return payload.getResult();
+          return payload.getFuture().get();
         };
 
       vm->nativeCallback(name, std::move(native_callback), params);
