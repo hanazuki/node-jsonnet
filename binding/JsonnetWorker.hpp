@@ -16,7 +16,7 @@ namespace nodejsonnet {
     };
 
     struct EvaluateFileOp: public Op {
-      explicit EvaluateFileOp(std::string &&filename): filename(filename) {
+      explicit EvaluateFileOp(std::string filename): filename(std::move(filename)) {
       }
       JsonnetVm::Buffer execute(std::shared_ptr<JsonnetVm> vm) override;
 
@@ -25,8 +25,8 @@ namespace nodejsonnet {
     };
 
     struct EvaluateSnippetOp: public Op {
-      EvaluateSnippetOp(std::string &&snippet, std::string &&filename):
-        snippet(snippet), filename(filename) {
+      EvaluateSnippetOp(std::string snippet, std::string filename):
+        snippet(std::move(snippet)), filename(std::move(filename)) {
       }
       JsonnetVm::Buffer execute(std::shared_ptr<JsonnetVm> vm) override;
 

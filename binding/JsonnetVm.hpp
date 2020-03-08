@@ -18,7 +18,7 @@ namespace nodejsonnet {
 
   class JsonnetVm: public std::enable_shared_from_this<JsonnetVm> {
   public:
-    using NativeCallback = std::function<JsonnetJsonValue *(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> &&args)>;
+    using NativeCallback = std::function<JsonnetJsonValue *(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args)>;
     using Buffer = std::unique_ptr<char, std::function<void(char *)>>;
 
   private:
@@ -42,7 +42,7 @@ namespace nodejsonnet {
     void tlaVar(std::string const &key, std::string const &val);
     void tlaCode(std::string const &key, std::string const &val);
     void jpathAdd(std::string const &path);
-    void nativeCallback(std::string const &name, NativeCallback &&cb, std::vector<std::string> const &params);
+    void nativeCallback(std::string const &name, NativeCallback cb, std::vector<std::string> const &params);
 
     Buffer evaluateFile(std::string const &filename);
     Buffer evaluateSnippet(std::string const &filename, std::string const &snippet);

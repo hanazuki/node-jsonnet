@@ -127,7 +127,7 @@ namespace nodejsonnet {
   namespace {
 
     struct TsfnWrap {
-      TsfnWrap(Napi::ThreadSafeFunction &&tsfn): tsfn{tsfn} {
+      TsfnWrap(Napi::ThreadSafeFunction tsfn): tsfn{tsfn} {
       }
 
       ~TsfnWrap() {
@@ -302,7 +302,7 @@ namespace nodejsonnet {
         };
 
       auto const native_callback =
-        [=, tsfn = std::move(tsfn)](std::shared_ptr<JsonnetVm> &&vm, std::vector<JsonnetJsonValue const *> &&args) {
+        [=, tsfn = std::move(tsfn)](std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args) {
           // This functions runs in a worker thread and cannot access Node VM.
 
           Payload payload(std::move(vm), std::move(args));

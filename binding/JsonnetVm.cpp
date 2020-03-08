@@ -52,7 +52,7 @@ namespace nodejsonnet {
     ::jsonnet_jpath_add(vm, path.c_str());
   }
 
-  void JsonnetVm::nativeCallback(std::string const &name, NativeCallback &&cb, std::vector<std::string> const &params) {
+  void JsonnetVm::nativeCallback(std::string const &name, NativeCallback cb, std::vector<std::string> const &params) {
     // Construct NULL-terminated array
     std::vector<char const *> params_cstr(params.size() + 1);
     std::transform(cbegin(params), cend(params), begin(params_cstr),
