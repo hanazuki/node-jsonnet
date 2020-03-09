@@ -153,6 +153,9 @@ namespace nodejsonnet {
       }
 
       TsfnWrap &operator=(TsfnWrap &&other) {
+        if(tsfn) {
+          tsfn.Release();
+        }
         tsfn = other.tsfn;
         other.tsfn = {};
         return *this;
