@@ -3,7 +3,6 @@
 ## Native callbacks
 
 - Exception propagation from callbacks to original context where `evaluate*` is called.
-- Recursive value mapping (Array & Object).
 
 ## import
 
