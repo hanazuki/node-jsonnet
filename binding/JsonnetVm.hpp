@@ -47,18 +47,18 @@ namespace nodejsonnet {
     Buffer evaluateFile(std::string const &filename) const;
     Buffer evaluateSnippet(std::string const &filename, std::string const &snippet) const;
 
-    JsonnetJsonValue *makeJsonString(std::string const &v);
-    JsonnetJsonValue *makeJsonNumber(double v);
-    JsonnetJsonValue *makeJsonBool(bool v);
-    JsonnetJsonValue *makeJsonNull();
-    JsonnetJsonValue *makeJsonArray();
-    void appendJsonArray(JsonnetJsonValue *array, JsonnetJsonValue *value);
-    JsonnetJsonValue *makeJsonObject();
-    void appendJsonObject(JsonnetJsonValue *array, std::string const &field, JsonnetJsonValue *value);
-    std::optional<std::string_view> extractJsonString(JsonnetJsonValue const *json);
-    std::optional<double> extractJsonNumber(JsonnetJsonValue const *json);
-    std::optional<bool> extractJsonBool(JsonnetJsonValue const *json);
-    bool extractJsonNull(JsonnetJsonValue const *json);
+    JsonnetJsonValue *makeJsonString(std::string const &v) const;
+    JsonnetJsonValue *makeJsonNumber(double v) const;
+    JsonnetJsonValue *makeJsonBool(bool v) const;
+    JsonnetJsonValue *makeJsonNull() const;
+    JsonnetJsonValue *makeJsonArray() const;
+    void appendJsonArray(JsonnetJsonValue *array, JsonnetJsonValue *value) const;
+    JsonnetJsonValue *makeJsonObject() const;
+    void appendJsonObject(JsonnetJsonValue *array, std::string const &field, JsonnetJsonValue *value) const;
+    std::optional<std::string_view> extractJsonString(JsonnetJsonValue const *json) const;
+    std::optional<double> extractJsonNumber(JsonnetJsonValue const *json) const;
+    std::optional<bool> extractJsonBool(JsonnetJsonValue const *json) const;
+    bool extractJsonNull(JsonnetJsonValue const *json) const;
 
   private:
     using CallbackEntry = std::tuple<JsonnetVm *, size_t, NativeCallback>;  // [(this, arity, fun)]

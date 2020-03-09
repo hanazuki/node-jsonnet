@@ -71,7 +71,7 @@ namespace nodejsonnet {
     return result;
   }
 
-  JsonnetVm::Buffer JsonnetVm::evaluateSnippet(std::string const &filename, std::string const &snippet)const {
+  JsonnetVm::Buffer JsonnetVm::evaluateSnippet(std::string const &filename, std::string const &snippet) const {
     int error;
     auto result = buffer(::jsonnet_evaluate_snippet(vm, filename.c_str(), snippet.c_str(), &error));
     if(error != 0) {
@@ -80,53 +80,53 @@ namespace nodejsonnet {
     return result;
   }
 
-  JsonnetJsonValue *JsonnetVm::makeJsonString(std::string const &v) {
+  JsonnetJsonValue *JsonnetVm::makeJsonString(std::string const &v) const {
     return ::jsonnet_json_make_string(vm, v.c_str());
   }
 
-  JsonnetJsonValue *JsonnetVm::makeJsonNumber(double v) {
+  JsonnetJsonValue *JsonnetVm::makeJsonNumber(double v) const {
     return ::jsonnet_json_make_number(vm, v);
   }
 
-  JsonnetJsonValue *JsonnetVm::makeJsonBool(bool v) {
+  JsonnetJsonValue *JsonnetVm::makeJsonBool(bool v) const {
     return ::jsonnet_json_make_bool(vm, v);
   }
 
-  JsonnetJsonValue *JsonnetVm::makeJsonNull() {
+  JsonnetJsonValue *JsonnetVm::makeJsonNull() const {
     return ::jsonnet_json_make_null(vm);
   }
 
-  JsonnetJsonValue *JsonnetVm::makeJsonArray() {
+  JsonnetJsonValue *JsonnetVm::makeJsonArray() const {
     return ::jsonnet_json_make_array(vm);
   }
 
-  void JsonnetVm::appendJsonArray(JsonnetJsonValue *array, JsonnetJsonValue *value) {
+  void JsonnetVm::appendJsonArray(JsonnetJsonValue *array, JsonnetJsonValue *value) const {
     ::jsonnet_json_array_append(vm, array, value);
   }
 
-  JsonnetJsonValue *JsonnetVm::makeJsonObject() {
+  JsonnetJsonValue *JsonnetVm::makeJsonObject() const {
     return ::jsonnet_json_make_object(vm);
   }
 
-  void JsonnetVm::appendJsonObject(JsonnetJsonValue *array, std::string const &field, JsonnetJsonValue *value) {
+  void JsonnetVm::appendJsonObject(JsonnetJsonValue *array, std::string const &field, JsonnetJsonValue *value) const {
     ::jsonnet_json_object_append(vm, array, field.c_str(), value);
   }
 
-  std::optional<std::string_view> JsonnetVm::extractJsonString(JsonnetJsonValue const *json) {
+  std::optional<std::string_view> JsonnetVm::extractJsonString(JsonnetJsonValue const *json) const {
     if(auto const p = ::jsonnet_json_extract_string(vm, json)) {
       return p;
     }
     return std::nullopt;
   }
 
-  std::optional<double> JsonnetVm::extractJsonNumber(JsonnetJsonValue const *json) {
+  std::optional<double> JsonnetVm::extractJsonNumber(JsonnetJsonValue const *json) const {
     if(double n; ::jsonnet_json_extract_number(vm, json, &n)) {
       return n;
     }
     return std::nullopt;
   }
 
-  std::optional<bool> JsonnetVm::extractJsonBool(JsonnetJsonValue const *json) {
+  std::optional<bool> JsonnetVm::extractJsonBool(JsonnetJsonValue const *json) const {
     switch(::jsonnet_json_extract_bool(vm, json)) {
     case 0:
       return false;
@@ -137,7 +137,7 @@ namespace nodejsonnet {
     }
   }
 
-  bool JsonnetVm::extractJsonNull(JsonnetJsonValue const *json) {
+  bool JsonnetVm::extractJsonNull(JsonnetJsonValue const *json) const {
     return ::jsonnet_json_extract_null(vm, json);
   }
 
