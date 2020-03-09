@@ -126,17 +126,27 @@ const {Jsonnet} = require("../lib/index.js");
 
   jsonnet.nativeCallback("int8array", () => new Int8Array([1,2,3]));
   jsonnet.evaluateSnippet(`std.native("int8array")()`).then(
-    j => assert.deepEqual(JSON.parse(j), [1,2,3])
+    j => assert.deepEqual(JSON.parse(j), {0: 1, 1: 2, 2: 3})
   );
 
-  jsonnet.nativeCallback("int32array", () => new Int32Array([1,2,3]));
-  jsonnet.evaluateSnippet(`std.native("int32array")()`).then(
-    j => assert.deepEqual(JSON.parse(j), [1,2,3])
+  jsonnet.nativeCallback("function", () => function(){ return 1; });
+  jsonnet.evaluateSnippet(`std.native("function")()`).then(
+    j => assert.equal(JSON.parse(j), null)
   );
 
-  jsonnet.nativeCallback("float64array", () => new Float64Array([1.1,2.2,3.3]));
-  jsonnet.evaluateSnippet(`std.native("float64array")()`).then(
-    j => assert.deepEqual(JSON.parse(j), [1.1,2.2,3.3])
+  jsonnet.nativeCallback("asyncFunction", () => async function(){ return 1; });
+  jsonnet.evaluateSnippet(`std.native("asyncFunction")()`).then(
+    j => assert.equal(JSON.parse(j), null)
+  );
+
+  jsonnet.nativeCallback("date", () => new Date(0));
+  jsonnet.evaluateSnippet(`std.native("date")()`).then(
+    j => assert.equal(JSON.parse(j), "1970-01-01T00:00:00.000Z")
+  );
+
+  jsonnet.nativeCallback("symbol", () => Symbol("foo"));
+  jsonnet.evaluateSnippet(`std.native("symbol")()`).then(
+    j => assert.equal(JSON.parse(j), null)
   );
 }
 

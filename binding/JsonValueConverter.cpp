@@ -35,18 +35,17 @@ namespace nodejsonnet {
     if(v.IsString()) {
       return vm->makeJsonString(v.As<Napi::String>());
     }
+    if(v.IsDate()) {
+      auto const toISOString = v.As<Napi::Object>().Get("toISOString").As<Napi::Function>();
+      return vm->makeJsonString(toISOString.Call(v, {}).As<Napi::String>());
+    }
+    if(v.IsFunction() || v.IsSymbol()) {
+      return vm->makeJsonNull();
+    }
     if(v.IsArray()) {
       auto const array = v.As<Napi::Array>();
       auto const json = vm->makeJsonArray();
       for(size_t i = 0, len = array.Length(); i < len; ++i) {
-        vm->appendJsonArray(json, toJsonnetJson(array[i]));
-      }
-      return json;
-    }
-    if(v.IsTypedArray()) {
-      auto const array = v.As<Napi::TypedArray>();
-      auto const json = vm->makeJsonArray();
-      for(size_t i = 0, len = array.ElementLength(); i < len; ++i) {
         vm->appendJsonArray(json, toJsonnetJson(array[i]));
       }
       return json;
