@@ -61,10 +61,10 @@ namespace nodejsonnet {
     bool extractJsonNull(JsonnetJsonValue const *json);
 
   private:
-    using CallbackEntry = std::tuple<JsonnetVm *, size_t, NativeCallback>;
+    using CallbackEntry = std::tuple<JsonnetVm *, size_t, NativeCallback>;  // [(this, arity, fun)]
 
     ::JsonnetVm *vm;
-    std::forward_list<CallbackEntry> callbacks;  // [(this, arity, fun)]
+    std::forward_list<CallbackEntry> callbacks;
 
     Buffer buffer(char *buf) const;
     static JsonnetJsonValue *trampoline(void *ctx, JsonnetJsonValue const *const *argv, int *success);

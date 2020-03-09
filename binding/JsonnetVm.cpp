@@ -58,7 +58,7 @@ namespace nodejsonnet {
     std::transform(cbegin(params), cend(params), begin(params_cstr),
                    std::function<char const *(std::string const &)>(&std::string::c_str));
 
-    auto ptr = &callbacks.emplace_front(this, params.size(), std::move(cb));
+    auto const ptr = &callbacks.emplace_front(this, params.size(), std::move(cb));
     ::jsonnet_native_callback(vm, name.c_str(), &trampoline, ptr, params_cstr.data());
   }
 
@@ -146,7 +146,7 @@ namespace nodejsonnet {
   }
 
   JsonnetJsonValue *JsonnetVm::trampoline(void *ctx, JsonnetJsonValue const *const *argv, int *success) {
-    auto [vm, arity, func] = *static_cast<CallbackEntry *>(ctx);
+    auto const &[vm, arity, func] = *static_cast<CallbackEntry *>(ctx);
 
     try {
       auto result = func(vm->shared_from_this(), {argv, argv + arity});
