@@ -93,7 +93,7 @@ export class Jsonnet {
    * ```
    *
    * @bug If the native callback throws an error, the entire Node.js process panics.
-   * To avoid this, use async function for operations that may throw.
+   *   To avoid this, use async function for operations that may throw.
    * ```typescript
    * // Node.js crashes
    * jsonnet.nativeCallback("failBad", () => { throw "fail"; });
@@ -106,8 +106,12 @@ export class Jsonnet {
    * ```
    *
    * @param name - Name of the callback function.
-   * @param fun - The function to register as a callback. `fun` can return an Object as the callback result or a Promise for it. Since the result will be serialized as JSON before passed back to Jsonnet, it cannot contain any recursive structures.
-   * @param params - Names of the function parameters. `params` must have the equal number of elements as the number of the parameters of the function `fun`.
+   * @param fun - The function to register as a callback.
+   *   `fun` can return an Object as the callback result or a Promise for it.
+   *  Since the result will be serialized as JSON before passed back to Jsonnet,
+   *  it cannot contain any recursive structures.
+   * @param params - Names of the function parameters.
+   *   `params` must have the equal number of elements as the number of the parameters of `fun`.
    */
   nativeCallback<T extends string[]>(
     name: string,
