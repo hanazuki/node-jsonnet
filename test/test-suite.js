@@ -9,7 +9,7 @@ const Jsonnet = require('../').Jsonnet;
 const run = async () => {
   let tested = 0;
 
-  for await (const dirent of await fs.opendir('.')) {
+  for (const dirent of await fs.readdir('.', {withFileTypes: true})) {
     if(!dirent.isFile() || !/\.jsonnet$/.test(dirent.name)) continue;
 
     if(/^trace\./.test(dirent.name)) continue;  // Skip
