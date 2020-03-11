@@ -21,10 +21,16 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node }}
-    - name: Test
-      run: |
-        CC=gcc CXX=g++ bash ./scripts/test-packaging.sh
-        CC=clang CXX=clang++ bash ./scripts/test-packaging.sh
+    - name: Test with GCC
+      run: ./scripts/test-packaging.sh
+      env:
+        CC: gcc
+        CXX: g++
+    - name: Test with Clang
+      run: ./scripts/test-packaging.sh
+      env:
+        CC: clang
+        CXX: clang++
 
   lint:
     runs-on: ubuntu-18.04
