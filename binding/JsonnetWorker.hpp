@@ -47,6 +47,18 @@ namespace nodejsonnet {
       Napi::Value toValue(Napi::Env env, JsonnetVm::Buffer buffer) override;
     };
 
+    struct EvaluateFileStreamOp: public EvaluateFileOp {
+      using EvaluateFileOp::EvaluateFileOp;
+      JsonnetVm::Buffer execute(JsonnetVm const &vm) override;
+      Napi::Value toValue(Napi::Env env, JsonnetVm::Buffer buffer) override;
+    };
+
+    struct EvaluateSnippetStreamOp: public EvaluateSnippetOp {
+      using EvaluateSnippetOp::EvaluateSnippetOp;
+      JsonnetVm::Buffer execute(JsonnetVm const &vm) override;
+      Napi::Value toValue(Napi::Env env, JsonnetVm::Buffer buffer) override;
+    };
+
     JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> op);
 
     void Execute() override;

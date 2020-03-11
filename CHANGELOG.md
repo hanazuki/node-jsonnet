@@ -2,6 +2,7 @@
 
 ## unreleased
 - Added Jsonnet#evaluateFileMulti, Jsonnet#evaluateSnippetMulti
+- Added Jsonnet#evaluateFileStream, Jsonnet#evaluateSnippetStream
 
 ## v0.2.0
 

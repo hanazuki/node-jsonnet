@@ -34,5 +34,16 @@ const multi_snippet = `
 `;
 
 jsonnet.evaluateSnippetMulti(multi_snippet)
-       .then(jsons => console.log(jsons["a.json"]))
+       .then(jsons => console.log(JSON.parse(jsons["a.json"])))
+       .catch(error => console.log(error));
+
+const stream_snippet = `
+{
+  {a: 1},
+  {b: 1},
+}
+`;
+
+jsonnet.evaluateSnippetStream(multi_snippet)
+       .then(jsons => console.log(JSON.parse(jsons[0])))
        .catch(error => console.log(error));

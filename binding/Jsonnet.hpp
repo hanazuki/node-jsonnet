@@ -49,6 +49,8 @@ namespace nodejsonnet {
     Napi::Value evaluateSnippet(const Napi::CallbackInfo &info);
     Napi::Value evaluateFileMulti(const Napi::CallbackInfo &info);
     Napi::Value evaluateSnippetMulti(const Napi::CallbackInfo &info);
+    Napi::Value evaluateFileStream(const Napi::CallbackInfo &info);
+    Napi::Value evaluateSnippetStream(const Napi::CallbackInfo &info);
     Napi::Value extString(const Napi::CallbackInfo &info);
     Napi::Value extCode(const Napi::CallbackInfo &info);
     Napi::Value tlaString(const Napi::CallbackInfo &info);

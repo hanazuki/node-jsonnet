@@ -78,4 +78,37 @@ namespace nodejsonnet {
     return parseMultiValue(env, std::move(buffer));
   }
 
+  namespace {
+    Napi::Value parseStreamValue(Napi::Env env, JsonnetVm::Buffer buffer) {
+      std::vector<napi_value> jsons;
+      for(auto p = buffer.get(); *p; ) {
+        std::string_view const json(p);
+        p += json.size() + 1;
+        jsons.push_back(Napi::String::New(env, json.data(), json.size()));
+      }
+
+      auto result = Napi::Array::New(env, jsons.size());
+      for(size_t i = 0; i < jsons.size(); ++i) {
+        result.Set(i, jsons[i]);
+      }
+      return result;
+    }
+  }
+
+  JsonnetVm::Buffer JsonnetWorker::EvaluateFileStreamOp::execute(JsonnetVm const &vm) {
+    return vm.evaluateFileStream(filename);
+  }
+
+  Napi::Value JsonnetWorker::EvaluateFileStreamOp::toValue(Napi::Env env, JsonnetVm::Buffer buffer) {
+    return parseStreamValue(env, std::move(buffer));
+  }
+
+  JsonnetVm::Buffer JsonnetWorker::EvaluateSnippetStreamOp::execute(JsonnetVm const &vm) {
+    return vm.evaluateSnippetStream(filename, snippet);
+  }
+
+  Napi::Value JsonnetWorker::EvaluateSnippetStreamOp::toValue(Napi::Env env, JsonnetVm::Buffer buffer) {
+    return parseStreamValue(env, std::move(buffer));
+  }
+
 }

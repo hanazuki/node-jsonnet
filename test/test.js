@@ -229,3 +229,21 @@ const {Jsonnet} = require("../");
     },
   )
 }
+
+{
+  const jsonnet = new Jsonnet();
+
+  jsonnet.evaluateSnippetStream(`[{a: 1}, {b: 2}]`).then(
+    list => {
+      assert.equal(list[0], '{\n   "a": 1\n}\n');
+      assert.equal(list[1], '{\n   "b": 2\n}\n');
+    },
+  )
+
+  jsonnet.evaluateFileStream(`${__dirname}/fixtures/stream.jsonnet`).then(
+    list => {
+      assert.equal(list[0], '{\n   "a": 1\n}\n');
+      assert.equal(list[1], '{\n   "b": 2\n}\n');
+    },
+  )
+}
