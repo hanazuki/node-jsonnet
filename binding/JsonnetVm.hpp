@@ -46,6 +46,8 @@ namespace nodejsonnet {
 
     Buffer evaluateFile(std::string const &filename) const;
     Buffer evaluateSnippet(std::string const &filename, std::string const &snippet) const;
+    Buffer evaluateFileMulti(std::string const &filename) const;
+    Buffer evaluateSnippetMulti(std::string const &filename, std::string const &snippet) const;
 
     JsonnetJsonValue *makeJsonString(std::string const &v) const;
     JsonnetJsonValue *makeJsonNumber(double v) const;

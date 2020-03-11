@@ -211,3 +211,21 @@ const {Jsonnet} = require("../");
 
   assert.rejects(jsonnet.evaluateSnippet(`1 +`, "snippet-filename"), {message: /^STATIC ERROR: snippet-filename:1:4/});
 }
+
+{
+  const jsonnet = new Jsonnet();
+
+  jsonnet.evaluateSnippetMulti(`{"a.json": {a: 1}, "b.yaml": std.manifestYamlDoc({b: 2})}`).then(
+    dict => {
+      assert.equal(dict['a.json'], '{\n   "a": 1\n}\n');
+      assert.equal(dict['b.yaml'], '"\\"b\\": 2"\n');
+    },
+  )
+
+  jsonnet.evaluateFileMulti(`${__dirname}/fixtures/multi.jsonnet`).then(
+    dict => {
+      assert.equal(dict['a.json'], '{\n   "a": 1\n}\n');
+      assert.equal(dict['b.yaml'], '"\\"b\\": 2"\n');
+    },
+  )
+}

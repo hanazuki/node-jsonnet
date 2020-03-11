@@ -23,3 +23,16 @@ jsonnet.evaluateSnippet(snippet, "snippet.jsonnet")
 jsonnet.evaluateFile("file.jsonnet")
        .then(json => console.log(JSON.parse(json)))
        .catch(error => console.log(error));
+
+const multi_snippet = `
+{
+  "a.json": {a: 1},
+  "b.yaml": std.manifestYamlDoc(
+    {b: 1}
+  )
+}
+`;
+
+jsonnet.evaluateSnippetMulti(multi_snippet)
+       .then(jsons => console.log(jsons["a.json"]))
+       .catch(error => console.log(error));

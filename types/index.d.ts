@@ -127,11 +127,28 @@ export class Jsonnet {
   evaluateFile(filename: string): Promise<string>;
 
   /**
-   * Evaluates a Jsonnet script give as a string.
+   * Evaluates a Jsonnet script given as a string.
    *
    * @param snippet - Jsonnet script to evaluate.
    * @param filename - Filename used for error reporting.
    * @returns A Promise for the evaluation result in JSON representation.
    */
   evaluateSnippet(snippet: string, filename?: string): Promise<string>;
+
+  /**
+   * Evaluates a Jsonnet script in a file and returns a number of named JSON's.
+   *
+   * @param filename - Path to the file.
+   * @returns A Promise for the evaluation result in JSON representation.
+   */
+  evaluateFileMulti(filename: string): Promise<{[name: string]: string}>;
+
+  /**
+   * Evaluates a Jsonnet script given as a string and returns a number of named JSON's.
+   *
+   * @param snippet - Jsonnet script to evaluate.
+   * @param filename - Filename used for error reporting.
+   * @returns A Promise for the evaluation result in JSON representation.
+   */
+  evaluateSnippetMulti(snippet: string, filename?: string): Promise<{[name: string]: string}>;
 }

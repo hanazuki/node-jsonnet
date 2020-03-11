@@ -21,6 +21,8 @@ namespace nodejsonnet {
         InstanceMethod("setGcGrowthTrigger", &Jsonnet::setGcGrowthTrigger),
         InstanceMethod("evaluateFile", &Jsonnet::evaluateFile),
         InstanceMethod("evaluateSnippet", &Jsonnet::evaluateSnippet),
+        InstanceMethod("evaluateFileMulti", &Jsonnet::evaluateFileMulti),
+        InstanceMethod("evaluateSnippetMulti", &Jsonnet::evaluateSnippetMulti),
         InstanceMethod("extString", &Jsonnet::extString),
         InstanceMethod("extCode", &Jsonnet::extCode),
         InstanceMethod("tlaString", &Jsonnet::tlaString),
@@ -81,6 +83,29 @@ namespace nodejsonnet {
 
     auto vm = createVm(env);
     auto const worker = new JsonnetWorker(env, vm, std::make_unique<JsonnetWorker::EvaluateSnippetOp>(std::move(snippet), std::move(filename)));
+    auto const promise = worker->Promise();
+    worker->Queue();
+    return promise;
+  }
+
+  Napi::Value Jsonnet::evaluateFileMulti(const Napi::CallbackInfo& info) {
+    auto const env = info.Env();
+    auto filename = info[0].As<Napi::String>().Utf8Value();
+
+    auto vm = createVm(env);
+    auto const worker = new JsonnetWorker(env, vm, std::make_unique<JsonnetWorker::EvaluateFileMultiOp>(std::move(filename)));
+    auto const promise = worker->Promise();
+    worker->Queue();
+    return promise;
+  }
+
+  Napi::Value Jsonnet::evaluateSnippetMulti(const Napi::CallbackInfo& info) {
+    auto const env = info.Env();
+    auto snippet = info[0].As<Napi::String>().Utf8Value();
+    auto filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
+
+    auto vm = createVm(env);
+    auto const worker = new JsonnetWorker(env, vm, std::make_unique<JsonnetWorker::EvaluateSnippetMultiOp>(std::move(snippet), std::move(filename)));
     auto const promise = worker->Promise();
     worker->Queue();
     return promise;
