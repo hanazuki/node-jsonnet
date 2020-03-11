@@ -1,5 +1,5 @@
 const assert = require('assert').strict;
-const {Jsonnet} = require("../lib/index.js");
+const {Jsonnet} = require("../");
 
 {
   const jsonnet = new Jsonnet();

@@ -39,7 +39,7 @@
   ],
   "scripts": {
     "install": "cmake-js build",
-    "test": "node test/test.js",
+    "test": "node test/test*.js",
     "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
   },
   "dependencies": {
