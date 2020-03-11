@@ -14,6 +14,8 @@ const run = async () => {
 
     if(/^trace\./.test(dirent.name)) continue;  // Skip
 
+    ++tested;
+
     const expectsError = /^error\./.test(dirent.name);
 
     const jsonnet = new Jsonnet();
@@ -25,21 +27,25 @@ const run = async () => {
 
     const golden = fs.readFile(`${dirent.name}.golden`, {encoding: 'utf8'}).catch(() => "true\n");
 
+    let json;
     try {
-      const json = await jsonnet.evaluateFile(dirent.name);
-      assert.ok(!expectsError, `${dirent.name} is expected to fail, but succeeded.`);
-      assert.equal(json, await golden);
+      json = await jsonnet.evaluateFile(dirent.name);
     } catch(error) {
       assert.ok(expectsError, `${dirent.name} is expected to succeed, but failed with ${error}.`);
       const message = error.message.replace(/\tstd\.jsonnet:[0-9]*:[0-9-]*/g, "\tstd.jsonnet:<stdlib_position_redacted>");
       assert.equal(message, await golden);
+      continue;
     }
 
-    ++tested;
+    assert.ok(!expectsError, `${dirent.name} is expected to fail, but succeeded.`);
+    assert.equal(json, await golden);
   }
 
   assert.ok(tested > 0, "Nothing tested.");
 };
 
 process.chdir(path.join(__dirname, '../jsonnet/test_suite'));
-run();
+run().catch((e) => {
+  console.error(e);
+  process.exit(1);
+})
