@@ -29,4 +29,4 @@ The library is documented in the TypeScript type definitions at [`types/index.d.
 - CMake
 
 ## License
-@hanazuki/node-jsonnet is licensed under the MIT License (See [LICENSE](LICENSE) file for the full terms). libjsonnet, whose source code is included in the distributed NPM packages of @hanazuki/node-jsonnet, is developed by Google and licensed under the Apache License, Version 2.0 (See [jsonnet/LICENSE in this package](jsonnet/LICENSE) or [LICENSE in google/jsonnet](https://github.com/google/jsonnet/blob/master/LICENSE)).
+**@hanazuki/node-jsonnet** is licensed under the MIT License (See [LICENSE](LICENSE) file for the terms). **libjsonnet**, whose source code is bundled in the distributed NPM packages of @hanazuki/node-jsonnet, is licensed under the Apache License, Version 2.0 (See [jsonnet/LICENSE in this package](jsonnet/LICENSE) or [LICENSE file in the original repository](https://github.com/google/jsonnet/blob/master/LICENSE)). libjsonnet also bundles third-party software that is subject to other OSS licenses. 
