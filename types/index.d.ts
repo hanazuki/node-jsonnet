@@ -43,6 +43,13 @@ export class Jsonnet {
   maxGcGrowthTrigger(value: number): this;
 
   /**
+   * Set whether the evaluation results are returned in plain string instread of in JSON.
+   *
+   * @param value - Whether output is in plain string.
+   */
+  stringOutput(value: boolean): this;
+
+  /**
    * Binds external variable named as `key` to string `value`.
    *
    * @param key - Name of the external variable

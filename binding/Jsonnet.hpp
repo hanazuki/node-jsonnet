@@ -25,6 +25,7 @@ namespace nodejsonnet {
     std::optional<unsigned> maxStack, maxTrace;
     std::optional<unsigned> gcMinObjects;
     std::optional<double> gcGrowthTrigger;
+    bool stringOutput = false;
 
     std::map<std::string, Variable> ext, tla;
     std::vector<std::string> jpath;
@@ -45,6 +46,7 @@ namespace nodejsonnet {
     Napi::Value setMaxTrace(const Napi::CallbackInfo &info);
     Napi::Value setGcMinObjects(const Napi::CallbackInfo &info);
     Napi::Value setGcGrowthTrigger(const Napi::CallbackInfo &info);
+    Napi::Value setStringOutput(const Napi::CallbackInfo &info);
     Napi::Value evaluateFile(const Napi::CallbackInfo &info);
     Napi::Value evaluateSnippet(const Napi::CallbackInfo &info);
     Napi::Value evaluateFileMulti(const Napi::CallbackInfo &info);

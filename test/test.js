@@ -247,3 +247,17 @@ const {Jsonnet} = require("../");
     },
   )
 }
+
+{
+  const jsonnet = new Jsonnet();
+
+  jsonnet.stringOutput(true);
+  jsonnet.evaluateSnippet(`"a"`).then(
+    str => assert.equal(str, "a\n")
+  )
+
+  jsonnet.stringOutput(false);
+  jsonnet.evaluateSnippet(`"a"`).then(
+    str => assert.equal(str, '"a"\n')
+  )
+}

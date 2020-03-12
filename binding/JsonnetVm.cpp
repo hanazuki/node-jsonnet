@@ -32,6 +32,10 @@ namespace nodejsonnet {
     ::jsonnet_gc_growth_trigger(vm, v);
   }
 
+  void JsonnetVm::stringOutput(bool v) {
+    ::jsonnet_string_output(vm, v);
+  }
+
   void JsonnetVm::extVar(std::string const &key, std::string const &val) {
     ::jsonnet_ext_var(vm, key.c_str(), val.c_str());
   }
