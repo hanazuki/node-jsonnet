@@ -1,6 +1,6 @@
 # ChangeLog
 
-## unreleased
+## v0.3.0
 - Added Jsonnet.prototype.evaluateFileMulti, Jsonnet.prototype.evaluateSnippetMulti
 - Added Jsonnet.prototype.evaluateFileStream, Jsonnet.prototype.evaluateSnippetStream
 - Added Jsonnet.prototype.stringOutput
