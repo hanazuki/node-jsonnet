@@ -18,7 +18,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/jsonnet/include")
 
 set(BUILD_TESTS OFF CACHE BOOL "Disable jsonnet tests")
-add_subdirectory(jsonnet)
-set_target_properties(libjsonnet++ libjsonnet++_static libjsonnet_static jsonnet jsonnetfmt
-  PROPERTIES EXCLUDE_FROM_ALL ON
-  )
+add_subdirectory(jsonnet EXCLUDE_FROM_ALL)
