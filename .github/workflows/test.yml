@@ -21,6 +21,12 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node }}
+    - name: Setup GCC
+      if: startsWith(matrix.os, 'macos-')
+      run: |
+        cd /usr/local/bin
+        ln -sf gcc-9 gcc
+        ln -sf g++-9 g++
     - name: Test with GCC
       run: ./scripts/test-packaging.sh
       env:
