@@ -255,6 +255,19 @@ const {Jsonnet} = require("../");
   jsonnet.evaluateSnippet(`"a"`).then(
     str => assert.equal(str, "a\n")
   )
+  jsonnet.evaluateSnippetMulti(`{"0":"a","1":"b"}`).then(
+    dict => {
+      assert.equal(dict['0'], "a\n");
+      assert.equal(dict['1'], "b\n");
+    }
+  )
+  // BUG: maybe bug in libjsonnet?
+  // jsonnet.evaluateSnippetStream(`["a","b"]`).then(
+  //   list => {
+  //     assert.equal(list[0], "a\n");
+  //     assert.equal(list[1], "b\n");
+  //   }
+  // )
 
   jsonnet.stringOutput(false);
   jsonnet.evaluateSnippet(`"a"`).then(
