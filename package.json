@@ -35,7 +35,9 @@
   ],
   "keywords": [
     "jsonnet",
-    "node-addon"
+    "node-addon",
+    "native",
+    "bindings"
   ],
   "scripts": {
     "install": "cmake-js build",
