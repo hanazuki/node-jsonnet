@@ -183,7 +183,7 @@ namespace nodejsonnet {
   namespace {
 
     struct TsfnWrap {
-      TsfnWrap(Napi::ThreadSafeFunction tsfn): tsfn{tsfn} {
+      explicit TsfnWrap(Napi::ThreadSafeFunction tsfn): tsfn{tsfn} {
       }
 
       ~TsfnWrap() {
@@ -315,7 +315,7 @@ namespace nodejsonnet {
       auto const &fun = cb.fun;
       auto const &params = cb.params;
 
-      TsfnWrap tsfn = Napi::ThreadSafeFunction::New(env, fun->Value(), "Jsonnet Native Callback", 0, 1);
+      TsfnWrap tsfn{Napi::ThreadSafeFunction::New(env, fun->Value(), "Jsonnet Native Callback", 0, 1)};
 
       auto callback =
         [](Napi::Env env, Napi::Function fun, Payload *payload) {

@@ -7,7 +7,7 @@
 namespace nodejsonnet {
 
   struct JsonValueConverter {
-    JsonValueConverter(std::shared_ptr<JsonnetVm> vm);
+    explicit JsonValueConverter(std::shared_ptr<JsonnetVm> vm);
 
     Napi::Value toNapiValue(Napi::Env const &env, JsonnetJsonValue const *json) const;
     JsonnetJsonValue *toJsonnetJson(Napi::Value v) const;
