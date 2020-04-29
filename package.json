@@ -53,7 +53,7 @@
     "@types/node": "*"
   },
   "devDependencies": {
-    "dtslint": "^3.3.0",
+    "dtslint": "^3.4.2",
     "typedoc": "^0.16.11"
   }
 }
