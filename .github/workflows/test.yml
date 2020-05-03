@@ -29,11 +29,13 @@ jobs:
       env:
         CC: gcc
         CXX: g++
+        CMAKE_BUILD_PARALLEL_LEVEL: '4'
     - name: Test with Clang
       run: ./scripts/test-packaging.sh
       env:
         CC: clang
         CXX: clang++
+        CMAKE_BUILD_PARALLEL_LEVEL: '4'
 
   lint:
     runs-on: ubuntu-18.04
