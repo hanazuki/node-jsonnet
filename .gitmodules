@@ -1,3 +1,3 @@
 [submodule "jsonnet"]
-	path = jsonnet
+	path = third_party/jsonnet
 	url = https://github.com/google/jsonnet
