@@ -16,7 +16,7 @@
     "/lib/*",
     "/types/*.d.ts",
     "/src/*",
-    "/test/*",
+    "/spec/*",
     "/third_party/jsonnet/CMakeLists.txt.in",
     "/third_party/jsonnet/include/*.h",
     "/third_party/jsonnet/core/*.c",
@@ -41,7 +41,7 @@
   ],
   "scripts": {
     "install": "cmake-js build",
-    "test": "node test/test.js test/test*.js",
+    "test": "jasmine",
     "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
   },
   "dependencies": {
@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "dtslint": "^3.5.1",
+    "jasmine": "^3.5.0",
     "typedoc": "^0.16.11"
   }
 }
