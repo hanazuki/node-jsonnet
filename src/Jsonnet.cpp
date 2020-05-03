@@ -31,7 +31,7 @@ namespace nodejsonnet {
         InstanceMethod<&Jsonnet::tlaString>("tlaString"),
         InstanceMethod<&Jsonnet::tlaCode>("tlaCode"),
         InstanceMethod<&Jsonnet::addJpath>("addJpath"),
-        InstanceMethod<&Jsonnet::nativeCallback>("nativeCallback"),
+        InstanceMethod<&Jsonnet::nativeCallback>("_nativeCallback"),  // See also lib/index.js
       });
 
     constructor = Napi::Persistent(func);

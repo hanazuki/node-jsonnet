@@ -187,8 +187,6 @@ describe('binding', () => {
   });
 
   it('reports throwing native callback', async () => {
-    pending('This crashes VM');
-
     const jsonnet = new Jsonnet();
 
     jsonnet.nativeCallback("fail", (msg) => { throw msg; }, "msg");

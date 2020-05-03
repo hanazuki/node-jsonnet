@@ -99,19 +99,6 @@ export class Jsonnet {
    *        .then(result => console.log(JSON.parse(result)));  // => 5
    * ```
    *
-   * @bug If the native callback throws an error, the entire Node.js process panics.
-   *   To avoid this, use async function for operations that may throw.
-   * ```typescript
-   * // Node.js crashes
-   * jsonnet.nativeCallback("failBad", () => { throw "fail"; });
-   * jsonnet.evaluateSnippet(`std.native("failBad")()`);
-   *
-   * // OK
-   * jsonnet.nativeCallback("failGood", async () => { throw "fail"; });
-   * jsonnet.evaluateSnippet(`std.native("failGood")()`)
-   *        .catch(error => console.log(error));  // => "fail"
-   * ```
-   *
    * @param name - Name of the callback function.
    * @param fun - The function to register as a callback.
    *   `fun` can return an Object as the callback result or a Promise for it.
