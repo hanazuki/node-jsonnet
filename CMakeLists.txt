@@ -8,6 +8,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_RE
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} libjsonnet)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_JS_INC})
 target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-pedantic")
+target_compile_definitions(${PROJECT_NAME} PRIVATE "NAPI_VERSION=6")
 
 if(DEFINED ENV{NODE_JSONNET_ENABLE_COVERAGE})
   target_link_options(${PROJECT_NAME} PRIVATE --coverage)

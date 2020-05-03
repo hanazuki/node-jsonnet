@@ -11,9 +11,7 @@
 
 namespace nodejsonnet {
 
-  Napi::FunctionReference Jsonnet::constructor;
-
-  Napi::Object Jsonnet::init(Napi::Env env) {
+  Napi::Object Jsonnet::init(Napi::Env env, InstanceData &instanceData) {
     auto const func = DefineClass(env, "Jsonnet",
       {
         StaticAccessor<&Jsonnet::getVersion>("version"),
@@ -36,8 +34,7 @@ namespace nodejsonnet {
         InstanceMethod<&Jsonnet::nativeCallback>("_nativeCallback"),  // See also lib/index.js
       });
 
-    constructor = Napi::Persistent(func);
-    constructor.SuppressDestruct();
+    instanceData.constructor = Napi::Persistent(func);
     return func;
   }
 

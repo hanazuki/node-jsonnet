@@ -24,7 +24,7 @@ The library is documented in the TypeScript type definitions at [`types/index.d.
 
 ## Install Requirements
 
-- Node.js v10 or later
+- Node.js with N-API Version 6: v10 (^10.20.0), v12 (^12.17.0), v14 or later
 - GCC or Clang C++ compiler that supports C++17
 - CMake 3.8 or later
 

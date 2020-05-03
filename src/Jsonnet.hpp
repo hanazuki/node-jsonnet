@@ -34,12 +34,15 @@ namespace nodejsonnet {
 
   class Jsonnet: public Napi::ObjectWrap<Jsonnet>, private JsonnetVmParam {
   public:
-    static Napi::Object init(const Napi::Env env);
+    struct InstanceData {
+      Napi::FunctionReference constructor;
+    };
+
+    static Napi::Object init(const Napi::Env env, InstanceData &instanceData);
 
     explicit Jsonnet(const Napi::CallbackInfo &info);
 
   private:
-    static Napi::FunctionReference constructor;
     static Napi::Value getVersion(const Napi::CallbackInfo &info);
 
     Napi::Value setMaxStack(const Napi::CallbackInfo &info);
