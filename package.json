@@ -15,7 +15,7 @@
     "CMakeLists.txt",
     "/lib/*",
     "/types/*.d.ts",
-    "/binding/*",
+    "/src/*",
     "/test/*",
     "/third_party/jsonnet/CMakeLists.txt.in",
     "/third_party/jsonnet/include/*.h",

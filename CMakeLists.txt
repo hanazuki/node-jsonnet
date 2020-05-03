@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 
 project (node-jsonnet)
-file(GLOB SOURCE_FILES "binding/*.cpp")
+file(GLOB SOURCE_FILES "src/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
