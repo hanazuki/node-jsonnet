@@ -15,27 +15,55 @@ jobs:
     - name: Checkout submodules
       run: |
         git submodule update --init --recursive --depth=1
+    - name: Install
+      run: |
+        if type apt-get >/dev/null; then
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends lcov llvm
+        elif type brew >/dev/null; then
+          brew install lcov
+        fi
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node }}
-    - name: Setup GCC
+    - name: Setup compilers
       if: startsWith(matrix.os, 'macos-')
       run: |
         cd /usr/local/bin
         ln -sf gcc-9 gcc
         ln -sf g++-9 g++
+        ln -sf gcov-9 gcov
+        ln -sf /Library/Developer/CommandLineTools/usr/bin/llvm-cov .
     - name: Test with GCC
       run: ./scripts/test-packaging.sh
       env:
         CC: gcc
         CXX: g++
         CMAKE_BUILD_PARALLEL_LEVEL: '4'
+        NODE_JSONNET_ENABLE_COVERAGE: gcc
     - name: Test with Clang
       run: ./scripts/test-packaging.sh
       env:
         CC: clang
         CXX: clang++
         CMAKE_BUILD_PARALLEL_LEVEL: '4'
+        NODE_JSONNET_ENABLE_COVERAGE: clang
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        flag-name: ${{ matrix.os }}-${{ matrix.node }}
+        parallel: true
+
+  test-finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Upload to Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
 
   lint:
     runs-on: ubuntu-18.04
