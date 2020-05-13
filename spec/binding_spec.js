@@ -109,6 +109,9 @@ describe('binding', () => {
     j = await jsonnet.evaluateSnippet(`std.native("negate")(true)`);
     expect(j).toBeJSON(false);
 
+    j = await jsonnet.evaluateSnippet(`std.native("negate")(false)`);
+    expect(j).toBeJSON(true);
+
     j = await jsonnet.evaluateSnippet(`std.native("concat")("a", "b")`);
     expect(j).toBeJSON("ab");
 
