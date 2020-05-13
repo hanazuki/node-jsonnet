@@ -22,6 +22,8 @@ namespace nodejsonnet {
       return Napi::String::New(env, s->data(), s->size());
     }
 
+    // NOTREACHED
+    // Native extensions can only take primitives
     return env.Undefined();
   }
 
