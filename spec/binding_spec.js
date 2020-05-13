@@ -17,6 +17,10 @@ describe('binding', () => {
     });
   });
 
+  it('has version', async() => {
+    expect(Jsonnet.version).toEqual(jasmine.stringMatching(/^v/));
+  });
+
   it('can evaluate complex JSON', async () => {
     const jsonnet = new Jsonnet();
 
