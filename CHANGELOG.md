@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v0.3.3
+- Update libjsonnet to v0.16.0
+
 ## v0.3.2
 - Fix bug where throwing in a native callback kills Node.js VM (such as `jsonnet.nativeCallback("fun", () => { throw "fail"; })`).
 
