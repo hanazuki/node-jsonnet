@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 #include <algorithm>
+#include <stdexcept>
 #include "JsonnetVm.hpp"
 
 namespace nodejsonnet {

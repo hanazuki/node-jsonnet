@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 #include <future>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
