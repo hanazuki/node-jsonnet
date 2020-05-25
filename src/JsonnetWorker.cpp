@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: MIT
+#include "JsonnetWorker.hpp"
 #include <memory>
-#include <string_view>
 #include <utility>
 #include <vector>
-#include "JsonnetWorker.hpp"
+#include <string_view>
 
 namespace nodejsonnet {
 
   JsonnetWorker::JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> op)
     : Napi::AsyncWorker(env), vm(std::move(vm)), op(std::move(op)),
-      deferred(Napi::Promise::Deferred::New(env)) {}
+      deferred(Napi::Promise::Deferred::New(env)) {
+  }
 
   void JsonnetWorker::Execute() {
     result = op->execute(*vm);
@@ -24,7 +25,8 @@ namespace nodejsonnet {
   }
 
   JsonnetWorker::EvaluateFileOp::EvaluateFileOp(std::string filename)
-    : filename(std::move(filename)) {}
+    : filename(std::move(filename)) {
+  }
 
   JsonnetVm::Buffer JsonnetWorker::EvaluateFileOp::execute(JsonnetVm const &vm) {
     return vm.evaluateFile(filename);
@@ -35,7 +37,8 @@ namespace nodejsonnet {
   }
 
   JsonnetWorker::EvaluateSnippetOp::EvaluateSnippetOp(std::string snippet, std::string filename)
-    : snippet(std::move(snippet)), filename(std::move(filename)) {}
+    : snippet(std::move(snippet)), filename(std::move(filename)) {
+  }
 
   JsonnetVm::Buffer JsonnetWorker::EvaluateSnippetOp::execute(JsonnetVm const &vm) {
     return vm.evaluateSnippet(filename, snippet);
@@ -49,14 +52,14 @@ namespace nodejsonnet {
     Napi::Value parseMultiValue(Napi::Env env, JsonnetVm::Buffer buffer) {
       auto result = Napi::Object::New(env);
 
-      for(auto p = buffer.get(); *p; ) {
+      for(auto p = buffer.get(); *p;) {
         std::string_view const name(p);
         p += name.size() + 1;
         std::string_view const json(p);
         p += json.size() + 1;
 
         result.Set(Napi::String::New(env, name.data(), name.size()),
-                   Napi::String::New(env, json.data(), json.size()));
+          Napi::String::New(env, json.data(), json.size()));
       }
 
       return result;
@@ -75,14 +78,15 @@ namespace nodejsonnet {
     return vm.evaluateSnippetMulti(filename, snippet);
   }
 
-  Napi::Value JsonnetWorker::EvaluateSnippetMultiOp::toValue(Napi::Env env, JsonnetVm::Buffer buffer) {
+  Napi::Value JsonnetWorker::EvaluateSnippetMultiOp::toValue(
+    Napi::Env env, JsonnetVm::Buffer buffer) {
     return parseMultiValue(env, std::move(buffer));
   }
 
   namespace {
     Napi::Value parseStreamValue(Napi::Env env, JsonnetVm::Buffer buffer) {
       std::vector<napi_value> jsons;
-      for(auto p = buffer.get(); *p; ) {
+      for(auto p = buffer.get(); *p;) {
         std::string_view const json(p);
         p += json.size() + 1;
         jsons.push_back(Napi::String::New(env, json.data(), json.size()));
@@ -100,7 +104,8 @@ namespace nodejsonnet {
     return vm.evaluateFileStream(filename);
   }
 
-  Napi::Value JsonnetWorker::EvaluateFileStreamOp::toValue(Napi::Env env, JsonnetVm::Buffer buffer) {
+  Napi::Value JsonnetWorker::EvaluateFileStreamOp::toValue(
+    Napi::Env env, JsonnetVm::Buffer buffer) {
     return parseStreamValue(env, std::move(buffer));
   }
 
@@ -108,7 +113,8 @@ namespace nodejsonnet {
     return vm.evaluateSnippetStream(filename, snippet);
   }
 
-  Napi::Value JsonnetWorker::EvaluateSnippetStreamOp::toValue(Napi::Env env, JsonnetVm::Buffer buffer) {
+  Napi::Value JsonnetWorker::EvaluateSnippetStreamOp::toValue(
+    Napi::Env env, JsonnetVm::Buffer buffer) {
     return parseStreamValue(env, std::move(buffer));
   }
 

@@ -40,7 +40,7 @@
     "bindings"
   ],
   "scripts": {
-    "install": "cmake-js build",
+    "install": "cmake-js build --CDCMAKE_EXPORT_COMPILE_COMMANDS=1",
     "test": "jasmine",
     "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
   },

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
+#include "JsonnetVm.hpp"
 #include <algorithm>
 #include <stdexcept>
-#include "JsonnetVm.hpp"
 
 namespace nodejsonnet {
 
@@ -57,10 +57,12 @@ namespace nodejsonnet {
     ::jsonnet_jpath_add(vm, path.c_str());
   }
 
-  void JsonnetVm::nativeCallback(std::string const &name, NativeCallback cb, std::vector<std::string> const &params) {
+  void JsonnetVm::nativeCallback(
+    std::string const &name, NativeCallback cb, std::vector<std::string> const &params) {
     // Construct NULL-terminated array
     std::vector<char const *> params_cstr(params.size() + 1);
-    std::transform(cbegin(params), cend(params), begin(params_cstr), std::mem_fn(&std::string::c_str));
+    std::transform(
+      cbegin(params), cend(params), begin(params_cstr), std::mem_fn(&std::string::c_str));
 
     auto const ptr = &callbacks.emplace_front(this, params.size(), std::move(cb));
     ::jsonnet_native_callback(vm, name.c_str(), &trampoline, ptr, params_cstr.data());
@@ -75,7 +77,8 @@ namespace nodejsonnet {
     return result;
   }
 
-  JsonnetVm::Buffer JsonnetVm::evaluateSnippet(std::string const &filename, std::string const &snippet) const {
+  JsonnetVm::Buffer JsonnetVm::evaluateSnippet(
+    std::string const &filename, std::string const &snippet) const {
     int error;
     auto result = buffer(::jsonnet_evaluate_snippet(vm, filename.c_str(), snippet.c_str(), &error));
     if(error != 0) {
@@ -93,9 +96,11 @@ namespace nodejsonnet {
     return result;
   }
 
-  JsonnetVm::Buffer JsonnetVm::evaluateSnippetMulti(std::string const &filename, std::string const &snippet) const {
+  JsonnetVm::Buffer JsonnetVm::evaluateSnippetMulti(
+    std::string const &filename, std::string const &snippet) const {
     int error;
-    auto result = buffer(::jsonnet_evaluate_snippet_multi(vm, filename.c_str(), snippet.c_str(), &error));
+    auto result =
+      buffer(::jsonnet_evaluate_snippet_multi(vm, filename.c_str(), snippet.c_str(), &error));
     if(error != 0) {
       throw std::runtime_error(result.get());
     }
@@ -111,9 +116,11 @@ namespace nodejsonnet {
     return result;
   }
 
-  JsonnetVm::Buffer JsonnetVm::evaluateSnippetStream(std::string const &filename, std::string const &snippet) const {
+  JsonnetVm::Buffer JsonnetVm::evaluateSnippetStream(
+    std::string const &filename, std::string const &snippet) const {
     int error;
-    auto result = buffer(::jsonnet_evaluate_snippet_stream(vm, filename.c_str(), snippet.c_str(), &error));
+    auto result =
+      buffer(::jsonnet_evaluate_snippet_stream(vm, filename.c_str(), snippet.c_str(), &error));
     if(error != 0) {
       throw std::runtime_error(result.get());
     }
@@ -148,7 +155,8 @@ namespace nodejsonnet {
     return ::jsonnet_json_make_object(vm);
   }
 
-  void JsonnetVm::appendJsonObject(JsonnetJsonValue *array, std::string const &field, JsonnetJsonValue *value) const {
+  void JsonnetVm::appendJsonObject(
+    JsonnetJsonValue *array, std::string const &field, JsonnetJsonValue *value) const {
     ::jsonnet_json_object_append(vm, array, field.c_str(), value);
   }
 
@@ -182,10 +190,11 @@ namespace nodejsonnet {
   }
 
   JsonnetVm::Buffer JsonnetVm::buffer(char *buf) const {
-    return {buf, [self = shared_from_this()](char *buf){ ::jsonnet_realloc(self->vm, buf, 0); }};
+    return {buf, [self = shared_from_this()](char *buf) { ::jsonnet_realloc(self->vm, buf, 0); }};
   }
 
-  JsonnetJsonValue *JsonnetVm::trampoline(void *ctx, JsonnetJsonValue const *const *argv, int *success) {
+  JsonnetJsonValue *JsonnetVm::trampoline(
+    void *ctx, JsonnetJsonValue const *const *argv, int *success) {
     auto const &[vm, arity, func] = *static_cast<CallbackEntry *>(ctx);
 
     try {

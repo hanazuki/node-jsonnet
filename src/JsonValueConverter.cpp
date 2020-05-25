@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
+#include "JsonValueConverter.hpp"
 #include <memory>
 #include <utility>
-#include "JsonValueConverter.hpp"
 
 namespace nodejsonnet {
 
-  JsonValueConverter::JsonValueConverter(std::shared_ptr<JsonnetVm> vm)
-    : vm{std::move(vm)} {}
+  JsonValueConverter::JsonValueConverter(std::shared_ptr<JsonnetVm> vm): vm{std::move(vm)} {
+  }
 
-  Napi::Value JsonValueConverter::toNapiValue(Napi::Env const &env, JsonnetJsonValue const *json) const {
+  Napi::Value JsonValueConverter::toNapiValue(
+    Napi::Env const &env, JsonnetJsonValue const *json) const {
     if(vm->extractJsonNull(json)) {
       return env.Null();
     }

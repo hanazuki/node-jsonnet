@@ -1,0 +1,26 @@
+# -*- mode: yaml -*-
+BasedOnStyle: LLVM
+ColumnLimit: 100
+---
+Language: Cpp
+AlignAfterOpenBracket: DontAlign
+AllowShortFunctionsOnASingleLine: None
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+FixNamespaceComments: false
+NamespaceIndentation: All
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeInheritanceColon: false
+SpaceBeforeParens: Never
+SpaceBeforeRangeBasedForLoopColon: false
+SpacesBeforeTrailingComments: 2
+
+IncludeCategories:
+  - Regex:           '^<([a-z/]+)>'
+    Priority:        1
+  - Regex:           '^<'
+    Priority:        2
+  - Regex:           '.*'
+    Priority:        3

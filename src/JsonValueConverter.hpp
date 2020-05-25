@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <napi.h>
 #include <memory>
+#include <napi.h>
 #include "JsonnetVm.hpp"
 
 namespace nodejsonnet {

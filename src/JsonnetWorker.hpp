@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
-#include <napi.h>
 #include <memory>
 #include <string>
+#include <napi.h>
 #include "JsonnetVm.hpp"
 
 namespace nodejsonnet {
@@ -65,7 +65,9 @@ namespace nodejsonnet {
     void OnOK() override;
     void OnError(Napi::Error const &error) override;
 
-    Napi::Promise Promise() { return deferred.Promise(); }
+    Napi::Promise Promise() {
+      return deferred.Promise();
+    }
 
   private:
     std::shared_ptr<JsonnetVm> vm;
