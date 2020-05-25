@@ -1,6 +1,6 @@
 {
   "name": "@hanazuki/node-jsonnet",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Jsonnet addon for Node.js",
   "bugs": "https://github.com/hanazuki/node-jsonnet/issues",
   "homepage": "https://github.com/hanazuki/node-jsonnet",
