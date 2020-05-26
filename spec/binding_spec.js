@@ -207,7 +207,7 @@ describe('binding', () => {
 
     jsonnet.nativeCallback("failAsync", async (msg) => { throw msg; }, "msg");
     await expectAsync(jsonnet.evaluateSnippet(`std.native("failAsync")("kimagure")`))
-      .toBeRejectedWithError(Error , /^RUNTIME ERROR: kimagure/);
+      .toBeRejectedWithError(Error, /^RUNTIME ERROR: kimagure/);
   });
 
   it('reports syntax error in snippet with filename', async () => {
@@ -234,6 +234,13 @@ describe('binding', () => {
     });
   });
 
+  it('reports error for evaluateSnippetMulti', async () => {
+    const jsonnet = new Jsonnet();
+
+    await expectAsync(jsonnet.evaluateSnippetMulti(`1`))
+      .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
+  });
+
   it('evaluateSnippetStream', async () => {
     const jsonnet = new Jsonnet();
 
@@ -248,6 +255,13 @@ describe('binding', () => {
       '{\n   "a": 1\n}\n',
       '{\n   "b": 2\n}\n',
     ])
+  });
+
+  it('reports error for evaluateSnippetStream', async () => {
+    const jsonnet = new Jsonnet();
+
+    await expectAsync(jsonnet.evaluateSnippetStream(`1`))
+      .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
   });
 
   it('supports stringOutput for snippet', async () => {
