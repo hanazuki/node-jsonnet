@@ -241,6 +241,13 @@ describe('binding', () => {
       .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
   });
 
+  it('reports error for evaluateFileMulti', async () => {
+    const jsonnet = new Jsonnet();
+
+    await expectAsync(jsonnet.evaluateFileMulti(`${__dirname}/fixtures/runtime_error.jsonnet`))
+      .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
+  });
+
   it('evaluateSnippetStream', async () => {
     const jsonnet = new Jsonnet();
 
@@ -261,6 +268,13 @@ describe('binding', () => {
     const jsonnet = new Jsonnet();
 
     await expectAsync(jsonnet.evaluateSnippetStream(`1`))
+      .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
+  });
+
+  it('reports error for evaluateFileStream', async () => {
+    const jsonnet = new Jsonnet();
+
+    await expectAsync(jsonnet.evaluateFileStream(`${__dirname}/fixtures/runtime_error.jsonnet`))
       .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
   });
 
