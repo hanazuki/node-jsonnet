@@ -18,7 +18,7 @@ SpaceBeforeRangeBasedForLoopColon: false
 SpacesBeforeTrailingComments: 2
 
 IncludeCategories:
-  - Regex:           '^<([a-z/]+)>'
+  - Regex:           '^<([a-z_/]+)>'
     Priority:        1
   - Regex:           '^<'
     Priority:        2

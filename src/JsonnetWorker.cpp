@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 #include "JsonnetWorker.hpp"
 #include <memory>
+#include <string_view>
 #include <utility>
 #include <vector>
-#include <string_view>
 
 namespace nodejsonnet {
 
