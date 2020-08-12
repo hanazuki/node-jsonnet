@@ -42,6 +42,7 @@
   "scripts": {
     "install": "cmake-js build --CDCMAKE_EXPORT_COMPILE_COMMANDS=1",
     "test": "jasmine",
+    "lint": "dtslint types",
     "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
   },
   "engines": {
@@ -56,8 +57,9 @@
     "@types/node": "*"
   },
   "devDependencies": {
-    "dtslint": "^3.6.0",
-    "jasmine": "^3.5.0",
-    "typedoc": "^0.16.11"
+    "dtslint": "^3.6.14",
+    "jasmine": "^3.6.1",
+    "typedoc": "^0.16.11",
+    "typescript": "^3.9.7"
   }
 }
