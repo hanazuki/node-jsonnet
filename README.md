@@ -20,7 +20,7 @@ jsonnet.extCode("x", "4")
        .then(json => console.log(JSON.parse(json)));  // => 12
 ```
 
-The library is documented in the TypeScript type definitions at [`types/index.d.ts`](types/index.d.ts).
+The library is documented in the TypeScript type definitions at [`types/index.d.ts`](types/index.d.ts), and [HTML documentation](https://hanazuki.github.io/node-jsonnet/) is also available online.
 
 ## Install Requirements
 
