@@ -1,6 +1,6 @@
 {
   "inputFiles": ["index.d.ts"],
-  "exclude": ["test*.ts"],
+  "exclude": ["example*.ts", "test*.ts"],
   "mode": "file",
   "out": "../docs",
   "includeDeclarations": true,
