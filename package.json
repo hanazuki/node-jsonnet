@@ -46,7 +46,7 @@
     "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
   },
   "engines": {
-    "node": "^10.20.0 || ^12.17.0 || >=13"
+    "node": "^10.20.0 || ^12.17.0 || >=14"
   },
   "dependencies": {
     "bindings": "^1.5.0",
