@@ -13,6 +13,7 @@
   "types": "types/index.d.ts",
   "files": [
     "CMakeLists.txt",
+    "/*.md",
     "/lib/*",
     "/types/*.d.ts",
     "/src/*",
