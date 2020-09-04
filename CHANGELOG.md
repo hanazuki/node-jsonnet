@@ -1,6 +1,6 @@
 # ChangeLog
 
-## v0.4.0 (unreleased)
+## v0.4.0
 - [breaking] NAPI_VERSION >= 6 is required
 - Fixed to work in multi-context application (worker threads)
 - `Jsonnet.prototype.evaluate*` methods now return evaluation errors as `JsonnetError` objects
