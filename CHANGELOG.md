@@ -3,6 +3,7 @@
 ## v0.4.0 (unreleased)
 - [breaking] NAPI_VERSION >= 6 is required
 - Fixed to work in multi-context application (worker threads)
+- `Jsonnet.prototype.evaluate*` methods now return evaluation errors as `JsonnetError` objects
 
 ## v0.3.3
 - Update libjsonnet to [v0.16.0](https://github.com/google/jsonnet/releases/tag/v0.16.0)

@@ -1,4 +1,4 @@
-const {Jsonnet} = require("../");
+const {Jsonnet, JsonnetError} = require("../");
 
 describe('binding', () => {
   beforeEach(function() {
@@ -169,7 +169,7 @@ describe('binding', () => {
     expect(j).toBeJSON(`"🦔"\n`);
 
     await expectAsync(jsonnet.evaluateSnippet(`std.native("readFile")("non-existent")`))
-      .toBeRejectedWithError(Error, /^RUNTIME ERROR: .* ENOENT/);
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: .* ENOENT/);
   });
 
   it('uses the native callback added most recently for the same name', async () => {
@@ -188,9 +188,9 @@ describe('binding', () => {
     const jsonnet = new Jsonnet();
 
     await expectAsync(jsonnet.evaluateSnippet(`var1`))
-      .toBeRejectedWithError(Error, /^STATIC ERROR: .* Unknown variable/);
+      .toBeRejectedWithError(JsonnetError, /^STATIC ERROR: .* Unknown variable/);
     await expectAsync(jsonnet.evaluateSnippet(`1 / 0`))
-      .toBeRejectedWithError(Error, /^RUNTIME ERROR: division by zero/);
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: division by zero/);
   });
 
   it('reports throwing native callback', async () => {
@@ -198,7 +198,7 @@ describe('binding', () => {
 
     jsonnet.nativeCallback("fail", (msg) => { throw msg; }, "msg");
     await expectAsync(jsonnet.evaluateSnippet(`std.native("fail")("kimagure")`))
-      .toBeRejectedWithError(Error, /^RUNTIME ERROR: kimagure/);
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: kimagure/);
 
   });
 
@@ -207,14 +207,14 @@ describe('binding', () => {
 
     jsonnet.nativeCallback("failAsync", async (msg) => { throw msg; }, "msg");
     await expectAsync(jsonnet.evaluateSnippet(`std.native("failAsync")("kimagure")`))
-      .toBeRejectedWithError(Error, /^RUNTIME ERROR: kimagure/);
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: kimagure/);
   });
 
   it('reports syntax error in snippet with filename', async () => {
     const jsonnet = new Jsonnet();
 
     await expectAsync(jsonnet.evaluateSnippet(`1 +`, "snippet-filename"))
-      .toBeRejectedWithError(Error, /^STATIC ERROR: snippet-filename:1:4/);
+      .toBeRejectedWithError(JsonnetError, /^STATIC ERROR: snippet-filename:1:4/);
   });
 
   it('evaluateSnippetMulti', async () => {
@@ -238,14 +238,14 @@ describe('binding', () => {
     const jsonnet = new Jsonnet();
 
     await expectAsync(jsonnet.evaluateSnippetMulti(`1`))
-      .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR:/)
   });
 
   it('reports error for evaluateFileMulti', async () => {
     const jsonnet = new Jsonnet();
 
     await expectAsync(jsonnet.evaluateFileMulti(`${__dirname}/fixtures/runtime_error.jsonnet`))
-      .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR:/)
   });
 
   it('evaluateSnippetStream', async () => {
@@ -268,14 +268,14 @@ describe('binding', () => {
     const jsonnet = new Jsonnet();
 
     await expectAsync(jsonnet.evaluateSnippetStream(`1`))
-      .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR:/)
   });
 
   it('reports error for evaluateFileStream', async () => {
     const jsonnet = new Jsonnet();
 
     await expectAsync(jsonnet.evaluateFileStream(`${__dirname}/fixtures/runtime_error.jsonnet`))
-      .toBeRejectedWithError(Error, /^RUNTIME ERROR:/)
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR:/)
   });
 
   it('supports stringOutput for snippet', async () => {

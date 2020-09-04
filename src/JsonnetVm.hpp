@@ -16,6 +16,10 @@ extern "C" {
 
 namespace nodejsonnet {
 
+  class JsonnetError: public std::runtime_error {
+    using std::runtime_error::runtime_error;
+  };
+
   class JsonnetVm: public std::enable_shared_from_this<JsonnetVm> {
   public:
     using NativeCallback = std::function<JsonnetJsonValue *(

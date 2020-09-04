@@ -1,8 +1,17 @@
 // SPDX-License-Identifier: MIT
 // TypeScript Version: 3.1
 
+/**
+ * `JsonnetPrimitiveValue` is a class of values that may be passed to native callbacks.
+ */
 export type JsonnetPrimitiveValue = null | boolean | number | string;
 
+export class JsonnetError extends Error {
+}
+
+/**
+ * `Jsonnet` is a Jsonnet interpreter. It has a fluent interface: all the setter methods modify the receiver and return it.
+ */
 export class Jsonnet {
   /**
    * Returns the version of linked libjsonnet.
@@ -135,7 +144,7 @@ export class Jsonnet {
    * @param filename - Path to the file.
    * @returns A Promise for the evaluation result in JSON representation.
    */
-  evaluateFileMulti(filename: string): Promise<{[name: string]: string}>;
+  evaluateFileMulti(filename: string): Promise<{ [name: string]: string }>;
 
   /**
    * Evaluates a Jsonnet script given as a string and returns a number of named JSON's.
@@ -144,7 +153,7 @@ export class Jsonnet {
    * @param filename - Filename used for error reporting.
    * @returns A Promise for the evaluation result in JSON representation.
    */
-  evaluateSnippetMulti(snippet: string, filename?: string): Promise<{[name: string]: string}>;
+  evaluateSnippetMulti(snippet: string, filename?: string): Promise<{ [name: string]: string }>;
 
   /**
    * Evaluates a Jsonnet script in a file and returns a number of JSON's.

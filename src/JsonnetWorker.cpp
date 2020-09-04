@@ -4,16 +4,22 @@
 #include <string_view>
 #include <utility>
 #include <vector>
+#include "JsonnetAddon.hpp"
 
 namespace nodejsonnet {
 
   JsonnetWorker::JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> op)
-    : Napi::AsyncWorker(env), vm(std::move(vm)), op(std::move(op)),
+    : Napi::AsyncWorker(env, "jsonnet"), vm(std::move(vm)), op(std::move(op)),
       deferred(Napi::Promise::Deferred::New(env)) {
   }
 
   void JsonnetWorker::Execute() {
-    result = op->execute(*vm);
+    try {
+      result = op->execute(*vm);
+    } catch(JsonnetError const &e) {
+      errorType = ErrorType::Jsonnet;
+      throw;
+    }
   }
 
   void JsonnetWorker::OnOK() {
@@ -21,7 +27,23 @@ namespace nodejsonnet {
   }
 
   void JsonnetWorker::OnError(Napi::Error const &error) {
-    deferred.Reject(error.Value());
+    auto e = error.Value();
+
+    switch(errorType) {
+    case ErrorType::Generic:
+      break;
+    case ErrorType::Jsonnet:
+      e = JsonnetAddon::getInstance(e.Env())
+            .jsonnet.getExports()
+            .Get("Error")
+            .As<Napi::Function>()
+            .New({e.Get("message")});
+      break;
+    default:
+      abort();
+    }
+
+    deferred.Reject(e);
   }
 
   JsonnetWorker::EvaluateFileOp::EvaluateFileOp(std::string filename)

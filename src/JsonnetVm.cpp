@@ -72,7 +72,7 @@ namespace nodejsonnet {
     int error;
     auto result = buffer(::jsonnet_evaluate_file(vm, filename.c_str(), &error));
     if(error != 0) {
-      throw std::runtime_error(result.get());
+      throw JsonnetError(result.get());
     }
     return result;
   }
@@ -82,7 +82,7 @@ namespace nodejsonnet {
     int error;
     auto result = buffer(::jsonnet_evaluate_snippet(vm, filename.c_str(), snippet.c_str(), &error));
     if(error != 0) {
-      throw std::runtime_error(result.get());
+      throw JsonnetError(result.get());
     }
     return result;
   }
@@ -91,7 +91,7 @@ namespace nodejsonnet {
     int error;
     auto result = buffer(::jsonnet_evaluate_file_multi(vm, filename.c_str(), &error));
     if(error != 0) {
-      throw std::runtime_error(result.get());
+      throw JsonnetError(result.get());
     }
     return result;
   }
@@ -102,7 +102,7 @@ namespace nodejsonnet {
     auto result =
       buffer(::jsonnet_evaluate_snippet_multi(vm, filename.c_str(), snippet.c_str(), &error));
     if(error != 0) {
-      throw std::runtime_error(result.get());
+      throw JsonnetError(result.get());
     }
     return result;
   }
@@ -111,7 +111,7 @@ namespace nodejsonnet {
     int error;
     auto result = buffer(::jsonnet_evaluate_file_stream(vm, filename.c_str(), &error));
     if(error != 0) {
-      throw std::runtime_error(result.get());
+      throw JsonnetError(result.get());
     }
     return result;
   }
@@ -122,7 +122,7 @@ namespace nodejsonnet {
     auto result =
       buffer(::jsonnet_evaluate_snippet_stream(vm, filename.c_str(), snippet.c_str(), &error));
     if(error != 0) {
-      throw std::runtime_error(result.get());
+      throw JsonnetError(result.get());
     }
     return result;
   }

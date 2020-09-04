@@ -59,21 +59,28 @@ namespace nodejsonnet {
       Napi::Value toValue(Napi::Env env, JsonnetVm::Buffer buffer) override;
     };
 
-    JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> op);
+    enum class ErrorType {
+      Generic,
+      Jsonnet,
+    };
 
-    void Execute() override;
-    void OnOK() override;
-    void OnError(Napi::Error const &error) override;
+    JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> op);
 
     Napi::Promise Promise() {
       return deferred.Promise();
     }
+
+  protected:
+    void Execute() override;
+    void OnOK() override;
+    void OnError(Napi::Error const &error) override;
 
   private:
     std::shared_ptr<JsonnetVm> vm;
     std::unique_ptr<Op> op;
     Napi::Promise::Deferred deferred;
     JsonnetVm::Buffer result;
+    ErrorType errorType;
   };
 
 }
