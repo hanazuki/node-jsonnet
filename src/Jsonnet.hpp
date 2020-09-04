@@ -35,7 +35,9 @@ namespace nodejsonnet {
   class Jsonnet: public Napi::ObjectWrap<Jsonnet>, private JsonnetVmParam {
   public:
     struct InstanceData {
-      Napi::FunctionReference constructor;
+      Napi::FunctionReference exports;
+
+      Napi::Function getExports();
     };
 
     static Napi::Object init(const Napi::Env env, InstanceData &instanceData);

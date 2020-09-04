@@ -34,11 +34,15 @@ namespace nodejsonnet {
         InstanceMethod<&Jsonnet::nativeCallback>("_nativeCallback"),  // See also lib/index.js
       });
 
-    instanceData.constructor = Napi::Persistent(func);
+    instanceData.exports = Napi::Persistent(func);
     return func;
   }
 
   Jsonnet::Jsonnet(const Napi::CallbackInfo &info): Napi::ObjectWrap<Jsonnet>(info) {
+  }
+
+  Napi::Function Jsonnet::InstanceData::getExports() {
+    return exports.Value().As<Napi::Function>();
   }
 
   Napi::Value Jsonnet::getVersion(const Napi::CallbackInfo &info) {
