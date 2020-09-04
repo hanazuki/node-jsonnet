@@ -20,6 +20,8 @@ C++ source files should be formatted with clang-format before committed. Files o
 ## Testing
 `npm test` will evaluate [Jasmine](https://jasmine.github.io/) specs. `spec/binding_spec.js` describes the behavior of the binding. Using the test suite maintained by the Jsonnet developers, `spec/jsonnet_spec.js` ensures that the binding evaluates Jsonnet programs in the same way as the original jsonnet command.
 
+Test coverage is tracked on [Coveralls](https://coveralls.io/github/hanazuki/node-jsonnet).
+
 ## Packaging
 
 Running `scripts/test-packaging.sh` will produce an NPM tarball and check if the package can be cleanly installed.
