@@ -5,7 +5,7 @@ We welcome all your contributions to node-jsonnet.
 ## Project files
 
 - lib/ -- JavaScript stub to load native addon
-- scritps/ -- Utility scripts for development and testing
+- scripts/ -- Utility scripts for development and testing
 - spec/ -- Jasmine specs
 - src/ -- Node.js binding to libjsonnet, written in C++
 - third_party/
