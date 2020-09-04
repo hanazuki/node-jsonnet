@@ -20,7 +20,10 @@ cd docs
 
 git add -A
 if git commit -m 'Generate docs'; then
-  git push origin docs
+  if !git push origin docs; then
+    git pull origin docs --rebase
+    git push origin docs
+  fi
 else
   echo "No changes"
 fi
