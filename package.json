@@ -58,7 +58,7 @@
     "@types/node": "*"
   },
   "devDependencies": {
-    "dtslint": "^3.6.14",
+    "dtslint": "^3.7.0",
     "jasmine": "^3.6.1",
     "typedoc": "^0.16.11",
     "typescript": "^3.9.7"
