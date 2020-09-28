@@ -60,7 +60,7 @@
   "devDependencies": {
     "dtslint": "^3.7.0",
     "jasmine": "^3.6.1",
-    "typedoc": "^0.16.11",
+    "typedoc": "^0.19.2",
     "typescript": "^3.9.7"
   }
 }
