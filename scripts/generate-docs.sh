@@ -9,6 +9,8 @@ else
   exit 1
 fi
 
+commit=$(git rev-parse HEAD)
+
 git fetch origin docs
 
 rm -rf docs
@@ -19,7 +21,7 @@ git worktree add -f docs -B docs -- origin/docs
 cd docs
 
 git add -A
-if git commit -m 'Generate docs'; then
+if git commit -m 'Generate docs' -m "Source: $commit"; then
   if ! git push origin docs; then
     git pull origin docs --rebase
     git push origin docs
