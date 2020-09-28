@@ -81,12 +81,12 @@ jsonnet.extCode(<span class="hljs-string">&quot;x&quot;</span>, <span class="hlj
        .evaluateSnippet(<span class="hljs-string">`std.extVar(&quot;x&quot;) * std.native(&quot;add&quot;)(1, 2)`</span>)
        .then(<span class="hljs-function"><span class="hljs-params">json</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">JSON</span>.parse(json)));  <span class="hljs-comment">// =&gt; 12</span></code></pre>
 				<p>The library is documented in the TypeScript type definitions at <a href="types/index.d.ts"><code>types/index.d.ts</code></a>, and <a href="https://hanazuki.github.io/node-jsonnet/">HTML documentation</a> is also available online.</p>
-				<a href="#install-requirements" id="install-requirements" style="color: inherit; text-decoration: none;">
-					<h2>Install Requirements</h2>
+				<a href="#installation-requirements" id="installation-requirements" style="color: inherit; text-decoration: none;">
+					<h2>Installation Requirements</h2>
 				</a>
 				<ul>
-					<li>Node.js with N-API Version 6: v10 (^10.20.0), v12 (^12.17.0), v14 or later</li>
-					<li>GCC or Clang C++ compiler that supports C++17</li>
+					<li><a href="https://nodejs.org/api/n-api.html#n_api_n_api_version_matrix">Node.js with N-API Version 6</a>: v10 (^10.20.0), v12 (^12.17.0), v14 or later</li>
+					<li><a href="https://gcc.gnu.org/projects/cxx-status.html#cxx17">GCC</a> or <a href="https://clang.llvm.org/cxx_status.html#cxx17">Clang</a> C++ compiler that supports C++17</li>
 					<li>CMake 3.8 or later</li>
 				</ul>
 				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
