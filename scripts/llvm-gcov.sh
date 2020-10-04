@@ -1,1 +1,1 @@
-llvm-cov gcov "$@"
+exec llvm-cov gcov "$@"
