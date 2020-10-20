@@ -11,10 +11,10 @@ namespace nodejsonnet {
 
     static JsonnetAddon &getInstance(Napi::Env env);
 
-    Napi::Function getJsonnet();
+    Napi::Value getExport(char const *name);
 
   private:
-    Napi::FunctionReference jsonnet;
+    Napi::ObjectReference exports;
   };
 
 }

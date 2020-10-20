@@ -33,8 +33,10 @@ namespace nodejsonnet {
     case ErrorType::Generic:
       break;
     case ErrorType::Jsonnet:
-      e = JsonnetAddon::getInstance(e.Env()).getJsonnet().Get("Error").As<Napi::Function>().New(
-        {e.Get("message")});
+      e = JsonnetAddon::getInstance(e.Env())
+            .getExport("JsonnetError")
+            .As<Napi::Function>()
+            .New({e.Get("message")});
       break;
     default:
       abort();
