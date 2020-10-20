@@ -11,8 +11,8 @@
 
 namespace nodejsonnet {
 
-  Napi::Object Jsonnet::init(Napi::Env env, InstanceData &instanceData) {
-    auto const func = DefineClass(env, "Jsonnet",
+  Napi::Function Jsonnet::init(Napi::Env env) {
+    return DefineClass(env, "Jsonnet",
       {
         StaticAccessor<&Jsonnet::getVersion>("version"),
         InstanceMethod<&Jsonnet::setMaxStack>("setMaxStack"),
@@ -33,16 +33,9 @@ namespace nodejsonnet {
         InstanceMethod<&Jsonnet::addJpath>("addJpath"),
         InstanceMethod<&Jsonnet::nativeCallback>("_nativeCallback"),  // See also lib/index.js
       });
-
-    instanceData.exports = Napi::Persistent(func);
-    return func;
   }
 
   Jsonnet::Jsonnet(const Napi::CallbackInfo &info): Napi::ObjectWrap<Jsonnet>(info) {
-  }
-
-  Napi::Function Jsonnet::InstanceData::getExports() {
-    return exports.Value().As<Napi::Function>();
   }
 
   Napi::Value Jsonnet::getVersion(const Napi::CallbackInfo &info) {

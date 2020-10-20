@@ -11,7 +11,10 @@ namespace nodejsonnet {
 
     static JsonnetAddon &getInstance(Napi::Env env);
 
-    Jsonnet::InstanceData jsonnet;
+    Napi::Function getJsonnet();
+
+  private:
+    Napi::FunctionReference jsonnet;
   };
 
 }

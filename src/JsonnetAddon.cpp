@@ -4,8 +4,11 @@
 namespace nodejsonnet {
 
   JsonnetAddon::JsonnetAddon(Napi::Env env, Napi::Object exports) {
+    auto const jsonnet = nodejsonnet::Jsonnet::init(env);
+    this->jsonnet = Napi::Persistent(jsonnet);
+
     DefineAddon(exports, {
-                           InstanceValue("Jsonnet", nodejsonnet::Jsonnet::init(env, jsonnet)),
+                           InstanceValue("Jsonnet", jsonnet),
                          });
   }
 
@@ -13,4 +16,7 @@ namespace nodejsonnet {
     return *env.GetInstanceData<JsonnetAddon>();
   }
 
+  Napi::Function JsonnetAddon::getJsonnet() {
+    return jsonnet.Value().As<Napi::Function>();
+  }
 }
