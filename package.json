@@ -44,6 +44,8 @@
     "install": "cmake-js build --CDCMAKE_EXPORT_COMPILE_COMMANDS=1",
     "test": "jasmine",
     "lint": "dtslint types",
+    "format": "clang-format -i src/*",
+    "cpplint": "cpplint --filter=-,+build,+runtime,-runtime/indentation_namespace src/*",
     "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
   },
   "engines": {
