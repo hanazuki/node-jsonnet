@@ -21,7 +21,6 @@ execute_process(COMMAND node -p "require('node-addon-api').include.replace(/^\"(
   OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/third_party/jsonnet/include")
 
 set(BUILD_TESTS OFF CACHE BOOL "Disable jsonnet tests")
 add_subdirectory(third_party/jsonnet EXCLUDE_FROM_ALL)

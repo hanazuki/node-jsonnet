@@ -308,8 +308,6 @@ describe('binding', () => {
       "a\n",
       "b\n",
     ]);
-
-    pending("BUG in libjsonnet");
   });
 
 });
