@@ -11,10 +11,9 @@ jobs:
         node: ["^10.20.0", "^12.17.0", 14]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v1
-    - name: Checkout submodules
-      run: |
-        git submodule update --init --recursive --depth=1
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
     - name: Install
       run: |
         if type apt-get >/dev/null; then
