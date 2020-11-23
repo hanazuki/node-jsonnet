@@ -15,7 +15,7 @@ if(DEFINED ENV{NODE_JSONNET_ENABLE_COVERAGE})
   target_compile_options(${PROJECT_NAME} PRIVATE --coverage)
 endif()
 
-execute_process(COMMAND node -p "require('node-addon-api').include.replace(/^\"(.*)\"$/, '\$1')"
+execute_process(COMMAND node -p "require('node-addon-api').include_dir"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   OUTPUT_VARIABLE NODE_ADDON_API_DIR
   OUTPUT_STRIP_TRAILING_WHITESPACE
