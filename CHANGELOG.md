@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v0.4.1
+- Update libjsonnet to [v0.17.0](https://github.com/google/jsonnet/releases/tag/v0.17.0)
+
 ## v0.4.0
 - [breaking] NAPI_VERSION >= 6 is required
 - Fixed to work in multi-context application (worker threads)
