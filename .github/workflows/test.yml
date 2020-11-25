@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macos-10.15]
+        os: [ubuntu-20.04, macos-11.0]
         node: ["^10.20.0", "^12.17.0", 14]
     runs-on: ${{ matrix.os }}
     steps:
