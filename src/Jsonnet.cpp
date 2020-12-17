@@ -317,7 +317,7 @@ namespace nodejsonnet {
       auto const &params = cb.params;
 
       using namespace std::placeholders;
-      vm->nativeCallback(name, std::bind(&JsonnetNativeCallback::Call, fun.get(), _1, _2), params);
+      vm->nativeCallback(name, std::bind(&JsonnetNativeCallback::call, fun.get(), _1, _2), params);
     }
 
     return vm;

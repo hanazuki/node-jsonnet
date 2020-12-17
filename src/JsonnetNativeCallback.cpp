@@ -11,7 +11,7 @@ namespace nodejsonnet {
     this->tsfn.Release();
   }
 
-  JsonnetJsonValue *JsonnetNativeCallback::Call(
+  JsonnetJsonValue *JsonnetNativeCallback::call(
     std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args) {
     // This functions runs in a worker thread and cannot access Node VM.
 
@@ -20,7 +20,7 @@ namespace nodejsonnet {
     return payload.getFuture().get();
   }
 
-  void JsonnetNativeCallback::Callback(
+  void JsonnetNativeCallback::callback(
     Napi::Env env, Napi::Function fun, std::nullptr_t *, Payload *payload) {
     // This functions runs in the Node main thread.
 

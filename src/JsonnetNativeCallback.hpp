@@ -17,7 +17,7 @@ namespace nodejsonnet {
     JsonnetNativeCallback(Napi::Env env, Napi::Function fun);
     ~JsonnetNativeCallback();
 
-    JsonnetJsonValue *Call(
+    JsonnetJsonValue *call(
       std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args);
 
   private:
@@ -52,9 +52,9 @@ namespace nodejsonnet {
       std::promise<JsonnetJsonValue *> result;
     };
 
-    static void Callback(Napi::Env env, Napi::Function fun, std::nullptr_t *, Payload *payload);
+    static void callback(Napi::Env env, Napi::Function fun, std::nullptr_t *, Payload *payload);
 
-    using ThreadSafeFunction = Napi::TypedThreadSafeFunction<std::nullptr_t, Payload, Callback>;
+    using ThreadSafeFunction = Napi::TypedThreadSafeFunction<std::nullptr_t, Payload, callback>;
 
     ThreadSafeFunction tsfn;
   };
