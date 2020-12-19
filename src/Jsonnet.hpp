@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 #include <napi.h>
+#include "JsonnetNativeCallback.hpp"
 #include "JsonnetVm.hpp"
 
 namespace nodejsonnet {
@@ -18,7 +19,7 @@ namespace nodejsonnet {
     };
 
     struct NativeCallback {
-      std::shared_ptr<Napi::FunctionReference> fun;
+      std::shared_ptr<JsonnetNativeCallback> fun;
       std::vector<std::string> params;
     };
 
@@ -59,7 +60,7 @@ namespace nodejsonnet {
     Napi::Value addJpath(const Napi::CallbackInfo &info);
     Napi::Value nativeCallback(const Napi::CallbackInfo &info);
 
-    std::shared_ptr<JsonnetVm> createVm(Napi::Env const &env);
+    std::shared_ptr<JsonnetVm> createVm();
   };
 
 }
