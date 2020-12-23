@@ -35,6 +35,7 @@ jobs:
     - uses: github/codeql-action/init@v1
       with:
         languages: cpp,javascript
+        paths_ignore: third_party/
     - name: Build
       run: npm ci
     - uses: github/codeql-action/analyze@v1
