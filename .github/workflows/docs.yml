@@ -11,10 +11,20 @@ jobs:
   docs:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
     - name: gitconfig
       run: |
         git config --global user.email automate@hanazuki.dev
         git config --global user.name automate
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+    - name: Install
+      run: npm ci
     - name: Generate docs
       run: scripts/generate-docs.sh
