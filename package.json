@@ -9,8 +9,15 @@
     "url": "https://github.com/hanazuki/node-jsonnet"
   },
   "license": "MIT AND Apache-2.0",
-  "main": "lib/index.js",
-  "types": "types/index.d.ts",
+  "type": "commonjs",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib/module.mjs"
+    }
+  },
+  "types": "./types/index.d.ts",
   "files": [
     "CMakeLists.txt",
     "/*.md",
