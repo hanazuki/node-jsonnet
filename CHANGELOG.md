@@ -1,5 +1,8 @@
 # ChangeLog
 
+## UNRELEASED
+- Provide ES Module interface for Node.js >= 12
+
 ## v0.4.1 (2020-11-23)
 - Update libjsonnet to [v0.17.0](https://github.com/google/jsonnet/releases/tag/v0.17.0)
 
