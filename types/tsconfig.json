@@ -11,5 +11,5 @@
     "out": "../docs",
     "excludeExternals": true
   },
-  "include": ["."],
+  "include": ["."]
 }
