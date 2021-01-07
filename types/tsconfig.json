@@ -6,5 +6,10 @@
     "baseUrl": ".",
     "paths": { "@hanazuki/node-jsonnet": ["."] }
   },
-  "include": ["."]
+  "typedocOptions": {
+    "entryPoints": ["index.d.ts"],
+    "out": "../docs",
+    "excludeExternals": true
+  },
+  "include": ["."],
 }
