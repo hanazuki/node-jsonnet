@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macos-11.0]
+        os: [ubuntu-20.04, macos-latest]
         node: ["^10.20.0", "^12.17.0", 14]
     runs-on: ${{ matrix.os }}
     steps:
@@ -38,7 +38,6 @@ jobs:
         ln -sf gcov-10 gcov
         ln -sf /Library/Developer/CommandLineTools/usr/bin/llvm-cov .
     - name: Test with GCC
-      if: "!startsWith(matrix.os, 'macos-')" ## XXX
       run: ./scripts/test-packaging.sh
       env:
         CC: gcc
