@@ -7,7 +7,7 @@ const glob = require('glob').sync;
 const execFile = promisify(cp.execFile);
 
 const jsExamples = path.join(__dirname, "../examples/*.{mjs,cjs}");
-const tsExamples = path.join(__dirname, "../types/example*.ts");
+const tsExamples = path.join(__dirname, "../examples/*.ts");
 
 const timeout = 3000;
 
@@ -23,7 +23,7 @@ describe('JavaScript examples', () => {
 describe('TypeScript examples', () => {
   for(const file of glob(tsExamples)) {
     it(`${file}`, async () => execFile('ts-node', [file], {
-      cwd: path.join(__dirname, '../types'),
+      cwd: path.join(__dirname, '../examples'),
       timeout,
     }))
   }

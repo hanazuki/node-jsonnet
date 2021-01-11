@@ -21,6 +21,7 @@
   "files": [
     "CMakeLists.txt",
     "/*.md",
+    "/examples/*",
     "/lib/*",
     "/types/*.d.ts",
     "/src/*",
