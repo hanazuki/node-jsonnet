@@ -20,12 +20,12 @@ git worktree add -f docs -B docs -- origin/docs
 
 cd docs
 
-# git add -A
-# if git commit -m 'Generate docs' -m "Source: $commit"; then
-#   if ! git push origin docs; then
-#     git pull origin docs --rebase
-#     git push origin docs
-#   fi
-# else
-#   echo "No changes"
-# fi
+git add -A
+if git commit -m 'Generate docs' -m "Source: $commit"; then
+  if ! git push origin docs; then
+    git pull origin docs --rebase
+    git push origin docs
+  fi
+else
+  echo "No changes"
+fi
