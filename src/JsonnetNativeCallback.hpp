@@ -17,6 +17,9 @@ namespace nodejsonnet {
     JsonnetNativeCallback(Napi::Env env, Napi::Function fun);
     ~JsonnetNativeCallback();
 
+    JsonnetNativeCallback(JsonnetNativeCallback const &) = delete;
+    JsonnetNativeCallback &operator=(JsonnetNativeCallback const &) = delete;
+
     JsonnetJsonValue *call(
       std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args);
 

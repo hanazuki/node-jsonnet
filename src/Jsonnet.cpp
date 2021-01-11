@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 #include "JsonValueConverter.hpp"
+#include "JsonnetNativeCallback.hpp"
 #include "JsonnetWorker.hpp"
 #include "libjsonnet.h"
 
@@ -74,7 +75,7 @@ namespace nodejsonnet {
     auto const env = info.Env();
     auto filename = info[0].As<Napi::String>().Utf8Value();
 
-    auto vm = createVm();
+    auto vm = createVm(env);
     auto const worker = new JsonnetWorker(
       env, vm, std::make_unique<JsonnetWorker::EvaluateFileOp>(std::move(filename)));
     auto const promise = worker->Promise();
@@ -87,7 +88,7 @@ namespace nodejsonnet {
     auto snippet = info[0].As<Napi::String>().Utf8Value();
     auto filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
 
-    auto vm = createVm();
+    auto vm = createVm(env);
     auto const worker = new JsonnetWorker(env, vm,
       std::make_unique<JsonnetWorker::EvaluateSnippetOp>(std::move(snippet), std::move(filename)));
     auto const promise = worker->Promise();
@@ -99,7 +100,7 @@ namespace nodejsonnet {
     auto const env = info.Env();
     auto filename = info[0].As<Napi::String>().Utf8Value();
 
-    auto vm = createVm();
+    auto vm = createVm(env);
     auto const worker = new JsonnetWorker(
       env, vm, std::make_unique<JsonnetWorker::EvaluateFileMultiOp>(std::move(filename)));
     auto const promise = worker->Promise();
@@ -112,7 +113,7 @@ namespace nodejsonnet {
     auto snippet = info[0].As<Napi::String>().Utf8Value();
     auto filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
 
-    auto vm = createVm();
+    auto vm = createVm(env);
     auto const worker = new JsonnetWorker(env, vm,
       std::make_unique<JsonnetWorker::EvaluateSnippetMultiOp>(
         std::move(snippet), std::move(filename)));
@@ -125,7 +126,7 @@ namespace nodejsonnet {
     auto const env = info.Env();
     auto filename = info[0].As<Napi::String>().Utf8Value();
 
-    auto vm = createVm();
+    auto vm = createVm(env);
     auto const worker = new JsonnetWorker(
       env, vm, std::make_unique<JsonnetWorker::EvaluateFileStreamOp>(std::move(filename)));
     auto const promise = worker->Promise();
@@ -138,7 +139,7 @@ namespace nodejsonnet {
     auto snippet = info[0].As<Napi::String>().Utf8Value();
     auto filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
 
-    auto vm = createVm();
+    auto vm = createVm(env);
     auto const worker = new JsonnetWorker(env, vm,
       std::make_unique<JsonnetWorker::EvaluateSnippetStreamOp>(
         std::move(snippet), std::move(filename)));
@@ -229,7 +230,6 @@ namespace nodejsonnet {
   }
 
   Napi::Value Jsonnet::nativeCallback(const Napi::CallbackInfo &info) {
-    auto env = info.Env();
     auto name = info[0].As<Napi::String>().Utf8Value();
     auto const fun = info[1].As<Napi::Function>();
 
@@ -239,12 +239,13 @@ namespace nodejsonnet {
     }
 
     nativeCallbacks.insert_or_assign(std::move(name),
-      NativeCallback{std::make_shared<JsonnetNativeCallback>(env, fun), std::move(params)});
+      NativeCallback{
+        std::make_shared<Napi::FunctionReference>(Napi::Persistent(fun)), std::move(params)});
 
     return info.This();
   }
 
-  std::shared_ptr<JsonnetVm> Jsonnet::createVm() {
+  std::shared_ptr<JsonnetVm> Jsonnet::createVm(Napi::Env const &env) {
     auto vm = JsonnetVm::make();
 
     if(maxStack) {
@@ -281,43 +282,17 @@ namespace nodejsonnet {
       vm->jpathAdd(x);
     }
 
-    struct Payload {
-      Payload(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args)
-        : args{std::move(args)}, vm{std::move(vm)} {
-      }
-
-      std::vector<JsonnetJsonValue const *> const &getArgs() const {
-        return args;
-      }
-
-      std::shared_ptr<JsonnetVm> getVm() const {
-        return vm;
-      }
-
-      void setResult(JsonnetJsonValue *value) {
-        result.set_value(value);
-      }
-
-      void setError(std::exception_ptr e) {
-        result.set_exception(e);
-      }
-
-      std::future<JsonnetJsonValue *> getFuture() {
-        return result.get_future();
-      }
-
-    private:
-      std::vector<JsonnetJsonValue const *> args;
-      std::shared_ptr<JsonnetVm> vm;
-      std::promise<JsonnetJsonValue *> result;
-    };
-
     for(auto const &[name, cb]: nativeCallbacks) {
       auto const &fun = cb.fun;
       auto const &params = cb.params;
 
-      using namespace std::placeholders;
-      vm->nativeCallback(name, std::bind(&JsonnetNativeCallback::call, fun.get(), _1, _2), params);
+      vm->nativeCallback(
+        name,
+        [callback = std::make_shared<JsonnetNativeCallback>(env, fun->Value())](
+          std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args) {
+          return callback->call(std::move(vm), std::move(args));
+        },
+        params);
     }
 
     return vm;
