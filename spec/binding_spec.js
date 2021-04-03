@@ -88,6 +88,13 @@ describe('binding', () => {
     expect(j).toBeJSON("🦔");
   });
 
+  it('supports importstr', async () => {
+    const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
+
+    const j = await jsonnet.evaluateSnippet(`importstr "🦔.jsonnet"`);
+    expect(j).toBeJSON('"🦔"\n');
+  });
+
   it('supports top-level arguments', async () => {
     const jsonnet = new Jsonnet().tlaString("var1", "test").tlaCode("var2", "{x:1,y:2}");
 
