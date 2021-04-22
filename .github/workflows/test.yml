@@ -11,8 +11,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        node: ["^10.20.0", "^12.17.0", 14, 16]
+        os: [ubuntu-20.04, macos-latest]
+        node: ["^10.20.0", "^12.17.0", 14]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
