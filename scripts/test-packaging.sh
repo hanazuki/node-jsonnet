@@ -6,7 +6,6 @@ __dir="$(cd "$(dirname "$BASH_SOURCE")" && pwd)"
 mkdir -p coverage
 TRACEFILE="$PWD/coverage/lcov.info"
 
-npm build
 rm -f *.tgz
 npm pack
 tmpdir=$(mktemp -d)
