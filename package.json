@@ -19,7 +19,8 @@
   },
   "types": "./types/index.d.ts",
   "files": [
-    "CMakeLists.txt",
+    "/**/CMakeLists.txt",
+    "/**/third_party/*/LICENSE",
     "/*.md",
     "/examples/*",
     "/lib/*",
