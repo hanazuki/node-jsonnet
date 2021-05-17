@@ -182,53 +182,6 @@ namespace nodejsonnet {
     return info.This();
   }
 
-  namespace {
-
-    struct TsfnWrap {
-      explicit TsfnWrap(Napi::ThreadSafeFunction tsfn): tsfn{tsfn} {
-      }
-
-      ~TsfnWrap() {
-        if(tsfn) {
-          tsfn.Release();
-        }
-      }
-
-      TsfnWrap(TsfnWrap const &other) {
-        *this = other;
-      }
-
-      TsfnWrap(TsfnWrap &&other) {
-        *this = std::move(other);
-      }
-
-      TsfnWrap &operator=(TsfnWrap const &other) {
-        tsfn = other.tsfn;
-        if(tsfn) {
-          tsfn.Acquire();
-        }
-        return *this;
-      }
-
-      TsfnWrap &operator=(TsfnWrap &&other) {
-        if(tsfn) {
-          tsfn.Release();
-        }
-        tsfn = other.tsfn;
-        other.tsfn = {};
-        return *this;
-      }
-
-      Napi::ThreadSafeFunction const *operator->() const {
-        return &tsfn;
-      }
-
-    private:
-      Napi::ThreadSafeFunction tsfn;
-    };
-
-  }
-
   Napi::Value Jsonnet::nativeCallback(const Napi::CallbackInfo &info) {
     auto name = info[0].As<Napi::String>().Utf8Value();
     auto const fun = info[1].As<Napi::Function>();
