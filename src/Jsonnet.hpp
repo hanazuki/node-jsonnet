@@ -18,7 +18,7 @@ namespace nodejsonnet {
     };
 
     struct NativeCallback {
-      std::shared_ptr<Napi::FunctionReference> fun;
+      Napi::FunctionReference fun;
       std::vector<std::string> params;
     };
 

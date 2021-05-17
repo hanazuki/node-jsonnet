@@ -238,9 +238,8 @@ namespace nodejsonnet {
       params.push_back(info[i].As<Napi::String>().Utf8Value());
     }
 
-    nativeCallbacks.insert_or_assign(std::move(name),
-      NativeCallback{
-        std::make_shared<Napi::FunctionReference>(Napi::Persistent(fun)), std::move(params)});
+    nativeCallbacks.insert_or_assign(
+      std::move(name), NativeCallback{Napi::Persistent(fun), std::move(params)});
 
     return info.This();
   }
@@ -288,7 +287,7 @@ namespace nodejsonnet {
 
       vm->nativeCallback(
         name,
-        [callback = std::make_shared<JsonnetNativeCallback>(env, fun->Value())](
+        [callback = std::make_shared<JsonnetNativeCallback>(env, fun.Value())](
           std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args) {
           return callback->call(std::move(vm), std::move(args));
         },
