@@ -21,8 +21,10 @@ jobs:
     - name: Install
       run: |
         if type apt-get >/dev/null; then
+          clang_version=$(clang --version | perl -e '<> =~ /(\d+)\.\d+\.\d+/ && print $1')
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends lcov llvm
+          sudo apt-get install -y --no-install-recommends lcov llvm-"${clang_version}"
+          sudo update-alternatives --install /usr/bin/llvm-cov llvm /usr/bin/llvm-cov-"${clang_version}" 100
         elif type brew >/dev/null; then
           brew install lcov
         fi
