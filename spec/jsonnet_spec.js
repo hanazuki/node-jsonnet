@@ -9,6 +9,8 @@ const suiteDir = path.join(__dirname, '../third_party/jsonnet/test_suite');
 describe('libjsonnet', () => {
   beforeEach(() => {
     process.chdir(suiteDir);
+
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
   });
 
   const stackTraceLike = expected => ({
