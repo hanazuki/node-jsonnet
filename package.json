@@ -40,6 +40,7 @@
     "/third_party/jsonnet/third_party/json/*.hpp",
     "/third_party/jsonnet/third_party/md5/*.cpp",
     "/third_party/jsonnet/third_party/md5/*.h",
+    "/third_party/jsonnet/third_party/rapidyaml/rapidyaml/**/README.md",
     "/third_party/jsonnet/third_party/rapidyaml/rapidyaml/src/**/*.hpp",
     "/third_party/jsonnet/third_party/rapidyaml/rapidyaml/src/**/*.cpp",
     "/third_party/jsonnet/third_party/rapidyaml/rapidyaml/ext/c4core/src/**/*.cpp",
