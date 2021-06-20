@@ -10,7 +10,7 @@ describe('libjsonnet', () => {
   beforeEach(() => {
     process.chdir(suiteDir);
 
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 60 * 1000;
   });
 
   const stackTraceLike = expected => ({
