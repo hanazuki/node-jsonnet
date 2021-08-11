@@ -7,58 +7,58 @@ on:
     - cron: '0 15 * * 5'
 
 jobs:
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        node: ["^10.20.0", "^12.17.0", 14, 16]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: recursive
-    - name: Install
-      run: |
-        if type apt-get >/dev/null; then
-          clang_version=$(clang --version | perl -e '<> =~ /(\d+)\.\d+\.\d+/ && print $1')
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends lcov llvm-"${clang_version}"
-          sudo update-alternatives --install /usr/bin/llvm-cov llvm /usr/bin/llvm-cov-"${clang_version}" 100
-        elif type brew >/dev/null; then
-          brew install lcov
-        fi
-    - uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node }}
-    - name: Setup compilers
-      if: startsWith(matrix.os, 'macos-')
-      run: |
-        cd /usr/local/bin
-        ln -sf gcc-10 gcc
-        ln -sf g++-10 g++
-        ln -sf gcov-10 gcov
-        ln -sf /Library/Developer/CommandLineTools/usr/bin/llvm-cov .
-    - name: Test with GCC
-      run: ./scripts/test-packaging.sh
-      env:
-        CC: gcc
-        CXX: g++
-        CMAKE_BUILD_PARALLEL_LEVEL: '4'
-        NODE_JSONNET_ENABLE_COVERAGE: gcc
-    - name: Test with Clang
-      run: ./scripts/test-packaging.sh
-      env:
-        CC: clang
-        CXX: clang++
-        CMAKE_BUILD_PARALLEL_LEVEL: '4'
-        NODE_JSONNET_ENABLE_COVERAGE: clang
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.github_token }}
-        flag-name: ${{ matrix.os }}-${{ matrix.node }}
-        parallel: true
+  # test:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [ubuntu-latest, macos-latest]
+  #       node: ["^10.20.0", "^12.17.0", 14, 16]
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #     with:
+  #       submodules: recursive
+  #   - name: Install
+  #     run: |
+  #       if type apt-get >/dev/null; then
+  #         clang_version=$(clang --version | perl -e '<> =~ /(\d+)\.\d+\.\d+/ && print $1')
+  #         sudo apt-get update -qq
+  #         sudo apt-get install -y --no-install-recommends lcov llvm-"${clang_version}"
+  #         sudo update-alternatives --install /usr/bin/llvm-cov llvm /usr/bin/llvm-cov-"${clang_version}" 100
+  #       elif type brew >/dev/null; then
+  #         brew install lcov
+  #       fi
+  #   - uses: actions/setup-node@v1
+  #     with:
+  #       node-version: ${{ matrix.node }}
+  #   - name: Setup compilers
+  #     if: startsWith(matrix.os, 'macos-')
+  #     run: |
+  #       cd /usr/local/bin
+  #       ln -sf gcc-10 gcc
+  #       ln -sf g++-10 g++
+  #       ln -sf gcov-10 gcov
+  #       ln -sf /Library/Developer/CommandLineTools/usr/bin/llvm-cov .
+  #   - name: Test with GCC
+  #     run: ./scripts/test-packaging.sh
+  #     env:
+  #       CC: gcc
+  #       CXX: g++
+  #       CMAKE_BUILD_PARALLEL_LEVEL: '4'
+  #       NODE_JSONNET_ENABLE_COVERAGE: gcc
+  #   - name: Test with Clang
+  #     run: ./scripts/test-packaging.sh
+  #     env:
+  #       CC: clang
+  #       CXX: clang++
+  #       CMAKE_BUILD_PARALLEL_LEVEL: '4'
+  #       NODE_JSONNET_ENABLE_COVERAGE: clang
+  #   - name: Coveralls
+  #     uses: coverallsapp/github-action@master
+  #     with:
+  #       github-token: ${{ secrets.github_token }}
+  #       flag-name: ${{ matrix.os }}-${{ matrix.node }}
+  #       parallel: true
 
   test-windows:
     strategy:
@@ -81,7 +81,7 @@ jobs:
 
   test-finish:
     needs:
-      - test
+      # - test
       - test-windows
     runs-on: ubuntu-latest
     steps:
