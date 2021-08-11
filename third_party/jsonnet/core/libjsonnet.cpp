@@ -25,6 +25,7 @@ limitations under the License.
 #include <string>
 
 extern "C" {
+#define LIB_JSONNET_EXPORT
 #include "libjsonnet.h"
 #include "libjsonnet_fmt.h"
 }

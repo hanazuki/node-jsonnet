@@ -19,6 +19,18 @@ limitations under the License.
 
 #include <stddef.h>
 
+#ifdef _WIN32
+#  ifdef LIB_JSONNET_EXPORT
+#    define PUBLIC_API __declspec(dllexport)
+#  else
+#    define PUBLIC_API __declspec(dllimport)
+#  endif
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** \file This file is a library interface for evaluating Jsonnet.  It is written in C++ but exposes
  * a C interface for easier wrapping by other languages.  See \see jsonnet_lib_test.c for an example
  * of using the library.
@@ -37,24 +49,30 @@ limitations under the License.
  * http://semver.org/ If this does not match LIB_JSONNET_VERSION then there is a mismatch between
  * header and compiled library.
  */
+PUBLIC_API
 const char *jsonnet_version(void);
 
 /** Jsonnet virtual machine context. */
 struct JsonnetVm;
 
 /** Create a new Jsonnet virtual machine. */
+PUBLIC_API
 struct JsonnetVm *jsonnet_make(void);
 
 /** Set the maximum stack depth. */
+PUBLIC_API
 void jsonnet_max_stack(struct JsonnetVm *vm, unsigned v);
 
 /** Set the number of objects required before a garbage collection cycle is allowed. */
+PUBLIC_API
 void jsonnet_gc_min_objects(struct JsonnetVm *vm, unsigned v);
 
 /** Run the garbage collector after this amount of growth in the number of objects. */
+PUBLIC_API
 void jsonnet_gc_growth_trigger(struct JsonnetVm *vm, double v);
 
 /** Expect a string as output and don't JSON encode it. */
+PUBLIC_API
 void jsonnet_string_output(struct JsonnetVm *vm, int v);
 
 /** Callback used to load imports.
@@ -80,45 +98,55 @@ struct JsonnetJsonValue;
 
 /** If the value is a string, return it as UTF8 otherwise return NULL.
  */
+PUBLIC_API
 const char *jsonnet_json_extract_string(struct JsonnetVm *vm, const struct JsonnetJsonValue *v);
 
 /** If the value is a number, return 1 and store the number in out, otherwise return 0.
  */
+PUBLIC_API
 int jsonnet_json_extract_number(struct JsonnetVm *vm, const struct JsonnetJsonValue *v,
                                 double *out);
 
 /** Return 0 if the value is false, 1 if it is true, and 2 if it is not a bool.
  */
+PUBLIC_API
 int jsonnet_json_extract_bool(struct JsonnetVm *vm, const struct JsonnetJsonValue *v);
 
 /** Return 1 if the value is null, else 0.
  */
+PUBLIC_API
 int jsonnet_json_extract_null(struct JsonnetVm *vm, const struct JsonnetJsonValue *v);
 
 /** Convert the given UTF8 string to a JsonnetJsonValue.
  */
+PUBLIC_API
 struct JsonnetJsonValue *jsonnet_json_make_string(struct JsonnetVm *vm, const char *v);
 
 /** Convert the given double to a JsonnetJsonValue.
  */
+PUBLIC_API
 struct JsonnetJsonValue *jsonnet_json_make_number(struct JsonnetVm *vm, double v);
 
 /** Convert the given bool (1 or 0) to a JsonnetJsonValue.
  */
+PUBLIC_API
 struct JsonnetJsonValue *jsonnet_json_make_bool(struct JsonnetVm *vm, int v);
 
 /** Make a JsonnetJsonValue representing null.
  */
+PUBLIC_API
 struct JsonnetJsonValue *jsonnet_json_make_null(struct JsonnetVm *vm);
 
 /** Make a JsonnetJsonValue representing an array.
  *
  * Assign elements with jsonnet_json_array_append.
  */
+PUBLIC_API
 struct JsonnetJsonValue *jsonnet_json_make_array(struct JsonnetVm *vm);
 
 /** Add v to the end of the array.
  */
+PUBLIC_API
 void jsonnet_json_array_append(struct JsonnetVm *vm, struct JsonnetJsonValue *arr,
                                struct JsonnetJsonValue *v);
 
@@ -126,12 +154,14 @@ void jsonnet_json_array_append(struct JsonnetVm *vm, struct JsonnetJsonValue *ar
  *
  * Every index of the array must have a unique value assigned with jsonnet_json_array_element.
  */
+PUBLIC_API
 struct JsonnetJsonValue *jsonnet_json_make_object(struct JsonnetVm *vm);
 
 /** Add the field f to the object, bound to v.
  *
  * This replaces any previous binding of the field.
  */
+PUBLIC_API
 void jsonnet_json_object_append(struct JsonnetVm *vm, struct JsonnetJsonValue *obj, const char *f,
                                 struct JsonnetJsonValue *v);
 
@@ -139,6 +169,7 @@ void jsonnet_json_object_append(struct JsonnetVm *vm, struct JsonnetJsonValue *o
  *
  * This is useful if you want to abort with an error mid-way through building a complex value.
  */
+PUBLIC_API
 void jsonnet_json_destroy(struct JsonnetVm *vm, struct JsonnetJsonValue *v);
 
 /** Callback to provide native extensions to Jsonnet.
@@ -164,10 +195,12 @@ typedef struct JsonnetJsonValue *JsonnetNativeCallback(void *ctx,
  * \param sz The size of the buffer to return.  If zero, frees the buffer.
  * \returns The new buffer.
  */
+PUBLIC_API
 char *jsonnet_realloc(struct JsonnetVm *vm, char *buf, size_t sz);
 
 /** Override the callback used to locate imports.
  */
+PUBLIC_API
 void jsonnet_import_callback(struct JsonnetVm *vm, JsonnetImportCallback *cb, void *ctx);
 
 /** Register a native extension.
@@ -183,6 +216,7 @@ void jsonnet_import_callback(struct JsonnetVm *vm, JsonnetImportCallback *cb, vo
  * \param ctx User pointer, stash non-global state you need here.
  * \param params NULL-terminated array of the names of the params.  Must be valid identifiers.
  */
+PUBLIC_API
 void jsonnet_native_callback(struct JsonnetVm *vm, const char *name, JsonnetNativeCallback *cb,
                              void *ctx, const char *const *params);
 
@@ -190,33 +224,39 @@ void jsonnet_native_callback(struct JsonnetVm *vm, const char *name, JsonnetNati
  *
  * Argument values are copied so memory should be managed by caller.
  */
+PUBLIC_API
 void jsonnet_ext_var(struct JsonnetVm *vm, const char *key, const char *val);
 
 /** Bind a Jsonnet external var to the given code.
  *
  * Argument values are copied so memory should be managed by caller.
  */
+PUBLIC_API
 void jsonnet_ext_code(struct JsonnetVm *vm, const char *key, const char *val);
 
 /** Bind a string top-level argument for a top-level parameter.
  *
  * Argument values are copied so memory should be managed by caller.
  */
+PUBLIC_API
 void jsonnet_tla_var(struct JsonnetVm *vm, const char *key, const char *val);
 
 /** Bind a code top-level argument for a top-level parameter.
  *
  * Argument values are copied so memory should be managed by caller.
  */
+PUBLIC_API
 void jsonnet_tla_code(struct JsonnetVm *vm, const char *key, const char *val);
 
 /** Set the number of lines of stack trace to display (0 for all of them). */
+PUBLIC_API
 void jsonnet_max_trace(struct JsonnetVm *vm, unsigned v);
 
 /** Add to the default import callback's library search path.
  *
  * The search order is last to first, so more recently appended paths take precedence.
  */
+PUBLIC_API
 void jsonnet_jpath_add(struct JsonnetVm *vm, const char *v);
 
 /** Evaluate a file containing Jsonnet code, return a JSON string.
@@ -227,6 +267,7 @@ void jsonnet_jpath_add(struct JsonnetVm *vm, const char *v);
  * \param error Return by reference whether or not there was an error.
  * \returns Either JSON or the error message.
  */
+PUBLIC_API
 char *jsonnet_evaluate_file(struct JsonnetVm *vm, const char *filename, int *error);
 
 /** Evaluate a string containing Jsonnet code, return a JSON string.
@@ -238,6 +279,7 @@ char *jsonnet_evaluate_file(struct JsonnetVm *vm, const char *filename, int *err
  * \param error Return by reference whether or not there was an error.
  * \returns Either JSON or the error message.
  */
+PUBLIC_API
 char *jsonnet_evaluate_snippet(struct JsonnetVm *vm, const char *filename, const char *snippet,
                                int *error);
 
@@ -250,6 +292,7 @@ char *jsonnet_evaluate_snippet(struct JsonnetVm *vm, const char *filename, const
  * \param error Return by reference whether or not there was an error.
  * \returns Either the error, or a sequence of strings separated by \0, terminated with \0\0.
  */
+PUBLIC_API
 char *jsonnet_evaluate_file_multi(struct JsonnetVm *vm, const char *filename, int *error);
 
 /** Evaluate a string containing Jsonnet code, return a number of named JSON files.
@@ -262,6 +305,7 @@ char *jsonnet_evaluate_file_multi(struct JsonnetVm *vm, const char *filename, in
  * \param error Return by reference whether or not there was an error.
  * \returns Either the error, or a sequence of strings separated by \0, terminated with \0\0.
  */
+PUBLIC_API
 char *jsonnet_evaluate_snippet_multi(struct JsonnetVm *vm, const char *filename,
                                      const char *snippet, int *error);
 
@@ -274,6 +318,7 @@ char *jsonnet_evaluate_snippet_multi(struct JsonnetVm *vm, const char *filename,
  * \param error Return by reference whether or not there was an error.
  * \returns Either the error, or a sequence of strings separated by \0, terminated with \0\0.
  */
+PUBLIC_API
 char *jsonnet_evaluate_file_stream(struct JsonnetVm *vm, const char *filename, int *error);
 
 /** Evaluate a string containing Jsonnet code, return a number of JSON files.
@@ -286,10 +331,18 @@ char *jsonnet_evaluate_file_stream(struct JsonnetVm *vm, const char *filename, i
  * \param error Return by reference whether or not there was an error.
  * \returns Either the error, or a sequence of strings separated by \0, terminated with \0\0.
  */
+PUBLIC_API
 char *jsonnet_evaluate_snippet_stream(struct JsonnetVm *vm, const char *filename,
                                       const char *snippet, int *error);
 
 /** Complement of \see jsonnet_vm_make. */
+PUBLIC_API
 void jsonnet_destroy(struct JsonnetVm *vm);
+
+#undef PUBLIC_API
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif
 
 #endif  // LIB_JSONNET_H
