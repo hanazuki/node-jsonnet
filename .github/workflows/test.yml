@@ -60,8 +60,29 @@ jobs:
         flag-name: ${{ matrix.os }}-${{ matrix.node }}
         parallel: true
 
+  test-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [16]
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node }}
+    - name: Test with MSVC
+      shell: bash
+      run: ./scripts/test-packaging.sh
+      env:
+        CMAKE_BUILD_PARALLEL_LEVEL: '4'
+
   test-finish:
-    needs: test
+    needs:
+      - test
+      - test-windows
     runs-on: ubuntu-latest
     steps:
     - name: Upload to Coveralls
