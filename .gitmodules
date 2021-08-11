@@ -1,3 +1,4 @@
 [submodule "jsonnet"]
 	path = third_party/jsonnet
-	url = https://github.com/google/jsonnet
+	url = https://github.com/hanazuki/jsonnet
+  branch = windows-cmake
