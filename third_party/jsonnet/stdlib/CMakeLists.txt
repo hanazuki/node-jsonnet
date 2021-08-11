@@ -3,6 +3,9 @@
 add_executable(to_c_array to_c_array.cpp)
 set(TO_C_ARRAY ${GLOBAL_OUTPUT_PATH}/to_c_array${CMAKE_EXECUTABLE_SUFFIX_CXX})
 
+message(${GLOBAL_OUTPUT_PATH})
+message(${TO_C_ARRAY})
+
 # Custom command that will only build stdlib when it changes.
 add_custom_command(
 	OUTPUT ${PROJECT_SOURCE_DIR}/core/std.jsonnet.h
