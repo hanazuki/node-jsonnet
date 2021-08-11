@@ -50,7 +50,7 @@
     "bindings"
   ],
   "scripts": {
-    "install": "cmake-js build --CDCMAKE_EXPORT_COMPILE_COMMANDS=1",
+    "install": "cmake-js build -l verbose --CDCMAKE_EXPORT_COMPILE_COMMANDS=1",
     "test": "jasmine",
     "lint": "dtslint types",
     "format": "clang-format -i src/*",
