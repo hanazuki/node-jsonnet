@@ -54,6 +54,7 @@ jobs:
         CMAKE_BUILD_PARALLEL_LEVEL: '4'
         NODE_JSONNET_ENABLE_COVERAGE: clang
     - name: Coveralls
+      continue-on-error: true
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.github_token }}
@@ -65,6 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Upload to Coveralls
+      continue-on-error: true
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.github_token }}
