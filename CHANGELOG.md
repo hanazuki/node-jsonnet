@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v1.0.0 (2021-12-22)
+- Update libjsonnet to [v0.18.0](https://github.com/google/jsonnet/releases/tag/v0.18.0)
+
 ## v0.4.2 (2021-01-11)
 - Provide ES Module interface for Node.js >= 12 ([#17](https://github.com/hanazuki/node-jsonnet/issues/17))
 - Fix regression that using a native callback makes the program never finish ([#18](https://github.com/hanazuki/node-jsonnet/issues/18))
