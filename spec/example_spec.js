@@ -16,19 +16,23 @@ if(nodeMajor >= 12) {
 
   describe('JavaScript examples', () => {
     for(const file of glob(jsExamples)) {
-      it(`${file}`, async () => execFile('node', [file], {
-        cwd: path.join(__dirname, '..'),
-        timeout,
-      }))
+      it(`${file}`, async () => {
+        await execFile('node', [file], {
+          cwd: path.join(__dirname, '..'),
+          timeout,
+        });
+      });
     }
   });
 
   describe('TypeScript examples', () => {
     for(const file of glob(tsExamples)) {
-      it(`${file}`, async () => execFile('ts-node', [file], {
-        cwd: path.join(__dirname, '../examples'),
-        timeout,
-      }))
+      it(`${file}`, async () => {
+        await execFile('ts-node', [file], {
+          cwd: path.join(__dirname, '../examples'),
+          timeout,
+        });
+      });
     }
   });
 
