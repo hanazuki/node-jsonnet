@@ -9,7 +9,7 @@ const execFile = promisify(cp.execFile);
 const jsExamples = path.join(__dirname, "../examples/*.{mjs,cjs}");
 const tsExamples = path.join(__dirname, "../examples/*.ts");
 
-const timeout = 3000;
+const timeout = 10000;
 
 const nodeMajor = Number.parseInt(process.versions.node.split('.')[0]);
 if(nodeMajor >= 12) {
