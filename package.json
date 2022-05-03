@@ -78,7 +78,7 @@
   "devDependencies": {
     "@types/node": "*",
     "@definitelytyped/dtslint": "^0.0.104",
-    "glob": "^7.1.6",
+    "glob": "^8.0.1",
     "jasmine": "^4.1.0",
     "ts-node": "^10.0.0",
     "typedoc": "^0.22.3",
