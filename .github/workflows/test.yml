@@ -30,7 +30,7 @@ jobs:
         elif type brew >/dev/null; then
           brew install lcov
         fi
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node }}
         cache: npm
@@ -83,6 +83,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v1
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: npm
     - uses: actions/cache@v1
       with:
         path: /home/runner/.dts
@@ -90,8 +94,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-dtslint-
     - name: Install
-      run: npm install --no-save "@types/node@$(node -p 'process.versions.node.split(".")[0]')"
+      run: npm install --ignore-scripts
     - name: Lint
-      run: |
-        npx dtslint --version
-        npx dtslint types
+      run: npm run lint
