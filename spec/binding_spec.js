@@ -3,10 +3,10 @@ const {Jsonnet, JsonnetError} = require("../");
 describe('binding', () => {
   beforeEach(function() {
     jasmine.addMatchers({
-      toBeJSON: (util, customEqualityTesters) => ({
+      toBeJSON: (util) => ({
         compare: (actual, expected) => {
           const result = {
-            pass: util.equals(JSON.parse(actual), expected, customEqualityTesters),
+            pass: util.equals(JSON.parse(actual), expected),
           }
           if(!result.pass) {
             result.message = `Expect '${actual}' to be JSON representing ${JSON.stringify(expected)}.`
