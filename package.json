@@ -81,7 +81,7 @@
     "glob": "^8.0.1",
     "jasmine": "^4.1.0",
     "ts-node": "^10.0.0",
-    "typedoc": "^0.22.3",
+    "typedoc": "^0.23.1",
     "typescript": "^4.0.3"
   }
 }
