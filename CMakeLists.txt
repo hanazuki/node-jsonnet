@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
+cmake_policy(SET CMP0042 NEW)
 
 project (node-jsonnet)
 file(GLOB SOURCE_FILES "src/*.cpp")
@@ -16,13 +17,6 @@ if(DEFINED ENV{NODE_JSONNET_ENABLE_COVERAGE})
   target_link_options(${PROJECT_NAME} PRIVATE --coverage)
   target_compile_options(${PROJECT_NAME} PRIVATE --coverage)
 endif()
-
-execute_process(COMMAND node -p "require('node-addon-api').include_dir"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  OUTPUT_VARIABLE NODE_ADDON_API_DIR
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 
 set(BUILD_TESTS OFF CACHE BOOL "Disable jsonnet tests")
 add_subdirectory(third_party/jsonnet EXCLUDE_FROM_ALL)
