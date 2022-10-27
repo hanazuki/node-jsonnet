@@ -71,7 +71,9 @@
     "node": ">=14"
   },
   "binary": {
-    "napi_versions": [6]
+    "napi_versions": [
+      6
+    ]
   },
   "dependencies": {
     "bindings": "^1.5.0",
