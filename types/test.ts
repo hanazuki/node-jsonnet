@@ -47,3 +47,9 @@ const stream_snippet = `
 jsonnet.evaluateSnippetStream(multi_snippet)
        .then(jsons => console.log(JSON.parse(jsons[0])))
        .catch(error => console.log(error));
+
+// @ts-expect-error
+jsonnet.nativeCallback("arityMismatch", (a) => a);
+
+// @ts-expect-error
+jsonnet.nativeCallback("arityMismatch", (a) => a, "a", "b");
