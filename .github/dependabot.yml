@@ -13,3 +13,7 @@ updates:
       - dependency-type: development
     ignore:
       - dependency-name: "@types/*"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
