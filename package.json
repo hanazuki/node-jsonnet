@@ -75,6 +75,19 @@
       6
     ]
   },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "no-const-enum": "error",
+      "no-useless-files": "error"
+    }
+  },
   "dependencies": {
     "bindings": "^1.5.0",
     "cmake-js": "^7.0.0",
@@ -82,7 +95,7 @@
   },
   "devDependencies": {
     "@types/node": "*",
-    "@definitelytyped/dtslint": "^0.0.119",
+    "@definitelytyped/dtslint": "^0.0.134",
     "glob": "^8.0.1",
     "jasmine": "^4.1.0",
     "ts-node": "^10.0.0",
