@@ -75,6 +75,19 @@
       6
     ]
   },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "no-const-enum": "error",
+      "no-useless-files": "error"
+    }
+  },
   "dependencies": {
     "bindings": "^1.5.0",
     "cmake-js": "^7.0.0",
