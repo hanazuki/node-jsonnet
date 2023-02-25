@@ -24,11 +24,11 @@
     "/**/LICENSE",
     "/**/LICENSE.txt",
     "/*.md",
-    "/examples/*",
-    "/lib/*",
+    "/examples/",
+    "/lib/",
     "/types/*.d.ts",
-    "/src/*",
-    "/spec/*",
+    "/src/",
+    "/spec/",
     "/third_party/jsonnet/CMakeLists.txt.in",
     "/third_party/jsonnet/include/*.h",
     "/third_party/jsonnet/core/*.c",
@@ -51,7 +51,7 @@
     "/third_party/jsonnet/third_party/rapidyaml/rapidyaml/**/*.natvis",
     "/third_party/jsonnet/stdlib/*.cpp",
     "/third_party/jsonnet/stdlib/*.jsonnet",
-    "/third_party/jsonnet/test_suite/*"
+    "/third_party/jsonnet/test_suite/"
   ],
   "keywords": [
     "jsonnet",
