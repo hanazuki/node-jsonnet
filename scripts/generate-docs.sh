@@ -16,7 +16,7 @@ git fetch origin docs
 rm -rf docs
 git worktree add -f docs -B docs -- origin/docs
 
-(cd types; "$(npm bin)"/typedoc --out "../docs/${dir}")
+(cd types; npm exec -- typedoc --out "../docs/${dir}")
 
 cd docs
 
