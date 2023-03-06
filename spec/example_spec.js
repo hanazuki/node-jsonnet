@@ -3,7 +3,7 @@ const path = require('path');
 const cp = require('child_process');
 const { promisify } = require('util');
 
-const glob = require('glob').sync;
+const glob = require('glob').globSync;
 const execFile = promisify(cp.execFile);
 
 const jsExamples = path.join(__dirname, "../examples/*.{mjs,cjs}");
