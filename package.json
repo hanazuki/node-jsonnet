@@ -94,7 +94,7 @@
   },
   "devDependencies": {
     "@types/node": "*",
-    "@definitelytyped/dtslint": "^0.0.153",
+    "@definitelytyped/dtslint": "^0.0.157",
     "glob": "^9.0.1",
     "jasmine": "^4.1.0",
     "ts-node": "^10.0.0",
