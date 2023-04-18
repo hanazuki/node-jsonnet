@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v2.1.0 (UNRELEASED)
+- Update libjsonnet to [v0.20.0](https://github.com/google/jsonnet/releases/tag/v0.20.0)
+
 ## v2.0.0 (2022-10-27)
 
 - [breaking] Node.js v10 and v12 are no longer supported.
