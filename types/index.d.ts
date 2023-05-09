@@ -52,7 +52,7 @@ export class Jsonnet {
   maxGcGrowthTrigger(value: number): this;
 
   /**
-   * Set whether the evaluation results are returned in plain string instread of in JSON.
+   * Set whether the evaluation results are returned in plain string instead of in JSON.
    *
    * @param value - Whether output is in plain string.
    */
