@@ -96,7 +96,7 @@
     "@types/node": "*",
     "@definitelytyped/dtslint": "^0.0.163",
     "glob": "^10.0.0",
-    "jasmine": "^4.1.0",
+    "jasmine": "^5.0.2",
     "ts-node": "^10.0.0",
     "typedoc": "^0.24.1",
     "typescript": "^5.0.2"
