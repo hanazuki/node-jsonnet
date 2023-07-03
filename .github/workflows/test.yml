@@ -47,14 +47,22 @@ jobs:
         ln -sf gcov-12 gcov
         ln -sf /Library/Developer/CommandLineTools/usr/bin/llvm-cov .
     - name: Test with GCC
-      run: ./scripts/test-packaging.sh
+      run: |
+        if [[ $(uname -s) == Darwin ]]; then
+          unset NODE_JSONNET_ENABLE_COVERAGE
+        fi
+        ./scripts/test-packaging.sh
       env:
         CC: gcc
         CXX: g++
         CMAKE_BUILD_PARALLEL_LEVEL: '4'
         NODE_JSONNET_ENABLE_COVERAGE: gcc
     - name: Test with Clang
-      run: ./scripts/test-packaging.sh
+      run: |
+        if [[ $(uname -s) == Darwin ]]; then
+          unset NODE_JSONNET_ENABLE_COVERAGE
+        fi
+        ./scripts/test-packaging.sh
       env:
         CC: clang
         CXX: clang++
