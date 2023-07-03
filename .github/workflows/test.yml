@@ -42,9 +42,9 @@ jobs:
       if: startsWith(matrix.os, 'macos-')
       run: |
         cd /usr/local/bin
-        ln -sf gcc-10 gcc
-        ln -sf g++-10 g++
-        ln -sf gcov-10 gcov
+        ln -sf gcc-12 gcc
+        ln -sf g++-12 g++
+        ln -sf gcov-12 gcov
         ln -sf /Library/Developer/CommandLineTools/usr/bin/llvm-cov .
     - name: Test with GCC
       run: ./scripts/test-packaging.sh
