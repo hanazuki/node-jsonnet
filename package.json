@@ -77,14 +77,11 @@
   },
   "eslintConfig": {
     "root": true,
-    "extends": [],
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
+    "extends": [
+      "plugin:@definitelytyped/all"
     ],
     "rules": {
-      "no-const-enum": "error",
-      "no-useless-files": "error"
+      "@definitelytyped/dt-header": "off"
     }
   },
   "dependencies": {
@@ -93,8 +90,9 @@
     "node-addon-api": "^6.0.0"
   },
   "devDependencies": {
+    "@definitelytyped/dtslint": "^0.0.176",
+    "@definitelytyped/eslint-plugin": "^0.0.176",
     "@types/node": "*",
-    "@definitelytyped/dtslint": "^0.0.165",
     "glob": "^10.0.0",
     "jasmine": "^4.1.0",
     "ts-node": "^10.0.0",
