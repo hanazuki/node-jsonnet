@@ -15,7 +15,7 @@ jobs:
       run: |
         git config --global user.email automate@hanazuki.dev
         git config --global user.name automate
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
     - uses: actions/cache@v3
