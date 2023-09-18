@@ -90,7 +90,7 @@
     "node-addon-api": "^6.0.0"
   },
   "devDependencies": {
-    "@definitelytyped/dtslint": "^0.0.177",
+    "@definitelytyped/dtslint": "^0.0.178",
     "@definitelytyped/eslint-plugin": "^0.0.177",
     "@types/node": "*",
     "glob": "^10.0.0",
