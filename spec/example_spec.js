@@ -11,29 +11,24 @@ const tsExamples = path.join(__dirname, "../examples/*.ts");
 
 const timeout = 10000;
 
-const nodeMajor = Number.parseInt(process.versions.node.split('.')[0]);
-if(nodeMajor >= 12) {
-
-  describe('JavaScript examples', () => {
-    for(const file of glob(jsExamples)) {
-      it(`${file}`, async () => {
-        await execFile('node', [file], {
-          cwd: path.join(__dirname, '..'),
-          timeout,
-        });
+describe('JavaScript examples', () => {
+  for(const file of glob(jsExamples)) {
+    it(`${file}`, async () => {
+      await execFile('node', [file], {
+        cwd: path.join(__dirname, '..'),
+        timeout,
       });
-    }
-  });
+    });
+  }
+});
 
-  describe('TypeScript examples', () => {
-    for(const file of glob(tsExamples)) {
-      it(`${file}`, async () => {
-        await execFile('ts-node', [file], {
-          cwd: path.join(__dirname, '../examples'),
-          timeout,
-        });
+describe('TypeScript examples', () => {
+  for(const file of glob(tsExamples)) {
+    it(`${file}`, async () => {
+      await execFile('ts-node', [file], {
+        cwd: path.join(__dirname, '../examples'),
+        timeout,
       });
-    }
-  });
-
-}
+    });
+  }
+});
