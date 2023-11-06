@@ -91,7 +91,7 @@
   },
   "devDependencies": {
     "@definitelytyped/dtslint": "^0.0.182",
-    "@definitelytyped/eslint-plugin": "^0.0.184",
+    "@definitelytyped/eslint-plugin": "^0.0.187",
     "@types/node": "*",
     "glob": "^10.0.0",
     "jasmine": "^5.1.0",
