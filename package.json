@@ -86,8 +86,8 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "cmake-js": "^7.0.0",
-    "node-addon-api": "^7.0.0"
+    "cmake-js": "^7.3.0",
+    "node-addon-api": "^8.0.0"
   },
   "devDependencies": {
     "@definitelytyped/dtslint": "^0.0.182",
