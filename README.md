@@ -24,7 +24,7 @@ The library is documented in the TypeScript type definitions at [`types/index.d.
 
 ## Installation Requirements
 
-- [Node.js](https://nodejs.org/) v14 or later
+- [Node.js](https://nodejs.org/) v18 or later
 - [GCC](https://gcc.gnu.org/projects/cxx-status.html#cxx17) or [Clang](https://clang.llvm.org/cxx_status.html#cxx17) C++ compiler that supports C++17
 - CMake 3.8 or later
 
