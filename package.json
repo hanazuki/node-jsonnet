@@ -4,7 +4,7 @@
   "version": "2.1.0",
   "description": "Jsonnet addon for Node.js",
   "bugs": "https://github.com/hanazuki/node-jsonnet/issues",
-  "homepage": "https://github.com/hanazuki/node-jsonnet",
+  "homepage": "https://node-jsonnet.hanazuki.dev/",
   "repository": {
     "type": "git",
     "url": "https://github.com/hanazuki/node-jsonnet"
