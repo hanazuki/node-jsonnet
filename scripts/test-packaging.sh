@@ -14,13 +14,14 @@ pushd "$tmpdir/package"
 npm install-test
 if [[ ${NODE_JSONNET_ENABLE_COVERAGE-} ]]; then
   mkdir -p coverage
-  lcov_opts=()
+  lcov_opts=(--branch-coverage --ignore-errors inconsistent)
   if [[ $NODE_JSONNET_ENABLE_COVERAGE = clang ]]; then
     lcov_opts+=(--gcov-tool "${__dir}"/llvm-gcov.sh)
   fi
-  lcov -c -d build/CMakeFiles -b "$(pwd -P)/src" --no-external -o coverage/lcov.info -t "$NODE_JSONNET_ENABLE_COVERAGE" ${lcov_opts[@]+"${lcov_opts[@]}"}
-  sed -i.bak -e "s|^SF:$(pwd -P)/|SF:|" coverage/lcov.info
-  lcov -a coverage/lcov.info -o "$TRACEFILE"
+
+  lcov -c -d build/CMakeFiles --include "$(pwd -P)/src" -o coverage/lcov.info -t "$NODE_JSONNET_ENABLE_COVERAGE" ${lcov_opts[@]+"${lcov_opts[@]}"} &&
+  sed -i.bak -e "s|^SF:$(pwd -P)/|SF:|" coverage/lcov.info &&
+  lcov -a coverage/lcov.info -o "$TRACEFILE" ${lcov_opts[@]+"${lcov_opts[@]}"} || :
 fi
 popd
 rm -rf "$tmpdir"
