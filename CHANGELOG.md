@@ -1,7 +1,7 @@
 # ChangeLog
 
 ## UNRELEASED
-- [breaking] Node.js v14 and v16 are no longer supported.
+- [breaking] Node.js v14, v16 and v18 are no longer supported.
 - Update libjsonnet to [v0.21.0](https://github.com/google/jsonnet/releases/tag/v0.21.0).
 
 ## v2.1.0 (2023-04-18)
