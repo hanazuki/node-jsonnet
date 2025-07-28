@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// TypeScript Version: 3.2
+// TypeScript Version: 5.0
 
 /**
  * `JsonnetPrimitiveValue` is a class of values that may be passed to native callbacks.
