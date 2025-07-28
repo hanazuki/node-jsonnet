@@ -1,5 +1,5 @@
 {
-  "packageManager": "npm@8.19.2",
+  "packageManager": "npm@11.5.1",
   "name": "@hanazuki/node-jsonnet",
   "version": "3.0.0",
   "description": "Jsonnet addon for Node.js",
@@ -79,7 +79,7 @@
   "dependencies": {
     "bindings": "^1.5.0",
     "cmake-js": "^7.3.0",
-    "node-addon-api": "^8.0.0"
+    "node-addon-api": "^8.5.0"
   },
   "devDependencies": {
     "@definitelytyped/dtslint": "^0.0.182",

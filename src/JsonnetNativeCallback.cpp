@@ -56,8 +56,7 @@ namespace nodejsonnet {
       },
       "onFailure", payload);
 
-    auto const promise = result.As<Napi::Object>();
-    promise.Get("then").As<Napi::Function>().Call(promise, {on_success, on_failure});
+    result.As<Napi::Promise>().Then(on_success, on_failure);
   }
 
 }
