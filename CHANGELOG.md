@@ -1,6 +1,8 @@
 # ChangeLog
 
 ## UNRELEASED
+
+## v3.0.1 (2025-09-19)
 - The package is now compatible with CMake 4.
 
 ## v3.0.0 (2025-05-08)

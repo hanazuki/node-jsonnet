@@ -1,7 +1,7 @@
 {
   "packageManager": "npm@11.5.1",
   "name": "@hanazuki/node-jsonnet",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Jsonnet addon for Node.js",
   "bugs": "https://github.com/hanazuki/node-jsonnet/issues",
   "homepage": "https://node-jsonnet.hanazuki.dev/",
