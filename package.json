@@ -55,6 +55,7 @@
   "scripts": {
     "install": "cmake-js build --CDCMAKE_EXPORT_COMPILE_COMMANDS=1",
     "prepare": "if test -f ./scripts/apply-patches.sh; then ./scripts/apply-patches.sh; fi",
+    "version": "./scripts/bump-version.js",
     "test": "jasmine",
     "lint": "dtslint types",
     "format": "clang-format -i src/*",
