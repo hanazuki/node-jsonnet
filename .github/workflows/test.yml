@@ -38,6 +38,10 @@ jobs:
       with:
         path: /home/runner/.cmake-js
         key: ${{ matrix.node }}-cmake-js
+    - name: Set git identity
+      run: |
+        git config --global user.email automate@hanazuki.dev
+        git config --global user.name automate
     - name: Setup compilers
       if: startsWith(matrix.os, 'macos-')
       run: |
