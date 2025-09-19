@@ -1,0 +1,42 @@
+From 6c87c1b0e1e18d25898be071c1b231e264f05a8c Mon Sep 17 00:00:00 2001
+From: Pat Riehecky <riehecky@fnal.gov>
+Date: Wed, 16 Jul 2025 08:58:46 -0500
+Subject: [PATCH] Add cmake4 to cmake_minimum_required.
+
+Leaving cmake 2.8 may have some long term cost, but for now
+it all works as expected.
+
+External projects will need to manage their own cmake_minimum_required.
+
+Signed-off-by: Pat Riehecky <riehecky@fnal.gov>
+---
+ CMakeLists.txt    | 2 +-
+ CMakeLists.txt.in | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dd17367b..3413ea14 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8.7)
++cmake_minimum_required(VERSION 2.8.7...4.0)
+ project(jsonnet C CXX)
+ 
+ include(ExternalProject)
+diff --git a/CMakeLists.txt.in b/CMakeLists.txt.in
+index 41fac662..7f7d802a 100644
+--- a/CMakeLists.txt.in
++++ b/CMakeLists.txt.in
+@@ -1,7 +1,7 @@
+ # CMake script run a generation-time. This must be separate from the main
+ # CMakeLists.txt file to allow downloading and building googletest at generation
+ # time.
+-cmake_minimum_required(VERSION 2.8.2)
++cmake_minimum_required(VERSION 2.8.2...4.0)
+ 
+ project(googletest-download NONE)
+ 
+-- 
+2.49.0
+

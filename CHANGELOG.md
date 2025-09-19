@@ -1,5 +1,8 @@
 # ChangeLog
 
+## UNRELEASED
+- The package is now compatible with CMake 4.
+
 ## v3.0.0 (2025-05-08)
 - [breaking] Node.js v14, v16 and v18 are no longer supported.
 - Update libjsonnet to [v0.21.0](https://github.com/google/jsonnet/releases/tag/v0.21.0).
