@@ -1,13 +1,15 @@
-const fs = require('fs');
-const path = require('path');
-const cp = require('child_process');
-const { promisify } = require('util');
+import {describe, expect, it} from 'vitest';
+
+import fs from 'node:fs';
+import path from 'node:path';
+import cp from 'node:child_process';
+import {promisify} from 'node:util';
 
 const glob = require('glob').globSync;
 const execFile = promisify(cp.execFile);
 
-const jsExamples = path.join(__dirname, "../examples/*.{mjs,cjs}");
-const tsExamples = path.join(__dirname, "../examples/*.ts");
+const jsExamples = path.join(__dirname, '../examples/*.{mjs,cjs}');
+const tsExamples = path.join(__dirname, '../examples/*.ts');
 
 const timeout = 10000;
 

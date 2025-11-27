@@ -1,5 +1,7 @@
-const fs = require('fs').promises;
-const path = require('path');
+import {describe, it} from 'vitest';
+
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 describe('package', () => {
 
@@ -11,8 +13,8 @@ describe('package', () => {
   ];
 
   for (const licenseFile of licenseFiles) {
-    it(`contains ${licenseFile}`, async () => {
-      return expectAsync(fs.stat(path.join(__dirname, '..', licenseFile))).toBeResolved();
+    it(`contains ${licenseFile}`, async ({expect}) => {
+      return await expect(fs.stat(path.join(__dirname, '..', licenseFile))).resolves;
     });
   }
 
