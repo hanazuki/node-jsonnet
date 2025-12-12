@@ -91,24 +91,18 @@ jobs:
         github-token: ${{ secrets.github_token }}
         parallel-finished: true
 
-  lint:
+  typetest:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v5
     - uses: actions/setup-node@v6
       with:
-        node-version: 20
+        node-version: lts/*
         cache: npm
-    - uses: actions/cache@v4
-      with:
-        path: /home/runner/.dts
-        key: ${{ runner.os }}-dtslint-${{ hashFiles('package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-dtslint-
     - name: Install
       run: npm install --ignore-scripts
-    - name: Lint
-      run: npm run lint
+    - name: Test
+      run: npm run typetest
 
   docs:
     runs-on: ubuntu-latest
@@ -116,7 +110,7 @@ jobs:
     - uses: actions/checkout@v5
     - uses: actions/setup-node@v6
       with:
-        node-version: 20
+        node-version: lts/*
         cache: npm
     - name: Install
       run: npm install --ignore-scripts

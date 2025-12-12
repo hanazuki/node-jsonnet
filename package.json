@@ -57,7 +57,7 @@
     "prepare": "if test -f ./scripts/apply-patches.sh; then ./scripts/apply-patches.sh; fi",
     "version": "./scripts/bump-version.js",
     "test": "jasmine",
-    "lint": "dtslint types",
+    "typetest": "tstyche --target '>=5.0'",
     "format": "clang-format -i src/*",
     "cpplint": "cpplint --filter=-,+build,+runtime,-runtime/indentation_namespace src/*",
     "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
@@ -85,12 +85,11 @@
     "node-addon-api": "^8.5.0"
   },
   "devDependencies": {
-    "@definitelytyped/dtslint": "^0.0.182",
-    "@definitelytyped/eslint-plugin": "^0.1.0",
     "@types/node": "20",
     "glob": "^11.0.2",
     "jasmine": "^5.1.0",
     "ts-node": "^10.0.0",
+    "tstyche": "^5.0.2",
     "typedoc": "^0.28.1",
     "typescript": "^5.0.2"
   }
