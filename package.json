@@ -89,7 +89,7 @@
     "glob": "^13.0.0",
     "jasmine": "^5.1.0",
     "ts-node": "^10.0.0",
-    "tstyche": "^5.0.2",
+    "tstyche": "^6.0.2",
     "typedoc": "^0.28.1",
     "typescript": "^5.0.2"
   }
