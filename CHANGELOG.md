@@ -1,6 +1,7 @@
 # ChangeLog
 
 ## UNRELEASED
+- Update libjsonnet to [v0.22.0](https://github.com/google/jsonnet/releases/tag/v0.22.0).
 
 ## v3.0.1 (2025-09-19)
 - The package is now compatible with CMake 4.
