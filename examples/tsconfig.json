@@ -2,8 +2,8 @@
   "compilerOptions": {
     "module": "commonjs",
     "lib": ["es6"],
+    "types": ["node"],
     "strict": true,
-    "baseUrl": ".",
     "paths": { "@hanazuki/node-jsonnet": ["../types"] }
   },
   "include": ["."]
