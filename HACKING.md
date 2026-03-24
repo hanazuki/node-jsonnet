@@ -37,3 +37,7 @@ node-jsonnet should maintain compatibility with:
     - Ubuntu: the two latest LTS releases
     - MacOS: the latest release (Clang from Apple and GCC from Homebrew)
 - TypeScript: reasonably new versions
+
+## Release
+
+Run `npm version` and push the tag to GitHub. This will trigger a GitHub Actions workflow that publishes a package to npmjs as trusted publisher.
