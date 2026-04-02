@@ -1,0 +1,194 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*'
+  pull_request:
+  schedule:
+    - cron: '0 15 * * 5'
+
+jobs:
+  build:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        submodules: recursive
+        persist-credentials: false
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      with:
+        node-version: lts/*
+    - run: mkdir -p pkg
+    - name: Package
+      run: npm pack --pack-destination pkg
+    - id: attest
+      uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+      with:
+        subject-path: pkg/*
+    - name: Copy attestation bundle
+      run: |
+        cp "$BUNDLE" pkg/provenance.json
+      env:
+        BUNDLE: ${{ steps.attest.outputs.bundle-path }}
+    - id: upload
+      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      with:
+        name: package
+        path: pkg/
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+
+  test:
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: [20, 22, 24]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        persist-credentials: false
+    - name: Install
+      run: |
+        if type apt-get >/dev/null; then
+          clang_version=$(clang --version | perl -e '<> =~ /(\d+)\.\d+\.\d+/ && print $1')
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends lcov llvm-"${clang_version}"
+          sudo update-alternatives --install /usr/bin/llvm-cov llvm /usr/bin/llvm-cov-"${clang_version}" 100
+        elif type brew >/dev/null; then
+          brew install lcov
+        fi
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      with:
+        node-version: ${{ matrix.node }}
+        cache: npm
+    - uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      with:
+        path: /home/runner/.cmake-js
+        key: node-${{ matrix.node }}-cmake-js
+    - name: Setup compilers
+      if: startsWith(matrix.os, 'macos-')
+      run: |
+        cd /usr/local/bin
+        ln -sf gcc-12 gcc
+        ln -sf g++-12 g++
+        ln -sf gcov-12 gcov
+        ln -sf /Library/Developer/CommandLineTools/usr/bin/llvm-cov .
+    - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        artifact-ids: ${{ needs.build.outputs.artifact-id }}
+        path: pkg/
+    - name: Test with GCC
+      run: |
+        if [[ $(uname -s) == Darwin ]]; then
+          unset NODE_JSONNET_ENABLE_COVERAGE
+        fi
+        ./scripts/test-packaging.sh pkg/*.tgz
+      env:
+        CC: gcc
+        CXX: g++
+        CMAKE_BUILD_PARALLEL_LEVEL: '4'
+        NODE_JSONNET_ENABLE_COVERAGE: gcc
+    - name: Test with Clang
+      run: |
+        if [[ $(uname -s) == Darwin ]]; then
+          unset NODE_JSONNET_ENABLE_COVERAGE
+        fi
+        ./scripts/test-packaging.sh pkg/*.tgz
+      env:
+        CC: clang
+        CXX: clang++
+        CMAKE_BUILD_PARALLEL_LEVEL: '4'
+        NODE_JSONNET_ENABLE_COVERAGE: clang
+    - name: Coveralls
+      continue-on-error: true
+      uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2.3.6
+      with:
+        github-token: ${{ secrets.github_token }}
+        flag-name: ${{ matrix.os }}-${{ matrix.node }}
+        parallel: true
+
+  test-finish:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+    - name: Upload to Coveralls
+      continue-on-error: true
+      uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2.3.6
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
+
+  typetest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        persist-credentials: false
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      with:
+        node-version: lts/*
+        cache: npm
+    - name: Install
+      run: npm install --ignore-scripts
+    - name: Test
+      run: npm run typetest
+
+  docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        persist-credentials: false
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      with:
+        node-version: lts/*
+        cache: npm
+    - name: Install
+      run: npm install --ignore-scripts
+    - name: Generate docs
+      run: |
+        cd types
+        npm exec -- typedoc --out "../docs/tmp"
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [test-finish, typetest, build]
+    runs-on: ubuntu-slim
+    permissions:
+      contents: write
+      id-token: write
+    environment: npmjs.com
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        persist-credentials: false
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      with:
+        node-version: lts/*
+    - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        artifact-ids: ${{ needs.build.outputs.artifact-id }}
+        path: pkg/
+    - name: Upload to GitHub releases
+      uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+      with:
+        script: await require("./.github/scripts/release.cjs")({ github, context });
+    - name: Publish to npmjs
+      run: npm publish pkg/*.tgz --provenance-file pkg/provenance.json

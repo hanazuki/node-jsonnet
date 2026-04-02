@@ -6,10 +6,8 @@ __dir="$(cd "$(dirname "$BASH_SOURCE")" && pwd)"
 mkdir -p coverage
 TRACEFILE="$PWD/coverage/lcov.info"
 
-rm -f *.tgz
-npm pack
 tmpdir=$(mktemp -d)
-tar xf hanazuki-node-jsonnet-*.tgz -C "$tmpdir"
+tar xf "$1" -C "$tmpdir"
 pushd "$tmpdir/package"
 npm install-test
 if [[ ${NODE_JSONNET_ENABLE_COVERAGE-} ]]; then
