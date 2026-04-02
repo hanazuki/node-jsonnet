@@ -191,4 +191,4 @@ jobs:
       with:
         script: await require("./.github/scripts/release.cjs")({ github, context });
     - name: Publish to npmjs
-      run: npm publish pkg/*.tgz --provenance-file pkg/provenance.json
+      run: npm publish ./pkg/*.tgz --provenance-file ./pkg/provenance.json
