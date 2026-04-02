@@ -2,6 +2,8 @@
 
 ## UNRELEASED
 
+## v3.1.1 (2026-04-02)
+
 - No changes since v3.1.0 -- v3.1.0 was not properly packaged during the release workflow.
 
 ## [deprecated] v3.1.0 (2026-03-24)
