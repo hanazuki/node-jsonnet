@@ -2,6 +2,8 @@
 
 ## UNRELEASED
 
+## v3.1.1-alpha.0 (2026-04-02)
+
 ## v3.1.0 (2026-03-24)
 - Update libjsonnet to [v0.22.0](https://github.com/google/jsonnet/releases/tag/v0.22.0).
 
