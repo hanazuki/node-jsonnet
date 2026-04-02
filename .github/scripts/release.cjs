@@ -45,7 +45,7 @@ async function getOrCreateRelease(github, repo, tag, prerelease) {
 /**
  * @param {import('@actions/github-script').AsyncFunctionArguments} AsyncFunctionArguments
  */
-module.exports = async ({ github, context }) => {
+module.exports = async ({ github, context, core }) => {
   const ref = (
     await github.rest.git.getRef({
       ...context.repo,
@@ -75,37 +75,39 @@ module.exports = async ({ github, context }) => {
     )
   ).data;
 
-  if (!release.draft) return;
+  if (release.draft) {
+    const pkgdir = './pkg';
+    await using dir = await fs.opendir(pkgdir, { encoding: 'utf-8' });
+    for await (const dirent of dir) {
+      if (!dirent.isFile()) continue;
 
-  const pkgdir = './pkg';
-  await using dir = await fs.opendir(pkgdir, { encoding: 'utf-8' });
-  for await (const dirent of dir) {
-    if (!dirent.isFile()) continue;
+      const name = dirent.name;
+      if (release.assets.some((asset) => asset.name == name)) continue;
 
-    const name = dirent.name;
-    if (release.assets.some((asset) => asset.name == name)) continue;
+      await using file = await fs.open(path.join(pkgdir, dirent.name));
 
-    await using file = await fs.open(path.join(pkgdir, dirent.name));
+      /** @type {any} */
+      const data = file.createReadStream();
+      const size = (await file.stat()).size;
 
-    /** @type {any} */
-    const data = file.createReadStream();
-    const size = (await file.stat()).size;
+      await github.rest.repos.uploadReleaseAsset({
+        ...context.repo,
+        release_id: release.id,
+        name: dirent.name,
+        data,
+        headers: {
+          'content-type': contentType(name),
+          'content-length': size,
+        },
+      })
+    }
 
-    await github.rest.repos.uploadReleaseAsset({
+    await github.rest.repos.updateRelease({
       ...context.repo,
       release_id: release.id,
-      name: dirent.name,
-      data,
-      headers: {
-        'content-type': contentType(name),
-        'content-length': size,
-      },
+      draft: false,
     })
   }
 
-  await github.rest.repos.updateRelease({
-    ...context.repo,
-    release_id: release.id,
-    draft: false,
-  })
+  core.setOutput('prerelease', String(prerelease));
 };

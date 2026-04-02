@@ -186,9 +186,19 @@ jobs:
       with:
         artifact-ids: ${{ needs.build.outputs.artifact-id }}
         path: pkg/
-    - name: Upload to GitHub releases
+    - id: release
+      name: Upload to GitHub releases
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
       with:
-        script: await require("./.github/scripts/release.cjs")({ github, context });
+        script: await require("./.github/scripts/release.cjs")({ github, context, core });
     - name: Publish to npmjs
-      run: npm publish ./pkg/*.tgz --provenance-file ./pkg/provenance.json
+      shell: bash
+      run: |
+        if "$PRE"; then
+          tag=(--tag prerelease)
+        else
+          tag=()
+        fi
+        npm publish ./pkg/*.tgz --provenance-file ./pkg/provenance.json "${tag[@]}"
+      env:
+        PRE: ${{ steps.release.outputs.prerelease }}
