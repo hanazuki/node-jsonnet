@@ -85,7 +85,7 @@
     "node-addon-api": "^8.5.0"
   },
   "devDependencies": {
-    "@actions/github-script": "github:actions/github-script#v8.0.0",
+    "@actions/github-script": "github:actions/github-script#v9",
     "@types/node": "20",
     "glob": "^13.0.0",
     "jasmine": "^6.0.0",
