@@ -147,6 +147,8 @@ jobs:
       run: npm install --ignore-scripts
     - name: Test
       run: npm run typetest
+    - name: Typecheck scripts
+      run: npm run typecheck -w .github/scripts
 
   docs:
     runs-on: ubuntu-latest

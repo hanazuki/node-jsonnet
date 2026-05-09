@@ -1,7 +1,7 @@
 /build
 /docs
 /coverage
-/node_modules
+node_modules
 /*.log
 .cache/
 /pkg

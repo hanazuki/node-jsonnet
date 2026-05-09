@@ -85,7 +85,6 @@
     "node-addon-api": "^8.5.0"
   },
   "devDependencies": {
-    "@actions/github-script": "github:actions/github-script#v9.0.0",
     "@types/node": "20",
     "glob": "^13.0.0",
     "jasmine": "^6.0.0",
@@ -93,5 +92,8 @@
     "tstyche": "^7.0.0",
     "typedoc": "^0.28.1",
     "typescript": "^6.0.2"
-  }
+  },
+  "workspaces": [
+    ".github/scripts"
+  ]
 }
