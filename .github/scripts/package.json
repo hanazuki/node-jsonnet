@@ -1,0 +1,13 @@
+{
+  "name": "github-scripts",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@actions/github-script": "github:actions/github-script#v9.0.0",
+    "@types/node": "24",
+    "typescript": "^6.0.2"
+  }
+}
