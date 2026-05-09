@@ -6,7 +6,7 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
-    "@actions/github-script": "github:actions/github-script#v9.0.0",
+    "@actions/github-script": "github:actions/github-script#v9",
     "@types/node": "24",
     "typescript": "^6.0.2"
   }
