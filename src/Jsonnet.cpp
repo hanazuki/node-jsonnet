@@ -29,10 +29,10 @@ namespace nodejsonnet {
         InstanceMethod<&Jsonnet::evaluateSnippetMulti>("evaluateSnippetMulti"),
         InstanceMethod<&Jsonnet::evaluateFileStream>("evaluateFileStream"),
         InstanceMethod<&Jsonnet::evaluateSnippetStream>("evaluateSnippetStream"),
-        InstanceMethod<&Jsonnet::extString>("extString"),
-        InstanceMethod<&Jsonnet::extCode>("extCode"),
-        InstanceMethod<&Jsonnet::tlaString>("tlaString"),
-        InstanceMethod<&Jsonnet::tlaCode>("tlaCode"),
+        InstanceMethod<&Jsonnet::extString>("_extString"),
+        InstanceMethod<&Jsonnet::extCode>("_extCode"),
+        InstanceMethod<&Jsonnet::tlaString>("_tlaString"),
+        InstanceMethod<&Jsonnet::tlaCode>("_tlaCode"),
         InstanceMethod<&Jsonnet::addJpath>("addJpath"),
         InstanceMethod<&Jsonnet::nativeCallback>("_nativeCallback"),  // See also lib/index.js
       });
