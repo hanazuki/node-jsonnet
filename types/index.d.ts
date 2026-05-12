@@ -65,6 +65,12 @@ export class Jsonnet {
    * @param value - String value to which the variable is bound
    */
   extString(key: string, value: string): this;
+  /**
+   * Binds multiple external variables to string values.
+   *
+   * @param vars - Mapping from variable names to their string values
+   */
+  extString(vars: Record<string, string>): this;
 
   /**
    * Binds external variable named as `key` to a value represented by `value`.
@@ -73,6 +79,12 @@ export class Jsonnet {
    * @param value - Code representation of the value to which the variable is bound
    */
   extCode(key: string, value: string): this;
+  /**
+   * Binds multiple external variables to values represented by code.
+   *
+   * @param vars - Mapping from variable names to their code representations
+   */
+  extCode(vars: Record<string, string>): this;
 
   /**
    * Binds top-level argument named as `key` to string `value`.
@@ -81,6 +93,12 @@ export class Jsonnet {
    * @param value - String value to which the argument is bound
    */
   tlaString(key: string, value: string): this;
+  /**
+   * Binds multiple top-level arguments to string values.
+   *
+   * @param vars - Mapping from argument names to their string values
+   */
+  tlaString(vars: Record<string, string>): this;
 
   /**
    * Binds top-level argument named as `key` to a value represented by `value`.
@@ -89,6 +107,12 @@ export class Jsonnet {
    * @param value - Code representation of the value to which the argument is bound
    */
   tlaCode(key: string, value: string): this;
+  /**
+   * Binds multiple top-level arguments to values represented by code.
+   *
+   * @param vars - Mapping from argument names to their code representations
+   */
+  tlaCode(vars: Record<string, string>): this;
 
   /**
    * Adds a path to the list of include paths. Paths added more recently take precedence.

@@ -49,6 +49,22 @@ describe('binding', () => {
     expect(j).toBeJSON("str2");
   });
 
+  it('supports multiple extVar assignment', async () => {
+    const jsonnet = new Jsonnet()
+      .extString({var1: "A", var2: "B"})
+      .extCode({var3: "{c: [0]}", var4: '"D"'});
+
+    let j = await jsonnet.evaluateSnippet(
+      `{a: std.extVar("var1"), b: std.extVar("var2"), c: std.extVar("var3"), d: std.extVar("var4")}`
+    );
+    expect(j).toBeJSON({
+      a: "A",
+      b: "B",
+      c: {c: [0]},
+      d: "D",
+    });
+  });
+
   it('can import files using Jpath', async () => {
     const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
 
@@ -103,6 +119,22 @@ describe('binding', () => {
 
     j = await jsonnet.evaluateSnippet(`function(var2, var1) var1 + var2.y`);
     expect(j).toBeJSON("test2");
+  });
+
+  it('supports multiple top-level arguments assignment', async () => {
+    const jsonnet = new Jsonnet()
+      .tlaString({var1: "A", var2: "B"})
+      .tlaCode({var3: "{c: [0]}", var4: '"D"'});
+
+    let j = await jsonnet.evaluateSnippet(
+      `function(var1, var2, var3, var4) {a: var1, b: var2, c: var3, d: var4}`
+    );
+    expect(j).toBeJSON({
+      a: "A",
+      b: "B",
+      c: {c: [0]},
+      d: "D",
+    });
   });
 
   it('support native callbacks', async () => {
