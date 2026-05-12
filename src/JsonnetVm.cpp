@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
-#include "JsonnetVm.hpp"
+extern "C" {
+#include <libjsonnet.h>
+}
 #include <algorithm>
-#include <stdexcept>
+#include "JsonnetVm.hpp"
 
 namespace nodejsonnet {
 
@@ -35,6 +37,10 @@ namespace nodejsonnet {
 
   void JsonnetVm::stringOutput(bool v) {
     ::jsonnet_string_output(vm, v);
+  }
+
+  void JsonnetVm::trailingNewline(bool v) {
+    ::jsonnet_set_trailing_newline(vm, v);
   }
 
   void JsonnetVm::extVar(std::string const &key, std::string const &val) {

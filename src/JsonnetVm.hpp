@@ -42,6 +42,7 @@ namespace nodejsonnet {
     void gcMinObjects(unsigned v);
     void gcGrowthTrigger(double v);
     void stringOutput(bool v);
+    void trailingNewline(bool v);
 
     void extVar(std::string const &key, std::string const &val);
     void extCode(std::string const &key, std::string const &val);
