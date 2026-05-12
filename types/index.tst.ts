@@ -119,3 +119,6 @@ expect(jsonnet.extCode({}))
 
 // @ts-expect-error!
 jsonnet.extCode({ext: "0", ext2: 1});
+
+expect(jsonnet.trailingNewline(true))
+  .type.toBe<Jsonnet>();

@@ -28,6 +28,24 @@ describe('binding', () => {
     expect(j).toBeJSON([1,"a",true,null,{a:{b:3}}]);
   });
 
+  it('returns JSON with trailing newline without trailingNewline()', async () => {
+    const jsonnet = new Jsonnet();
+    let j = await jsonnet.evaluateSnippet("[]");
+    expect(j).toEqual("[ ]\n");
+  });
+
+  it('returns JSON with trailing newline with trailingNewline(true)', async () => {
+    const jsonnet = new Jsonnet();
+    let j = await jsonnet.trailingNewline(true).evaluateSnippet("[]");
+    expect(j).toEqual("[ ]\n");
+  });
+
+  it('returns JSON without trailing newline with trailingNewline(false)', async () => {
+    const jsonnet = new Jsonnet();
+    let j = await jsonnet.trailingNewline(false).evaluateSnippet("[]");
+    expect(j).toEqual("[ ]");
+  });
+
   it('supports extVar', async () => {
     const jsonnet = new Jsonnet();
     jsonnet.extString("var1", "str");
