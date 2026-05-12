@@ -66,11 +66,29 @@ expect(jsonnet.tlaString("tla", "0"))
 // @ts-expect-error!
 jsonnet.tlaString("tla", 0);
 
+expect(jsonnet.tlaString({tla: "0", tla2: "1"}))
+  .type.toBe<Jsonnet>();
+
+expect(jsonnet.tlaString({}))
+  .type.toBe<Jsonnet>();
+
+// @ts-expect-error!
+jsonnet.tlaString({tla: "0", tla2: 1});
+
 expect(jsonnet.tlaCode("tla", "0"))
   .type.toBe<Jsonnet>();
 
 // @ts-expect-error!
 jsonnet.tlaCode("tla", 0);
+
+expect(jsonnet.tlaCode({tla: "0", tla2: "1"}))
+  .type.toBe<Jsonnet>();
+
+expect(jsonnet.tlaCode({}))
+  .type.toBe<Jsonnet>();
+
+// @ts-expect-error!
+jsonnet.tlaCode({tla: "0", tla2: 1});
 
 expect(jsonnet.extString("ext", "0"))
   .type.toBe<Jsonnet>();
@@ -78,11 +96,29 @@ expect(jsonnet.extString("ext", "0"))
 // @ts-expect-error!
 jsonnet.extString("ext", 0);
 
+expect(jsonnet.extString({ext: "0", ext2: "1"}))
+  .type.toBe<Jsonnet>();
+
+expect(jsonnet.extString({}))
+  .type.toBe<Jsonnet>();
+
+// @ts-expect-error!
+jsonnet.extString({ext: "0", ext2: 1});
+
 expect(jsonnet.extCode("ext", "0"))
   .type.toBe<Jsonnet>();
 
 // @ts-expect-error!
 jsonnet.extCode("ext", 0);
+
+expect(jsonnet.extCode({ext: "0", ext2: "1"}))
+  .type.toBe<Jsonnet>();
+
+expect(jsonnet.extCode({}))
+  .type.toBe<Jsonnet>();
+
+// @ts-expect-error!
+jsonnet.extCode({ext: "0", ext2: 1});
 
 expect(jsonnet.trailingNewline(true))
   .type.toBe<Jsonnet>();
