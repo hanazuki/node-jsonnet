@@ -23,6 +23,7 @@ namespace nodejsonnet {
         InstanceMethod<&Jsonnet::setGcMinObjects>("setGcMinObjects"),
         InstanceMethod<&Jsonnet::setGcGrowthTrigger>("setGcGrowthTrigger"),
         InstanceMethod<&Jsonnet::setStringOutput>("stringOutput"),
+        InstanceMethod<&Jsonnet::setTrailingNewline>("trailingNewline"),
         InstanceMethod<&Jsonnet::evaluateFile>("evaluateFile"),
         InstanceMethod<&Jsonnet::evaluateSnippet>("evaluateSnippet"),
         InstanceMethod<&Jsonnet::evaluateFileMulti>("evaluateFileMulti"),
@@ -68,6 +69,11 @@ namespace nodejsonnet {
 
   Napi::Value Jsonnet::setStringOutput(const Napi::CallbackInfo &info) {
     stringOutput = info[0].As<Napi::Boolean>();
+    return info.This();
+  }
+
+  Napi::Value Jsonnet::setTrailingNewline(const Napi::CallbackInfo &info) {
+    trailingNewline = info[0].As<Napi::Boolean>();
     return info.This();
   }
 
@@ -213,6 +219,7 @@ namespace nodejsonnet {
       vm->gcGrowthTrigger(*gcGrowthTrigger);
     }
     vm->stringOutput(stringOutput);
+    vm->trailingNewline(trailingNewline);
 
     for(auto const &[name, var]: ext) {
       if(var.isCode) {

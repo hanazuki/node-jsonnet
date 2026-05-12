@@ -4,7 +4,6 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 #include <napi.h>
 #include "JsonnetVm.hpp"
@@ -26,6 +25,7 @@ namespace nodejsonnet {
     std::optional<unsigned> gcMinObjects;
     std::optional<double> gcGrowthTrigger;
     bool stringOutput = false;
+    bool trailingNewline = true;
 
     std::map<std::string, Variable> ext, tla;
     std::vector<std::string> jpath;
@@ -46,6 +46,7 @@ namespace nodejsonnet {
     Napi::Value setGcMinObjects(const Napi::CallbackInfo &info);
     Napi::Value setGcGrowthTrigger(const Napi::CallbackInfo &info);
     Napi::Value setStringOutput(const Napi::CallbackInfo &info);
+    Napi::Value setTrailingNewline(const Napi::CallbackInfo &info);
     Napi::Value evaluateFile(const Napi::CallbackInfo &info);
     Napi::Value evaluateSnippet(const Napi::CallbackInfo &info);
     Napi::Value evaluateFileMulti(const Napi::CallbackInfo &info);

@@ -54,9 +54,16 @@ export class Jsonnet {
   /**
    * Set whether the evaluation results are returned in plain string instead of in JSON.
    *
-   * @param value - Whether output is in plain string.
+   * @param value - Whether the output is in plain string.
    */
   stringOutput(value: boolean): this;
+
+  /**
+   * Set whether the evaluation results should have a trailing newline.
+   *
+   * @param value - Whether the output has trailing newline.
+   */
+  trailingNewline(value: boolean): this;
 
   /**
    * Binds external variable named as `key` to string `value`.
