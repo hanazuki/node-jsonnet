@@ -2,6 +2,8 @@
 
 ## UNRELEASED
 
+## v3.2.0 (2026-05-13)
+
 - `Jsonnet.prototype.{extString,extCode,tlaString,tlaCode}` now accept an object to assign multiple variables at once.
 - Introduce `Jsonnet.prototype.trailingNewline` to control whether the output will have a trailing newline.
 
