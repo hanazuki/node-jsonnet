@@ -1,6 +1,6 @@
 import { expect } from "tstyche";
 
-import { Jsonnet } from '@hanazuki/node-jsonnet';
+import { Jsonnet, ImportResult, ImportCallback } from '@hanazuki/node-jsonnet';
 
 const version = Jsonnet.version;
 expect(version)
@@ -66,14 +66,14 @@ expect(jsonnet.tlaString("tla", "0"))
 // @ts-expect-error!
 jsonnet.tlaString("tla", 0);
 
-expect(jsonnet.tlaString({tla: "0", tla2: "1"}))
+expect(jsonnet.tlaString({ tla: "0", tla2: "1" }))
   .type.toBe<Jsonnet>();
 
 expect(jsonnet.tlaString({}))
   .type.toBe<Jsonnet>();
 
 // @ts-expect-error!
-jsonnet.tlaString({tla: "0", tla2: 1});
+jsonnet.tlaString({ tla: "0", tla2: 1 });
 
 expect(jsonnet.tlaCode("tla", "0"))
   .type.toBe<Jsonnet>();
@@ -81,14 +81,14 @@ expect(jsonnet.tlaCode("tla", "0"))
 // @ts-expect-error!
 jsonnet.tlaCode("tla", 0);
 
-expect(jsonnet.tlaCode({tla: "0", tla2: "1"}))
+expect(jsonnet.tlaCode({ tla: "0", tla2: "1" }))
   .type.toBe<Jsonnet>();
 
 expect(jsonnet.tlaCode({}))
   .type.toBe<Jsonnet>();
 
 // @ts-expect-error!
-jsonnet.tlaCode({tla: "0", tla2: 1});
+jsonnet.tlaCode({ tla: "0", tla2: 1 });
 
 expect(jsonnet.extString("ext", "0"))
   .type.toBe<Jsonnet>();
@@ -96,14 +96,14 @@ expect(jsonnet.extString("ext", "0"))
 // @ts-expect-error!
 jsonnet.extString("ext", 0);
 
-expect(jsonnet.extString({ext: "0", ext2: "1"}))
+expect(jsonnet.extString({ ext: "0", ext2: "1" }))
   .type.toBe<Jsonnet>();
 
 expect(jsonnet.extString({}))
   .type.toBe<Jsonnet>();
 
 // @ts-expect-error!
-jsonnet.extString({ext: "0", ext2: 1});
+jsonnet.extString({ ext: "0", ext2: 1 });
 
 expect(jsonnet.extCode("ext", "0"))
   .type.toBe<Jsonnet>();
@@ -111,14 +111,38 @@ expect(jsonnet.extCode("ext", "0"))
 // @ts-expect-error!
 jsonnet.extCode("ext", 0);
 
-expect(jsonnet.extCode({ext: "0", ext2: "1"}))
+expect(jsonnet.extCode({ ext: "0", ext2: "1" }))
   .type.toBe<Jsonnet>();
 
 expect(jsonnet.extCode({}))
   .type.toBe<Jsonnet>();
 
 // @ts-expect-error!
-jsonnet.extCode({ext: "0", ext2: 1});
+jsonnet.extCode({ ext: "0", ext2: 1 });
 
 expect(jsonnet.trailingNewline(true))
   .type.toBe<Jsonnet>();
+
+// ImportResult accepts string, Uint8Array, or Buffer content
+const _r1: ImportResult = { foundHere: 'path/to/file', content: 'jsonnet source' };
+const _r2: ImportResult = { foundHere: 'path/to/file', content: new Uint8Array([1, 2, 3]) };
+const _r3: ImportResult = { foundHere: 'path/to/file', content: Buffer.from('hello') };
+
+// ImportCallback accepts sync and async functions
+const _sync: ImportCallback = (base, rel) => ({ foundHere: rel, content: '' });
+const _async: ImportCallback = async (base, rel) => ({ foundHere: rel, content: new Uint8Array(0) });
+
+// importCallback() returns this
+expect(new Jsonnet().importCallback((base, rel) => ({ foundHere: rel, content: '' })))
+  .type.toBe<Jsonnet>();
+expect(new Jsonnet().importCallback(async (base, rel) => ({ foundHere: rel, content: '' })))
+  .type.toBe<Jsonnet>();
+
+// @ts-expect-error!
+new Jsonnet().importCallback(() => null);
+
+// @ts-expect-error!
+new Jsonnet().importCallback(() => ({ foundHere: 'x' }));
+
+// @ts-expect-error!
+new Jsonnet().importCallback(() => ({ foundHere: 'x', content: 42 }));

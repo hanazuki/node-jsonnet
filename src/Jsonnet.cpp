@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 #include "JsonValueConverter.hpp"
+#include "JsonnetImportCallback.hpp"
 #include "JsonnetNativeCallback.hpp"
 #include "JsonnetWorker.hpp"
 #include "libjsonnet.h"
@@ -36,6 +37,7 @@ namespace nodejsonnet {
         InstanceMethod<&Jsonnet::tlaCode>("_tlaCode"),
         InstanceMethod<&Jsonnet::addJpath>("addJpath"),
         InstanceMethod<&Jsonnet::nativeCallback>("_nativeCallback"),  // See also lib/index.js
+        InstanceMethod<&Jsonnet::importCallback>("_importCallback"),  // See also lib/index.js
       });
   }
 
@@ -203,6 +205,12 @@ namespace nodejsonnet {
     return info.This();
   }
 
+  Napi::Value Jsonnet::importCallback(const Napi::CallbackInfo &info) {
+    auto const fun = info[0].As<Napi::Function>();
+    importCallbackParam = ImportCallbackParam{Napi::Persistent(fun)};
+    return info.This();
+  }
+
   std::shared_ptr<JsonnetVm> Jsonnet::createVm(Napi::Env const &env) {
     auto vm = JsonnetVm::make();
 
@@ -252,6 +260,14 @@ namespace nodejsonnet {
           return callback->call(std::move(vm), std::move(args));
         },
         params);
+    }
+
+    if(importCallbackParam) {
+      vm->importCallback(
+        [callback = std::make_shared<JsonnetImportCallback>(env, importCallbackParam->fun.Value())](
+          std::shared_ptr<JsonnetVm> vm, std::string const &base, std::string const &rel) {
+          return callback->call(std::move(vm), base, rel);
+        });
     }
 
     return vm;

@@ -21,6 +21,10 @@ namespace nodejsonnet {
       std::vector<std::string> params;
     };
 
+    struct ImportCallbackParam {
+      Napi::FunctionReference fun;
+    };
+
     std::optional<unsigned> maxStack, maxTrace;
     std::optional<unsigned> gcMinObjects;
     std::optional<double> gcGrowthTrigger;
@@ -30,6 +34,7 @@ namespace nodejsonnet {
     std::map<std::string, Variable> ext, tla;
     std::vector<std::string> jpath;
     std::map<std::string, NativeCallback> nativeCallbacks;
+    std::optional<ImportCallbackParam> importCallbackParam;
   };
 
   class Jsonnet: public Napi::ObjectWrap<Jsonnet>, private JsonnetVmParam {
@@ -59,6 +64,7 @@ namespace nodejsonnet {
     Napi::Value tlaCode(const Napi::CallbackInfo &info);
     Napi::Value addJpath(const Napi::CallbackInfo &info);
     Napi::Value nativeCallback(const Napi::CallbackInfo &info);
+    Napi::Value importCallback(const Napi::CallbackInfo &info);
 
     std::shared_ptr<JsonnetVm> createVm(Napi::Env const &env);
   };

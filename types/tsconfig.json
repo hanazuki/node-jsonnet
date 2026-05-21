@@ -3,6 +3,7 @@
     "module": "commonjs",
     "lib": ["es6"],
     "strict": true,
+    "types": ["node"],
     "paths": { "@hanazuki/node-jsonnet": ["."] }
   },
   "typedocOptions": {
