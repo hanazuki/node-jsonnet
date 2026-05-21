@@ -1,14 +1,14 @@
-const {Jsonnet, JsonnetError} = require("../");
+const { Jsonnet, JsonnetError } = require("../");
 
 describe('binding', () => {
-  beforeEach(function() {
+  beforeEach(function () {
     jasmine.addMatchers({
       toBeJSON: (util) => ({
         compare: (actual, expected) => {
           const result = {
             pass: util.equals(JSON.parse(actual), expected),
           }
-          if(!result.pass) {
+          if (!result.pass) {
             result.message = `Expect '${actual}' to be JSON representing ${JSON.stringify(expected)}.`
           }
           return result;
@@ -17,7 +17,7 @@ describe('binding', () => {
     });
   });
 
-  it('has version', async() => {
+  it('has version', async () => {
     expect(Jsonnet.version).toEqual(jasmine.stringMatching(/^v/));
   });
 
@@ -25,7 +25,7 @@ describe('binding', () => {
     const jsonnet = new Jsonnet();
 
     let j = await jsonnet.evaluateSnippet(`[1,"a",true,null,{a:{b:3}}]`);
-    expect(j).toBeJSON([1,"a",true,null,{a:{b:3}}]);
+    expect(j).toBeJSON([1, "a", true, null, { a: { b: 3 } }]);
   });
 
   it('returns JSON with trailing newline without trailingNewline()', async () => {
@@ -55,7 +55,7 @@ describe('binding', () => {
     expect(j).toBeJSON("str");
 
     j = await jsonnet.evaluateSnippet(`std.extVar("var2")`);
-    expect(j).toBeJSON({a: [0]});
+    expect(j).toBeJSON({ a: [0] });
   });
 
   it('uses the extVar added most recently for the same name', async () => {
@@ -69,8 +69,8 @@ describe('binding', () => {
 
   it('supports multiple extVar assignment', async () => {
     const jsonnet = new Jsonnet()
-      .extString({var1: "A", var2: "B"})
-      .extCode({var3: "{c: [0]}", var4: '"D"'});
+      .extString({ var1: "A", var2: "B" })
+      .extCode({ var3: "{c: [0]}", var4: '"D"' });
 
     let j = await jsonnet.evaluateSnippet(
       `{a: std.extVar("var1"), b: std.extVar("var2"), c: std.extVar("var3"), d: std.extVar("var4")}`
@@ -78,7 +78,7 @@ describe('binding', () => {
     expect(j).toBeJSON({
       a: "A",
       b: "B",
-      c: {c: [0]},
+      c: { c: [0] },
       d: "D",
     });
   });
@@ -87,7 +87,7 @@ describe('binding', () => {
     const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
 
     const j = await jsonnet.evaluateFile(`${__dirname}/fixtures/fruits.jsonnet`);
-    expect(j).toBeJSON([{name: "Kiwi"}, {name: "Orange"}]);
+    expect(j).toBeJSON([{ name: "Kiwi" }, { name: "Orange" }]);
   });
 
   it('Jpath added later takes precedence', async () => {
@@ -103,13 +103,13 @@ describe('binding', () => {
     const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
 
     let j = await jsonnet.evaluateFile(`${__dirname}/fixtures/utf8.jsonnet`);
-    expect(j).toBeJSON({"あ": "あいうえお", "🍔": "🐧"});
+    expect(j).toBeJSON({ "あ": "あいうえお", "🍔": "🐧"}) ;
 
     j = await jsonnet.evaluateSnippet(`import "utf8.jsonnet"`);
-    expect(j).toBeJSON({"あ": "あいうえお", "🍔": "🐧"});
+    expect(j).toBeJSON({ "あ": "あいうえお", "🍔": "🐧"}) ;
 
     j = await jsonnet.evaluateSnippet(`{"あ": "あいうえお", "🍔": "🐧"}`);
-    expect(j).toBeJSON({"あ": "あいうえお", "🍔": "🐧"});
+    expect(j).toBeJSON({ "あ": "あいうえお", "🍔": "🐧"}) ;
   });
 
   it('handles paths in UTF-8', async () => {
@@ -141,8 +141,8 @@ describe('binding', () => {
 
   it('supports multiple top-level arguments assignment', async () => {
     const jsonnet = new Jsonnet()
-      .tlaString({var1: "A", var2: "B"})
-      .tlaCode({var3: "{c: [0]}", var4: '"D"'});
+      .tlaString({ var1: "A", var2: "B" })
+      .tlaCode({ var3: "{c: [0]}", var4: '"D"' });
 
     let j = await jsonnet.evaluateSnippet(
       `function(var1, var2, var3, var4) {a: var1, b: var2, c: var3, d: var4}`
@@ -150,7 +150,7 @@ describe('binding', () => {
     expect(j).toBeJSON({
       a: "A",
       b: "B",
-      c: {c: [0]},
+      c: { c: [0] },
       d: "D",
     });
   });
@@ -162,7 +162,7 @@ describe('binding', () => {
     jsonnet.nativeCallback("concat", (s, t) => s + t, "s", "t");
     jsonnet.nativeCallback("isNull", (v) => v === null, "v");
     jsonnet.nativeCallback("null", () => null);
-    jsonnet.nativeCallback("arrayOfObjects", () => [{name: "Kiwi"}, {name: "Orange"}]);
+    jsonnet.nativeCallback("arrayOfObjects", () => [{ name: "Kiwi" }, { name: "Orange" }]);
 
     let j = await jsonnet.evaluateSnippet(`std.native("double")(4)`);
     expect(j).toBeJSON(8);
@@ -183,21 +183,21 @@ describe('binding', () => {
     expect(j).toBeJSON(null);
 
     j = await jsonnet.evaluateSnippet(`std.native("arrayOfObjects")()`);
-    expect(j).toBeJSON([{name: "Kiwi"}, {name: "Orange"}]);
+    expect(j).toBeJSON([{ name: "Kiwi" }, { name: "Orange" }]);
   });
 
   it('serializes JavaScript objects', async () => {
     const jsonnet = new Jsonnet();
 
-    jsonnet.nativeCallback("int8array", () => new Int8Array([1,2,3]));
+    jsonnet.nativeCallback("int8array", () => new Int8Array([1, 2, 3]));
     let j = await jsonnet.evaluateSnippet(`std.native("int8array")()`);
-    expect(j).toBeJSON({0: 1, 1: 2, 2: 3});
+    expect(j).toBeJSON({ 0: 1, 1: 2, 2: 3 });
 
-    jsonnet.nativeCallback("function", () => function(){ return 1; });
+    jsonnet.nativeCallback("function", () => function () { return 1; });
     j = await jsonnet.evaluateSnippet(`std.native("function")()`);
     expect(j).toBeJSON(null);
 
-    jsonnet.nativeCallback("asyncFunction", () => async function(){ return 1; });
+    jsonnet.nativeCallback("asyncFunction", () => async function () { return 1; });
     j = await jsonnet.evaluateSnippet(`std.native("asyncFunction")()`);
     expect(j).toBeJSON(null);
 
