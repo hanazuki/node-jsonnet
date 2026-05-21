@@ -1,4 +1,3 @@
-const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const { promisify } = require('util');
@@ -12,7 +11,7 @@ const tsExamples = path.join(__dirname, "../examples/*.ts");
 const timeout = 10000;
 
 describe('JavaScript examples', () => {
-  for(const file of glob(jsExamples)) {
+  for (const file of glob(jsExamples)) {
     it(`${file}`, async () => {
       await execFile('node', [file], {
         cwd: path.join(__dirname, '..'),
@@ -23,7 +22,7 @@ describe('JavaScript examples', () => {
 });
 
 describe('TypeScript examples', () => {
-  for(const file of glob(tsExamples)) {
+  for (const file of glob(tsExamples)) {
     it(`${file}`, async () => {
       await execFile('ts-node', [file], {
         cwd: path.join(__dirname, '../examples'),
