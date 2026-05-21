@@ -27,6 +27,18 @@ namespace nodejsonnet {
       std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args)>;
     using Buffer = std::unique_ptr<char, std::function<void(char *)>>;
 
+    struct ImportResult {
+      Buffer foundHere;
+      Buffer content;
+      size_t contentLen;
+    };
+
+    using ImportCallback = std::function<ImportResult(
+      std::shared_ptr<JsonnetVm> vm, std::string const &base, std::string const &rel)>;
+
+    Buffer allocBuffer(size_t sz) const;
+    void importCallback(ImportCallback cb);
+
   private:
     JsonnetVm();
     JsonnetVm(JsonnetVm const &) = delete;
@@ -76,12 +88,20 @@ namespace nodejsonnet {
   private:
     using CallbackEntry = std::tuple<JsonnetVm *, size_t, NativeCallback>;  // [(this, arity, fun)]
 
+    struct ImportCallbackEntry {
+      std::shared_ptr<JsonnetVm> vm;
+      ImportCallback callback;
+    };
+
     ::JsonnetVm *vm;
     std::forward_list<CallbackEntry> callbacks;
+    std::optional<ImportCallbackEntry> importCbEntry;
 
     Buffer buffer(char *buf) const;
     static JsonnetJsonValue *trampoline(
       void *ctx, JsonnetJsonValue const *const *argv, int *success);
+    static int importTrampoline(
+      void *ctx, const char *base, const char *rel, char **found_here, char **buf, size_t *buflen);
   };
 
 }

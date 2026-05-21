@@ -3,6 +3,7 @@ extern "C" {
 #include <libjsonnet.h>
 }
 #include <algorithm>
+#include <cstring>
 #include "JsonnetVm.hpp"
 
 namespace nodejsonnet {
@@ -195,6 +196,15 @@ namespace nodejsonnet {
     return ::jsonnet_json_extract_null(vm, json);
   }
 
+  JsonnetVm::Buffer JsonnetVm::allocBuffer(size_t sz) const {
+    return buffer(static_cast<char *>(::jsonnet_realloc(vm, nullptr, std::max(sz, size_t{1}))));
+  }
+
+  void JsonnetVm::importCallback(ImportCallback cb) {
+    importCbEntry = ImportCallbackEntry{shared_from_this(), std::move(cb)};
+    ::jsonnet_import_callback(vm, &importTrampoline, &*importCbEntry);
+  }
+
   JsonnetVm::Buffer JsonnetVm::buffer(char *buf) const {
     return {buf, [self = shared_from_this()](char *buf) { ::jsonnet_realloc(self->vm, buf, 0); }};
   }
@@ -210,6 +220,25 @@ namespace nodejsonnet {
     } catch(std::exception const &e) {
       *success = 0;
       return vm->makeJsonString(e.what());
+    }
+  }
+
+  int JsonnetVm::importTrampoline(
+    void *ctx, const char *base, const char *rel, char **found_here, char **buf, size_t *buflen) {
+    auto &entry = *static_cast<ImportCallbackEntry *>(ctx);
+    try {
+      auto r = entry.callback(entry.vm, base, rel);
+      *found_here = r.foundHere.release();
+      *buflen = r.contentLen;
+      *buf = r.content.release();
+      return 0;
+    } catch(std::exception const &e) {
+      std::string_view msg = e.what();
+      *buflen = msg.size();
+      auto b = entry.vm->allocBuffer(msg.size());
+      std::memcpy(b.get(), msg.data(), *buflen);
+      *buf = b.release();
+      return 1;
     }
   }
 

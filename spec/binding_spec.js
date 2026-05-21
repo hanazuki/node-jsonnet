@@ -103,13 +103,13 @@ describe('binding', () => {
     const jsonnet = new Jsonnet().addJpath(`${__dirname}/fixtures`);
 
     let j = await jsonnet.evaluateFile(`${__dirname}/fixtures/utf8.jsonnet`);
-    expect(j).toBeJSON({ "あ": "あいうえお", "🍔": "🐧"}) ;
+    expect(j).toBeJSON({ "あ": "あいうえお", "🍔": "🐧" });
 
     j = await jsonnet.evaluateSnippet(`import "utf8.jsonnet"`);
-    expect(j).toBeJSON({ "あ": "あいうえお", "🍔": "🐧"}) ;
+    expect(j).toBeJSON({ "あ": "あいうえお", "🍔": "🐧"});
 
     j = await jsonnet.evaluateSnippet(`{"あ": "あいうえお", "🍔": "🐧"}`);
-    expect(j).toBeJSON({ "あ": "あいうえお", "🍔": "🐧"}) ;
+    expect(j).toBeJSON({ "あ": "あいうえお", "🍔": "🐧"});
   });
 
   it('handles paths in UTF-8', async () => {
@@ -365,6 +365,130 @@ describe('binding', () => {
       "a\n",
       "b\n",
     ]);
+  });
+
+  describe('importCallback', () => {
+    const path = require('node:path');
+
+    it('returns this for method chaining', () => {
+      const jsonnet = new Jsonnet();
+      expect(jsonnet.importCallback(() => {})).toBe(jsonnet);
+    });
+
+    it('uses the most recently set callback', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => ({ foundHere: 'x', content: '"first"' }))
+        .importCallback(() => ({ foundHere: 'x', content: '"second"' }));
+      const j = await jsonnet.evaluateSnippet('import "x.jsonnet"');
+      expect(j).toBeJSON('second');
+    });
+
+    it('resolves import with string content', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => ({ foundHere: rel, content: '{ value: 42 }' }));
+      const j = await jsonnet.evaluateSnippet('import "lib.jsonnet"');
+      expect(j).toBeJSON({ value: 42 });
+    });
+
+    it('resolves import with Buffer content', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => ({ foundHere: rel, content: Buffer.from('{ value: 42 }') }));
+      const j = await jsonnet.evaluateSnippet('import "lib.jsonnet"');
+      expect(j).toBeJSON({ value: 42 });
+    });
+
+    it('resolves import with Uint8Array content', async () => {
+      const content = new TextEncoder().encode('{ value: 42 }');
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => ({ foundHere: rel, content }));
+      const j = await jsonnet.evaluateSnippet('import "lib.jsonnet"');
+      expect(j).toBeJSON({ value: 42 });
+    });
+
+    it('handles UTF-8 content', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => ({ foundHere: rel, content: '{"emoji": "🦔"}' }));
+      const j = await jsonnet.evaluateSnippet('import "u.jsonnet"');
+      expect(j).toBeJSON({ emoji: '🦔' });
+    });
+
+    it('resolves importstr', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => ({ foundHere: rel, content: 'hello world' }));
+      const j = await jsonnet.evaluateSnippet('importstr "text.txt"');
+      expect(j).toBeJSON('hello world');
+    });
+
+    it('resolves importbin', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => ({ foundHere: rel, content: Buffer.from([1, 2, 255]) }));
+      const j = await jsonnet.evaluateSnippet('importbin "data.bin"');
+      expect(j).toBeJSON([1, 2, 255]);
+    });
+
+    it('resolves importbin with NUL bytes in content', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => ({ foundHere: rel, content: Buffer.from([0, 1, 0, 2, 0]) }));
+      const j = await jsonnet.evaluateSnippet('importbin "data.bin"');
+      expect(j).toBeJSON([0, 1, 0, 2, 0]);
+    });
+
+    it('receives the directory of the importing file as base', async () => {
+      const calls = [];
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => {
+          calls.push({ base, rel });
+          return { foundHere: path.join(base, rel), content: 'null' };
+        });
+      await jsonnet.evaluateSnippet('import "lib.jsonnet"', 'dir/snippet.jsonnet');
+      expect(calls[0]).toEqual({ base: 'dir/', rel: 'lib.jsonnet' });
+    });
+
+    it('uses foundHere as base for nested imports', async () => {
+      const files = {
+        'lib/a.jsonnet': 'import "b.jsonnet"',
+        'lib/b.jsonnet': '{ value: 42 }',
+      };
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => {
+          const key = path.join(base, rel);
+          if (!(key in files)) throw new Error(`not found: ${key}`);
+          return { foundHere: key, content: files[key] };
+        });
+      const j = await jsonnet.evaluateSnippet('import "lib/a.jsonnet"');
+      expect(j).toBeJSON({ value: 42 });
+    });
+
+    it('supports async callback', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(async (base, rel) => ({ foundHere: rel, content: '"async"' }));
+      const j = await jsonnet.evaluateSnippet('import "x.jsonnet"');
+      expect(j).toBeJSON('async');
+    });
+
+    it('propagates synchronous throw as JsonnetError', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => { throw new Error(`missing: ${rel}`); });
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError,
+          /missing: x\.jsonnet/);
+    });
+
+    it('propagates async rejection as JsonnetError', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(async (base, rel) => { throw new Error(`missing: ${rel}`); });
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError,
+          /missing: x\.jsonnet/);
+    });
+
+    it('takes precedence over addJpath', async () => {
+      const jsonnet = new Jsonnet()
+        .addJpath(`${__dirname}/fixtures`)
+        .importCallback((base, rel) => ({ foundHere: rel, content: '"from callback"' }));
+      const j = await jsonnet.evaluateSnippet('import "kiwi.libsonnet"');
+      expect(j).toBeJSON('from callback');
+    });
   });
 
 });

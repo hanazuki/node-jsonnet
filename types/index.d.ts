@@ -6,6 +6,34 @@
  */
 export type JsonnetPrimitiveValue = null | boolean | number | string;
 
+/**
+ * The result returned by an import callback.
+ */
+export type ImportResult = {
+  /**
+   * Canonical path for the imported file. Used as `base` for further imports
+   * within the loaded content, so nested imports resolve correctly.
+   */
+  foundHere: string;
+
+  /**
+   * Content of the imported file.
+   *
+   * A string value is converted to UTF-8 octets.
+   */
+  content: string | Uint8Array;
+};
+
+/**
+ * A function that resolves an import expression to its content.
+ *
+ * @param base - Directory of the file that contains the import expression.
+ * @param rel  - The literal path given to the import expression.
+ * @returns An ImportResult, or a Promise for one.
+ */
+export type ImportCallback =
+  (base: string, rel: string) => ImportResult | Promise<ImportResult>;
+
 export class JsonnetError extends Error {
 }
 
@@ -127,6 +155,31 @@ export class Jsonnet {
    * @param path - Path to add.
    */
   addJpath(path: string): this;
+
+  /**
+   * Sets a custom callback for resolving `import`, `importstr`, and `importbin` expressions.
+   * Replaces the default filesystem-based import resolution entirely.
+   *
+   * @example
+   * ```typescript
+   * import * as path from 'node:path';
+   *
+   * const files: Record<string, string> = {
+   *   'lib/util.libsonnet': '{ greet(name): "Hello, " + name }',
+   * };
+   *
+   * const result = await new Jsonnet()
+   *   .importCallback((base, rel) => {
+   *     const key = path.join(path.dirname(base), rel).replace(/^\.\//, '');
+   *     if (!(key in files)) throw new Error(`not found: ${rel}`);
+   *     return { foundHere: key, content: files[key] };
+   *   })
+   *   .evaluateSnippet('local util = import "lib/util.libsonnet"; util.greet("world")', 'main.jsonnet');
+   * ```
+   *
+   * @param callback - Function invoked for each import expression.
+   */
+  importCallback(callback: ImportCallback): this;
 
   /**
    * Registers a native callback function.
