@@ -2,6 +2,8 @@
 
 ## UNRELEASED
 
+- Introduce `Jsonnet.prototype.importCallback` to define custom import resolution.
+
 ## v3.2.0 (2026-05-13)
 
 - `Jsonnet.prototype.{extString,extCode,tlaString,tlaCode}` now accept an object to assign multiple variables at once.
