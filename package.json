@@ -53,14 +53,14 @@
     "bindings"
   ],
   "scripts": {
-    "install": "cmake-js build --CDCMAKE_EXPORT_COMPILE_COMMANDS=1",
+    "install": "cmake-js configure --CDCMAKE_EXPORT_COMPILE_COMMANDS=1 && cmake-js build",
     "prepare": "if test -f ./scripts/apply-patches.sh; then ./scripts/apply-patches.sh; fi",
     "version": "./scripts/bump-version.cjs",
     "test": "jasmine",
     "typetest": "tstyche --target '>=5.0'",
     "format": "clang-format -i src/*",
     "cpplint": "cpplint --filter=-,+build,+runtime,-runtime/indentation_namespace src/*",
-    "cmake-verbose": "cmake-js rebuild -l verbose --CDCMAKE_VERBOSE_MAKEFILE=1"
+    "cmake-verbose": "cmake-js configure -l verbose --CDCMAKE_EXPORT_COMPILE_COMMANDS=1 --CDCMAKE_VERBOSE_MAKEFILE=1 && cmake-js build -l verbose"
   },
   "engines": {
     "node": ">=14"
