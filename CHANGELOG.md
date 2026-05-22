@@ -2,6 +2,8 @@
 
 ## UNRELEASED
 
+## v3.3.0 (2026-05-22)
+
 - Introduce `Jsonnet.prototype.importCallback` to define custom import resolution.
 
 ## v3.2.0 (2026-05-13)
