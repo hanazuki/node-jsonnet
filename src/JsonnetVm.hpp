@@ -89,7 +89,7 @@ namespace nodejsonnet {
     using CallbackEntry = std::tuple<JsonnetVm *, size_t, NativeCallback>;  // [(this, arity, fun)]
 
     struct ImportCallbackEntry {
-      std::shared_ptr<JsonnetVm> vm;
+      JsonnetVm *vm;
       ImportCallback callback;
     };
 

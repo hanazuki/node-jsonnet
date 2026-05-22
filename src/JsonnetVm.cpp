@@ -201,7 +201,7 @@ namespace nodejsonnet {
   }
 
   void JsonnetVm::importCallback(ImportCallback cb) {
-    importCbEntry = ImportCallbackEntry{shared_from_this(), std::move(cb)};
+    importCbEntry = ImportCallbackEntry{this, std::move(cb)};
     ::jsonnet_import_callback(vm, &importTrampoline, &*importCbEntry);
   }
 
@@ -227,7 +227,7 @@ namespace nodejsonnet {
     void *ctx, const char *base, const char *rel, char **found_here, char **buf, size_t *buflen) {
     auto &entry = *static_cast<ImportCallbackEntry *>(ctx);
     try {
-      auto r = entry.callback(entry.vm, base, rel);
+      auto r = entry.callback(entry.vm->shared_from_this(), base, rel);
       *found_here = r.foundHere.release();
       *buflen = r.contentLen;
       *buf = r.content.release();
