@@ -9,15 +9,15 @@ import { Jsonnet } from "@hanazuki/node-jsonnet";
 const jsonnet = new Jsonnet();
 
 // Evaluates a simple Jsonnet program into a JSON value
-jsonnet.evaluateSnippet(`{a: 1 + 2, b: self.a * 3}`)
-  .then(json => console.log(JSON.parse(json)));  // => { a: 3, b: 9 }
+const json1 = await jsonnet.evaluateSnippet(`{a: 1 + 2, b: self.a * 3}`);
+console.log(JSON.parse(json1));  // => { a: 3, b: 9 }
 
 // Jsonnet programs can use JavaScript values through external variables (std.extVar)
 // and native callbacks (std.native).
-jsonnet.extCode("x", "4")
+const json2 = await jsonnet.extCode("x", "4")
   .nativeCallback("add", (a, b) => Number(a) + Number(b), "a", "b")
-  .evaluateSnippet(`std.extVar("x") * std.native("add")(1, 2)`)
-  .then(json => console.log(JSON.parse(json)));  // => 12
+  .evaluateSnippet(`std.extVar("x") * std.native("add")(1, 2)`);
+console.log(JSON.parse(json2));  // => 12
 ```
 
 The library is documented in the TypeScript type definitions at [`types/index.d.ts`](types/index.d.ts), and [HTML documentation](https://hanazuki.github.io/node-jsonnet/) is also available online.

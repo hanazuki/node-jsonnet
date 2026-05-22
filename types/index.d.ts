@@ -188,8 +188,8 @@ export class Jsonnet {
    * ```typescript
    * const jsonnet = new Jsonnet();
    * jsonnet.nativeCallback("add", (a, b) => Number(a) + Number(b), "a", "b");
-   * jsonnet.evaluateSnippet('std.native("add")(2, 3)')
-   *        .then(result => console.log(JSON.parse(result)));  // => 5
+   * const result = await jsonnet.evaluateSnippet('std.native("add")(2, 3)');
+   * console.log(JSON.parse(result));  // => 5
    * ```
    *
    * @param name - Name of the callback function.
