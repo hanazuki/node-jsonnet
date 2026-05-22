@@ -253,7 +253,7 @@ namespace nodejsonnet {
       auto const &fun = cb.fun;
       auto const &params = cb.params;
 
-      vm->nativeCallback(
+      vm->addNativeCallback(
         name,
         [callback = std::make_shared<JsonnetNativeCallback>(env, fun.Value())](
           std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args) {
@@ -263,7 +263,7 @@ namespace nodejsonnet {
     }
 
     if(importCallbackParam) {
-      vm->importCallback(
+      vm->setImportCallback(
         [callback = std::make_shared<JsonnetImportCallback>(env, importCallbackParam->fun.Value())](
           std::shared_ptr<JsonnetVm> vm, std::string const &base, std::string const &rel) {
           return callback->call(std::move(vm), base, rel);

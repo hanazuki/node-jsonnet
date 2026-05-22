@@ -24,7 +24,7 @@ describe('JavaScript examples', () => {
 describe('TypeScript examples', () => {
   for (const file of glob(tsExamples)) {
     it(`${file}`, async () => {
-      await execFile('ts-node', [file], {
+      await execFile('tsx', [file], {
         cwd: path.join(__dirname, '../examples'),
         timeout,
       });

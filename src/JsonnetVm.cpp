@@ -64,15 +64,16 @@ namespace nodejsonnet {
     ::jsonnet_jpath_add(vm, path.c_str());
   }
 
-  void JsonnetVm::nativeCallback(
+  void JsonnetVm::addNativeCallback(
     std::string const &name, NativeCallback cb, std::vector<std::string> const &params) {
     // Construct NULL-terminated array
     std::vector<char const *> params_cstr(params.size() + 1);
     std::transform(
       cbegin(params), cend(params), begin(params_cstr), std::mem_fn(&std::string::c_str));
 
-    auto const ptr = &callbacks.emplace_front(this, params.size(), std::move(cb));
-    ::jsonnet_native_callback(vm, name.c_str(), &trampoline, ptr, params_cstr.data());
+    nativeCallbacks.push_front({this, params.size(), std::move(cb)});
+    ::jsonnet_native_callback(
+      vm, name.c_str(), &nativeTrampoline, &nativeCallbacks.front(), params_cstr.data());
   }
 
   JsonnetVm::Buffer JsonnetVm::evaluateFile(std::string const &filename) const {
@@ -200,26 +201,26 @@ namespace nodejsonnet {
     return buffer(static_cast<char *>(::jsonnet_realloc(vm, nullptr, std::max(sz, size_t{1}))));
   }
 
-  void JsonnetVm::importCallback(ImportCallback cb) {
-    importCbEntry = ImportCallbackEntry{shared_from_this(), std::move(cb)};
-    ::jsonnet_import_callback(vm, &importTrampoline, &*importCbEntry);
+  void JsonnetVm::setImportCallback(ImportCallback cb) {
+    importCallback = ImportCallbackEntry{this, std::move(cb)};
+    ::jsonnet_import_callback(vm, &importTrampoline, &*importCallback);
   }
 
   JsonnetVm::Buffer JsonnetVm::buffer(char *buf) const {
     return {buf, [self = shared_from_this()](char *buf) { ::jsonnet_realloc(self->vm, buf, 0); }};
   }
 
-  JsonnetJsonValue *JsonnetVm::trampoline(
+  JsonnetJsonValue *JsonnetVm::nativeTrampoline(
     void *ctx, JsonnetJsonValue const *const *argv, int *success) {
-    auto const &[vm, arity, func] = *static_cast<CallbackEntry *>(ctx);
+    auto const &entry = *static_cast<NativeCallbackEntry *>(ctx);
 
     try {
-      auto result = func(vm->shared_from_this(), {argv, argv + arity});
+      auto result = entry.callback(entry.vm->shared_from_this(), {argv, argv + entry.arity});
       *success = 1;
       return result;
     } catch(std::exception const &e) {
       *success = 0;
-      return vm->makeJsonString(e.what());
+      return entry.vm->makeJsonString(e.what());
     }
   }
 
@@ -227,7 +228,7 @@ namespace nodejsonnet {
     void *ctx, const char *base, const char *rel, char **found_here, char **buf, size_t *buflen) {
     auto &entry = *static_cast<ImportCallbackEntry *>(ctx);
     try {
-      auto r = entry.callback(entry.vm, base, rel);
+      auto r = entry.callback(entry.vm->shared_from_this(), base, rel);
       *found_here = r.foundHere.release();
       *buflen = r.contentLen;
       *buf = r.content.release();

@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "lib": ["es6"],
+    "module": "preserve",
+    "target": "es2022",
+    "lib": ["es2022"],
     "types": ["node"],
     "strict": true,
     "paths": { "@hanazuki/node-jsonnet": ["../types"] }
   },
-  "include": ["."]
+  "include": ["*.ts"]
 }

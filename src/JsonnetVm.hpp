@@ -37,7 +37,6 @@ namespace nodejsonnet {
       std::shared_ptr<JsonnetVm> vm, std::string const &base, std::string const &rel)>;
 
     Buffer allocBuffer(size_t sz) const;
-    void importCallback(ImportCallback cb);
 
   private:
     JsonnetVm();
@@ -61,8 +60,9 @@ namespace nodejsonnet {
     void tlaVar(std::string const &key, std::string const &val);
     void tlaCode(std::string const &key, std::string const &val);
     void jpathAdd(std::string const &path);
-    void nativeCallback(
+    void addNativeCallback(
       std::string const &name, NativeCallback cb, std::vector<std::string> const &params);
+    void setImportCallback(ImportCallback cb);
 
     Buffer evaluateFile(std::string const &filename) const;
     Buffer evaluateSnippet(std::string const &filename, std::string const &snippet) const;
@@ -86,19 +86,23 @@ namespace nodejsonnet {
     bool extractJsonNull(JsonnetJsonValue const *json) const;
 
   private:
-    using CallbackEntry = std::tuple<JsonnetVm *, size_t, NativeCallback>;  // [(this, arity, fun)]
+    struct NativeCallbackEntry {
+      JsonnetVm *vm;
+      size_t arity;
+      NativeCallback callback;
+    };
 
     struct ImportCallbackEntry {
-      std::shared_ptr<JsonnetVm> vm;
+      JsonnetVm *vm;
       ImportCallback callback;
     };
 
     ::JsonnetVm *vm;
-    std::forward_list<CallbackEntry> callbacks;
-    std::optional<ImportCallbackEntry> importCbEntry;
+    std::forward_list<NativeCallbackEntry> nativeCallbacks;
+    std::optional<ImportCallbackEntry> importCallback;
 
     Buffer buffer(char *buf) const;
-    static JsonnetJsonValue *trampoline(
+    static JsonnetJsonValue *nativeTrampoline(
       void *ctx, JsonnetJsonValue const *const *argv, int *success);
     static int importTrampoline(
       void *ctx, const char *base, const char *rel, char **found_here, char **buf, size_t *buflen);

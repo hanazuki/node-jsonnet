@@ -10,12 +10,12 @@
     "url": "https://github.com/hanazuki/node-jsonnet"
   },
   "license": "MIT AND Apache-2.0",
-  "type": "commonjs",
-  "main": "./lib/index.js",
+  "type": "module",
+  "main": "./lib/index.cjs",
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
-      "require": "./lib/index.js",
+      "require": "./lib/index.cjs",
       "default": "./lib/module.mjs"
     }
   },
@@ -55,7 +55,7 @@
   "scripts": {
     "install": "cmake-js build --CDCMAKE_EXPORT_COMPILE_COMMANDS=1",
     "prepare": "if test -f ./scripts/apply-patches.sh; then ./scripts/apply-patches.sh; fi",
-    "version": "./scripts/bump-version.js",
+    "version": "./scripts/bump-version.cjs",
     "test": "jasmine",
     "typetest": "tstyche --target '>=5.0'",
     "format": "clang-format -i src/*",
@@ -88,7 +88,7 @@
     "@types/node": "20",
     "glob": "^13.0.0",
     "jasmine": "^6.0.0",
-    "ts-node": "^10.0.0",
+    "tsx": "^4.22.3",
     "tstyche": "^7.0.0",
     "typedoc": "^0.28.1",
     "typescript": "^6.0.2"
