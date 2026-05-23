@@ -1,62 +1,31 @@
 // SPDX-License-Identifier: MIT
 #include "JsonnetNativeCallback.hpp"
+#include "JsonValueConverter.hpp"
 
 namespace nodejsonnet {
 
-  JsonnetNativeCallback::JsonnetNativeCallback(Napi::Env env, Napi::Function fun)
-    : tsfn{ThreadSafeFunction::New(env, fun, "Jsonnet Native Callback", 0, 1)} {
-  }
+  namespace detail {
 
-  JsonnetNativeCallback::~JsonnetNativeCallback() {
-    this->tsfn.Release();
-  }
+    NativeCallbackPayload::NativeCallbackPayload(
+      std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args)
+      : CallbackPayload{std::move(vm)}, args{std::move(args)} {}
 
-  JsonnetJsonValue *JsonnetNativeCallback::call(
-    std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args) {
-    // This functions runs in a worker thread and cannot access Node VM.
 
-    Payload payload(std::move(vm), std::move(args));
-    tsfn.BlockingCall(&payload);
-    return payload.getFuture().get();
-  }
-
-  void JsonnetNativeCallback::callback(
-    Napi::Env env, Napi::Function fun, std::nullptr_t *, Payload *payload) {
-    // This functions runs in the Node main thread.
-
-    JsonValueConverter const conv{payload->getVm()};
-
-    std::vector<napi_value> args;
-    args.reserve(payload->getArgs().size());
-    for(auto const arg: payload->getArgs()) {
-      args.push_back(conv.toNapiValue(env, arg));
+    std::vector<napi_value> NativeCallbackPayload::makeArgs(Napi::Env env) const {
+      JsonValueConverter const conv{getVm()};
+      std::vector<napi_value> ret;
+      ret.reserve(args.size());
+      for(auto const arg : args) {
+        ret.push_back(conv.toNapiValue(env, arg));
+      }
+      return ret;
     }
 
-    auto const result = fun.Call(args);
-    if(!result.IsPromise()) {
-      payload->setResult(conv.toJsonnetJson(result));
-      return;
+    void NativeCallbackPayload::resolveResult(Napi::Value val) {
+      JsonValueConverter const conv{getVm()};
+      setResult(conv.toJsonnetJson(val));
     }
 
-    auto const on_success = Napi::Function::New(
-      env,
-      [](Napi::CallbackInfo const &info) {
-        auto const payload = static_cast<Payload *>(info.Data());
-        JsonValueConverter const conv{payload->getVm()};
-        payload->setResult(conv.toJsonnetJson(info[0]));
-      },
-      "onSuccess", payload);
-
-    auto const on_failure = Napi::Function::New(
-      env,
-      [](Napi::CallbackInfo const &info) {
-        auto const payload = static_cast<Payload *>(info.Data());
-        auto const error = info[0].ToString();
-        payload->setError(std::make_exception_ptr(std::runtime_error(error)));
-      },
-      "onFailure", payload);
-
-    result.As<Napi::Promise>().Then(on_success, on_failure);
   }
 
 }

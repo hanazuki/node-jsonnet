@@ -4,62 +4,32 @@
 extern "C" {
 #include <libjsonnet.h>
 }
-#include <future>
 #include <memory>
-#include <napi.h>
+#include <vector>
 
-#include "JsonValueConverter.hpp"
+#include "Callback.hpp"
 
 namespace nodejsonnet {
 
-  class JsonnetNativeCallback {
-  public:
-    JsonnetNativeCallback(Napi::Env env, Napi::Function fun);
-    ~JsonnetNativeCallback();
+  namespace detail {
 
-    JsonnetNativeCallback(JsonnetNativeCallback const &) = delete;
-    JsonnetNativeCallback &operator=(JsonnetNativeCallback const &) = delete;
+    struct NativeCallbackPayload : CallbackPayload<JsonnetJsonValue *> {
+      static constexpr char resourceName[] = "Jsonnet Native Callback";
 
-    JsonnetJsonValue *call(
-      std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args);
+      NativeCallbackPayload(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args);
 
-  private:
-    struct Payload {
-      Payload(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args)
-        : args{std::move(args)}, vm{std::move(vm)} {
-      }
-
-      std::vector<JsonnetJsonValue const *> const &getArgs() const {
-        return args;
-      }
-
-      std::shared_ptr<JsonnetVm> getVm() const {
-        return vm;
-      }
-
-      void setResult(JsonnetJsonValue *value) {
-        result.set_value(value);
-      }
-
-      void setError(std::exception_ptr e) {
-        result.set_exception(e);
-      }
-
-      std::future<JsonnetJsonValue *> getFuture() {
-        return result.get_future();
-      }
+      std::vector<napi_value> makeArgs(Napi::Env env) const;
+      void resolveResult(Napi::Value val);
 
     private:
       std::vector<JsonnetJsonValue const *> args;
-      std::shared_ptr<JsonnetVm> vm;
-      std::promise<JsonnetJsonValue *> result;
     };
 
-    static void callback(Napi::Env env, Napi::Function fun, std::nullptr_t *, Payload *payload);
+  }
 
-    using ThreadSafeFunction = Napi::TypedThreadSafeFunction<std::nullptr_t, Payload, callback>;
-
-    ThreadSafeFunction tsfn;
+  class JsonnetNativeCallback : public Callback<detail::NativeCallbackPayload> {
+  public:
+    using Callback::Callback;
   };
 
 }
