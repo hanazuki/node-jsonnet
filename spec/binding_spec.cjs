@@ -229,6 +229,22 @@ describe('binding', () => {
       .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: .* ENOENT/);
   });
 
+  it('supports native callback that returns a thenable', async () => {
+    const jsonnet = new Jsonnet();
+    jsonnet.nativeCallback("double", (x) => ({ then: (resolve) => resolve(x * 2) }), "x");
+
+    const j = await jsonnet.evaluateSnippet(`std.native("double")(21)`);
+    expect(j).toBeJSON(42);
+  });
+
+  it('propagates rejection from thenable returned by native callback', async () => {
+    const jsonnet = new Jsonnet();
+    jsonnet.nativeCallback("fail", (msg) => ({ then: (_, reject) => reject(msg) }), "msg");
+
+    await expectAsync(jsonnet.evaluateSnippet(`std.native("fail")("kimagure")`))
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: kimagure/);
+  });
+
   it('uses the native callback added most recently for the same name', async () => {
     const jsonnet = new Jsonnet();
     jsonnet.nativeCallback("func1", () => 1);
@@ -464,6 +480,20 @@ describe('binding', () => {
         .importCallback(async (base, rel) => ({ foundHere: rel, content: '"async"' }));
       const j = await jsonnet.evaluateSnippet('import "x.jsonnet"');
       expect(j).toBeJSON('async');
+    });
+
+    it('supports callback that returns a thenable', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => ({ then: (resolve) => resolve({ foundHere: rel, content: '"thenable"' }) }));
+      const j = await jsonnet.evaluateSnippet('import "x.jsonnet"');
+      expect(j).toBeJSON('thenable');
+    });
+
+    it('propagates rejection from thenable returned by callback', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback((base, rel) => ({ then: (_, reject) => reject(new Error(`missing: ${rel}`)) }));
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError, /missing: x\.jsonnet/);
     });
 
     it('propagates synchronous throw as JsonnetError', async () => {
