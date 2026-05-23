@@ -164,8 +164,8 @@ namespace nodejsonnet {
   }
 
   void JsonnetVm::appendJsonObject(
-    JsonnetJsonValue *array, std::string const &field, JsonnetJsonValue *value) const {
-    ::jsonnet_json_object_append(vm, array, field.c_str(), value);
+    JsonnetJsonValue *object, std::string const &field, JsonnetJsonValue *value) const {
+    ::jsonnet_json_object_append(vm, object, field.c_str(), value);
   }
 
   std::optional<std::string_view> JsonnetVm::extractJsonString(JsonnetJsonValue const *json) const {
