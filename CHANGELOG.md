@@ -2,7 +2,7 @@
 
 ## UNRELEASED
 
-- Fix: `importCallback` returning a malformed result object now rejects the evaluation with a `JsonnetError` instead of hanging indefinitely.
+- Fix: `importCallback` or `nativeCallback` returning a malformed result now rejects the evaluation with a `JsonnetError` instead of hanging indefinitely.
 
 ## v3.3.0 (2026-05-22)
 
