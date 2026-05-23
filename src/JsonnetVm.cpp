@@ -206,8 +206,15 @@ namespace nodejsonnet {
     ::jsonnet_import_callback(vm, &importTrampoline, &*importCallback);
   }
 
+  JsonnetVm::BufferDeleter::BufferDeleter(std::shared_ptr<JsonnetVm const> vm): vm(std::move(vm)) {
+  }
+
+  void JsonnetVm::BufferDeleter::operator()(char *p) const {
+    ::jsonnet_realloc(vm->vm, p, 0);
+  }
+
   JsonnetVm::Buffer JsonnetVm::buffer(char *buf) const {
-    return {buf, [self = shared_from_this()](char *buf) { ::jsonnet_realloc(self->vm, buf, 0); }};
+    return {buf, BufferDeleter{shared_from_this()}};
   }
 
   JsonnetJsonValue *JsonnetVm::nativeTrampoline(
