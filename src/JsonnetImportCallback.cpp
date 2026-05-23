@@ -8,8 +8,8 @@ namespace nodejsonnet {
 
     ImportCallbackPayload::ImportCallbackPayload(
       std::shared_ptr<JsonnetVm> vm, std::string base, std::string rel)
-      : CallbackPayload{std::move(vm)}, base{std::move(base)}, rel{std::move(rel)} {}
-
+      : CallbackPayload{std::move(vm)}, base{std::move(base)}, rel{std::move(rel)} {
+    }
 
     std::vector<napi_value> ImportCallbackPayload::makeArgs(Napi::Env env) const {
       return {
@@ -38,8 +38,8 @@ namespace nodejsonnet {
       } else {
         auto const ta = contentVal.As<Napi::TypedArray>();
         contentBuf = vm->allocBuffer(ta.ByteLength());
-        std::memcpy(contentBuf.get(), static_cast<char *>(ta.ArrayBuffer().Data()) + ta.ByteOffset(),
-          ta.ByteLength());
+        std::memcpy(contentBuf.get(),
+          static_cast<char *>(ta.ArrayBuffer().Data()) + ta.ByteOffset(), ta.ByteLength());
         contentLen = ta.ByteLength();
       }
 

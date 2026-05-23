@@ -283,6 +283,15 @@ describe('binding', () => {
 
   });
 
+  it('propagates error when native callback result object has a throwing ownKeys trap', async () => {
+    const jsonnet = new Jsonnet();
+    jsonnet.nativeCallback("fail", () => new Proxy({}, {
+      ownKeys() { throw new Error('trap threw'); },
+    }));
+    await expectAsync(jsonnet.evaluateSnippet(`std.native("fail")()`))
+      .toBeRejectedWithError(JsonnetError, /trap threw/);
+  });
+
   it('reports throwing async native callback', async () => {
     const jsonnet = new Jsonnet();
 
@@ -509,6 +518,34 @@ describe('binding', () => {
         .importCallback(() => ({ then: () => { throw "then threw"; } }));
       await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
         .toBeRejectedWithError(JsonnetError, /then threw/);
+    });
+
+    it('propagates error when foundHere in callback result is not a string', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => ({ foundHere: 42, content: '"hello"' }));
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError);
+    });
+
+    it('propagates error when foundHere in callback result is null', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => ({ foundHere: null, content: '"hello"' }));
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError);
+    });
+
+    it('propagates error when content in callback result is not a string or TypedArray', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => ({ foundHere: 'x', content: 42 }));
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError);
+    });
+
+    it('propagates error when callback result is not an object', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => 42);
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError);
     });
 
     it('propagates synchronous throw as JsonnetError', async () => {
