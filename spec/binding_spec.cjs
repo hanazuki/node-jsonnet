@@ -283,6 +283,15 @@ describe('binding', () => {
 
   });
 
+  it('propagates error when native callback result object has a throwing ownKeys trap', async () => {
+    const jsonnet = new Jsonnet();
+    jsonnet.nativeCallback("fail", () => new Proxy({}, {
+      ownKeys() { throw new Error('trap threw'); },
+    }));
+    await expectAsync(jsonnet.evaluateSnippet(`std.native("fail")()`))
+      .toBeRejectedWithError(JsonnetError, /trap threw/);
+  });
+
   it('reports throwing async native callback', async () => {
     const jsonnet = new Jsonnet();
 
