@@ -511,6 +511,34 @@ describe('binding', () => {
         .toBeRejectedWithError(JsonnetError, /then threw/);
     });
 
+    it('propagates error when foundHere in callback result is not a string', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => ({ foundHere: 42, content: '"hello"' }));
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError);
+    });
+
+    it('propagates error when foundHere in callback result is null', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => ({ foundHere: null, content: '"hello"' }));
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError);
+    });
+
+    it('propagates error when content in callback result is not a string or TypedArray', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => ({ foundHere: 'x', content: 42 }));
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError);
+    });
+
+    it('propagates error when callback result is not an object', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => 42);
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError);
+    });
+
     it('propagates synchronous throw as JsonnetError', async () => {
       const jsonnet = new Jsonnet()
         .importCallback((base, rel) => { throw new Error(`missing: ${rel}`); });

@@ -2,6 +2,8 @@
 
 ## UNRELEASED
 
+- Fix: `importCallback` returning a malformed result object now rejects the evaluation with a `JsonnetError` instead of hanging indefinitely.
+
 ## v3.3.0 (2026-05-22)
 
 - Introduce `Jsonnet.prototype.importCallback` to define custom import resolution.
