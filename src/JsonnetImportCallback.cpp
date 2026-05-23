@@ -27,21 +27,20 @@ namespace nodejsonnet {
       std::memcpy(foundHereBuf.get(), foundHereStr.c_str(), foundHereStr.size() + 1);
 
       auto const contentVal = obj.Get("content");
-      JsonnetVm::Buffer contentBuf;
-      size_t contentLen;
-
-      if(contentVal.IsString()) {
-        auto const str = contentVal.As<Napi::String>().Utf8Value();
-        contentBuf = vm->allocBuffer(str.size());
-        std::memcpy(contentBuf.get(), str.data(), str.size());
-        contentLen = str.size();
-      } else {
-        auto const ta = contentVal.As<Napi::TypedArray>();
-        contentBuf = vm->allocBuffer(ta.ByteLength());
-        std::memcpy(contentBuf.get(),
-          static_cast<char *>(ta.ArrayBuffer().Data()) + ta.ByteOffset(), ta.ByteLength());
-        contentLen = ta.ByteLength();
-      }
+      auto [contentBuf, contentLen] = [&]() -> std::tuple<JsonnetVm::Buffer, size_t> {
+        if(contentVal.IsString()) {
+          auto const str = contentVal.As<Napi::String>().Utf8Value();
+          auto buf = vm->allocBuffer(str.size());
+          std::memcpy(buf.get(), str.data(), str.size());
+          return {std::move(buf), str.size()};
+        } else {
+          auto const ta = contentVal.As<Napi::TypedArray>();
+          auto buf = vm->allocBuffer(ta.ByteLength());
+          std::memcpy(buf.get(), static_cast<char *>(ta.ArrayBuffer().Data()) + ta.ByteOffset(),
+            ta.ByteLength());
+          return {std::move(buf), ta.ByteLength()};
+        }
+      }();
 
       setResult(JsonnetVm::ImportResult{
         std::move(foundHereBuf),

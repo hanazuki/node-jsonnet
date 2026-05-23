@@ -25,7 +25,16 @@ namespace nodejsonnet {
   public:
     using NativeCallback = std::function<JsonnetJsonValue *(
       std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args)>;
-    using Buffer = std::unique_ptr<char, std::function<void(char *)>>;
+
+    class BufferDeleter {
+      std::shared_ptr<JsonnetVm const> vm;
+
+    public:
+      explicit BufferDeleter(std::shared_ptr<JsonnetVm const> vm);
+      void operator()(char *p) const;
+    };
+    using Buffer = std::unique_ptr<char, BufferDeleter>;
+    Buffer allocBuffer(size_t sz) const;
 
     struct ImportResult {
       Buffer foundHere;
@@ -35,8 +44,6 @@ namespace nodejsonnet {
 
     using ImportCallback = std::function<ImportResult(
       std::shared_ptr<JsonnetVm> vm, std::string const &base, std::string const &rel)>;
-
-    Buffer allocBuffer(size_t sz) const;
 
   private:
     JsonnetVm();

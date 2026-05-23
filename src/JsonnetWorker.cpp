@@ -23,7 +23,7 @@ namespace nodejsonnet {
   }
 
   void JsonnetWorker::OnOK() {
-    deferred.Resolve(op->toValue(Env(), std::move(result)));
+    deferred.Resolve(op->toValue(Env(), *std::exchange(result, std::nullopt)));
   }
 
   void JsonnetWorker::OnError(Napi::Error const &error) {
