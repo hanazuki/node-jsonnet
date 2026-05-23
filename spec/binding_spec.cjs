@@ -245,6 +245,14 @@ describe('binding', () => {
       .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: kimagure/);
   });
 
+  it('propagates synchronous throw from .then() on promise returned by native callback', async () => {
+    const jsonnet = new Jsonnet();
+    jsonnet.nativeCallback("fail", () => ({ then: () => { throw "then threw"; } }));
+
+    await expectAsync(jsonnet.evaluateSnippet(`std.native("fail")()`))
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: then threw/);
+  });
+
   it('uses the native callback added most recently for the same name', async () => {
     const jsonnet = new Jsonnet();
     jsonnet.nativeCallback("func1", () => 1);
@@ -494,6 +502,13 @@ describe('binding', () => {
         .importCallback((base, rel) => ({ then: (_, reject) => reject(new Error(`missing: ${rel}`)) }));
       await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
         .toBeRejectedWithError(JsonnetError, /missing: x\.jsonnet/);
+    });
+
+    it('propagates synchronous throw from .then() on promise returned by import callback', async () => {
+      const jsonnet = new Jsonnet()
+        .importCallback(() => ({ then: () => { throw "then threw"; } }));
+      await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
+        .toBeRejectedWithError(JsonnetError, /then threw/);
     });
 
     it('propagates synchronous throw as JsonnetError', async () => {
