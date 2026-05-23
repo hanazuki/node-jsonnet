@@ -10,7 +10,7 @@ namespace nodejsonnet {
 
   namespace detail {
 
-    struct ImportCallbackPayload : CallbackPayload<JsonnetVm::ImportResult> {
+    struct ImportCallbackPayload: CallbackPayload<JsonnetVm::ImportResult> {
       static constexpr char resourceName[] = "Jsonnet Import Callback";
 
       ImportCallbackPayload(std::shared_ptr<JsonnetVm> vm, std::string base, std::string rel);
@@ -25,7 +25,7 @@ namespace nodejsonnet {
 
   }
 
-  class JsonnetImportCallback : public Callback<detail::ImportCallbackPayload> {
+  class JsonnetImportCallback: public Callback<detail::ImportCallbackPayload> {
   public:
     using Callback::Callback;
   };

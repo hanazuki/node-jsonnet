@@ -13,10 +13,11 @@ namespace nodejsonnet {
 
   namespace detail {
 
-    struct NativeCallbackPayload : CallbackPayload<JsonnetJsonValue *> {
+    struct NativeCallbackPayload: CallbackPayload<JsonnetJsonValue *> {
       static constexpr char resourceName[] = "Jsonnet Native Callback";
 
-      NativeCallbackPayload(std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args);
+      NativeCallbackPayload(
+        std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args);
 
       std::vector<napi_value> makeArgs(Napi::Env env) const;
       void resolveResult(Napi::Value val);
@@ -27,7 +28,7 @@ namespace nodejsonnet {
 
   }
 
-  class JsonnetNativeCallback : public Callback<detail::NativeCallbackPayload> {
+  class JsonnetNativeCallback: public Callback<detail::NativeCallbackPayload> {
   public:
     using Callback::Callback;
   };
