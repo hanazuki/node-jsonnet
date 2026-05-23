@@ -80,7 +80,7 @@ namespace nodejsonnet {
     std::unique_ptr<Op> op;
     Napi::Promise::Deferred deferred;
     JsonnetVm::Buffer result;
-    ErrorType errorType;
+    ErrorType errorType = ErrorType::Generic;
   };
 
 }

@@ -39,7 +39,7 @@ namespace nodejsonnet {
             .New({e.Get("message")});
       break;
     default:
-      abort();
+      abort(); // unreachable
     }
 
     deferred.Reject(e);
