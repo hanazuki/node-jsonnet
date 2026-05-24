@@ -1,4 +1,6 @@
 const { Jsonnet, JsonnetError } = require("../");
+const { Worker } = require('node:worker_threads');
+const path = require('node:path');
 
 describe('binding', () => {
   beforeEach(function () {
@@ -570,6 +572,42 @@ describe('binding', () => {
         .importCallback((base, rel) => ({ foundHere: rel, content: '"from callback"' }));
       const j = await jsonnet.evaluateSnippet('import "kiwi.libsonnet"');
       expect(j).toBeJSON('from callback');
+    });
+  });
+
+  describe('multi-instance', () => {
+    const WORKER_SCRIPT = path.resolve(__dirname, 'worker.js');
+
+    const evalInWorker = (data) => {
+      return new Promise((resolve, reject) => {
+        const worker = new Worker(WORKER_SCRIPT, { workerData: data });
+        worker.on('message', resolve);
+        worker.on('error', reject);
+        worker.on('exit', code => {
+          if (code !== 0) reject(new Error(`Worker exited with code ${code}`));
+        });
+      });
+    }
+
+    it('loads and evaluates in a worker thread', async () => {
+      const result = await evalInWorker({ snippet: '1 + 2' });
+      expect(result).toEqual('3\n');
+    });
+
+    it('multiple worker thread instances operate correctly in parallel', async () => {
+      const count = 4;
+      const results = await Promise.all(
+        Array.from({ length: count }, (_, i) =>
+          evalInWorker({
+            extVars: { n: String(i) },
+            snippet: '"value=" + std.extVar("n")',
+          })
+        )
+      );
+
+      for (let i = 0; i < count; i++) {
+        expect(results[i]).toBeJSON(`value=${i}`);
+      }
     });
   });
 
