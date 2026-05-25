@@ -16,7 +16,7 @@ namespace nodejsonnet {
       std::string value;
     };
 
-    struct NativeCallback {
+    struct NativeCallbackParam {
       Napi::FunctionReference fun;
       std::vector<std::string> params;
     };
@@ -33,7 +33,7 @@ namespace nodejsonnet {
 
     std::map<std::string, Variable> ext, tla;
     std::vector<std::string> jpath;
-    std::map<std::string, NativeCallback> nativeCallbacks;
+    std::map<std::string, NativeCallbackParam> nativeCallbacks;
     std::optional<ImportCallbackParam> importCallbackParam;
   };
 

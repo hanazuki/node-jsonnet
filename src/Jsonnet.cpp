@@ -200,7 +200,7 @@ namespace nodejsonnet {
     }
 
     nativeCallbacks.insert_or_assign(
-      std::move(name), NativeCallback{Napi::Persistent(fun), std::move(params)});
+      std::move(name), NativeCallbackParam{Napi::Persistent(fun), std::move(params)});
 
     return info.This();
   }
