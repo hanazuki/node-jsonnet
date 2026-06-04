@@ -23,6 +23,15 @@ jsonnet.nativeCallback("arityMismatch", (a) => a);
 // @ts-expect-error!
 jsonnet.nativeCallback("arityMismatch", (a) => a, "a", "b");
 
+expect(jsonnet.nativeCallback("optional/1", (a, b = 1) => a, "a"))
+  .type.toBe<Jsonnet>();
+
+expect(jsonnet.nativeCallback("optional/2", (a, b = 1) => a, "a", "b"))
+  .type.toBe<Jsonnet>();
+
+// @ts-expect-error!
+jsonnet.nativeCallback("optional/3", (a, b = 1) => a, "a", "b", "c");
+
 const snippet = `
 local a = 3;
 local b = 7;
