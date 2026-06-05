@@ -72,6 +72,7 @@ namespace nodejsonnet {
   namespace {
     Napi::Value parseMultiValue(Napi::Env env, JsonnetVm::Buffer buffer) {
       auto result = Napi::Object::New(env);
+      result.Set("__proto__", env.Null());  // TODO: Use node_api_set_prototype when stabilized.
 
       for(auto p = buffer.get(); *p;) {
         std::string_view const name(p);

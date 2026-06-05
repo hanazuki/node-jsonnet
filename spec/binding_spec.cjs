@@ -440,6 +440,14 @@ describe('binding', () => {
     });
   });
 
+  it('preserves __proto__ key in multi output', async () => {
+    const jsonnet = new Jsonnet();
+
+    const dict = await jsonnet.evaluateSnippetMulti(`{"__proto__": {v: 1}}`);
+    expect(Object.hasOwn(dict, '__proto__')).toBeTrue();
+    expect(dict['__proto__']).toBe('{\n   "v": 1\n}\n');
+  });
+
   it('reports error for evaluateSnippetMulti', async () => {
     const jsonnet = new Jsonnet();
 
