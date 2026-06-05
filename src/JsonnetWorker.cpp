@@ -79,8 +79,7 @@ namespace nodejsonnet {
         std::string_view const json(p);
         p += json.size() + 1;
 
-        result.Set(Napi::String::New(env, name.data(), name.size()),
-          Napi::String::New(env, json.data(), json.size()));
+        result.Set(Napi::String::New(env, name), Napi::String::New(env, json));
       }
 
       return result;
@@ -110,7 +109,7 @@ namespace nodejsonnet {
       for(auto p = buffer.get(); *p;) {
         std::string_view const json(p);
         p += json.size() + 1;
-        jsons.push_back(Napi::String::New(env, json.data(), json.size()));
+        jsons.push_back(Napi::String::New(env, json));
       }
 
       auto result = Napi::Array::New(env, jsons.size());

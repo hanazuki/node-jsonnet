@@ -28,7 +28,7 @@ namespace nodejsonnet {
       return Napi::Number::New(env, *n);
     }
     if(auto const s = vm->extractJsonString(json)) {
-      return Napi::String::New(env, s->data(), s->size());
+      return Napi::String::New(env, *s);
     }
 
     // NOTREACHED
