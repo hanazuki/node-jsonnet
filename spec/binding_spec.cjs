@@ -294,6 +294,29 @@ describe('binding', () => {
       .toBeRejectedWithError(JsonnetError, /trap threw/);
   });
 
+  it('rejects a circular object returned from a native callback', async () => {
+    const jsonnet = new Jsonnet();
+    const circular = {};
+    circular.self = circular;
+    jsonnet.nativeCallback('circular', () => circular);
+
+    await expectAsync(jsonnet.evaluateSnippet(`std.native("circular")()`))
+      .toBeRejectedWithError(/Converting circular structure/);
+  });
+
+  it('accepts shared (non-circular) object references from a native callback', async () => {
+    const jsonnet = new Jsonnet();
+    const o = { x: 1 };
+    jsonnet.nativeCallback('inArray', () => [o, o]);
+    jsonnet.nativeCallback('inObject', () => ({ a: o, b: o }));
+
+    let j = await jsonnet.evaluateSnippet(`std.native("inArray")()`);
+    expect(j).toBeJSON([{ x: 1 }, { x: 1 }]);
+
+    j = await jsonnet.evaluateSnippet(`std.native("inObject")()`);
+    expect(j).toBeJSON({ a: { x: 1 }, b: { x: 1 } });
+  });
+
   it('reports throwing async native callback', async () => {
     const jsonnet = new Jsonnet();
 
