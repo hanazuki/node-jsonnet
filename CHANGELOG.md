@@ -2,6 +2,8 @@
 
 ## UNRELEASED
 
+- Now circular references in the object returned from a native function are detected and reported as an exception, instead of crashing the VM from stack overflow.
+
 ## v3.3.1 (2026-05-24)
 
 - Fix: `importCallback` or `nativeCallback` returning a malformed result now rejects the evaluation with a `JsonnetError` instead of hanging indefinitely.
