@@ -14,6 +14,7 @@ namespace nodejsonnet {
   }
 
   JsonnetVm::JsonnetVm(): vm{jsonnet_make()} {
+    if (!vm) throw JsonnetError{"failed to initialize a Jsonnet VM"};
   }
 
   JsonnetVm::~JsonnetVm() {
