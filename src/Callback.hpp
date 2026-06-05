@@ -51,7 +51,12 @@ namespace nodejsonnet {
     template <typename... Args> auto call(std::shared_ptr<JsonnetVm> vm, Args &&...args) {
       // This function runs in a worker thread and cannot access Node VM.
       PayloadType payload(std::move(vm), std::forward<Args>(args)...);
-      tsfn.BlockingCall(&payload);
+      auto const status = tsfn.BlockingCall(&payload);
+      if(status != napi_ok) {
+        throw std::runtime_error(
+          std::string("ThreadSafeFunction::BlockingCall failed: napi_status=") +
+          std::to_string(status));
+      }
       return payload.getFuture().get();
     }
 
