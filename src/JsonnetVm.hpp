@@ -87,6 +87,7 @@ namespace nodejsonnet {
     JsonnetJsonValue *makeJsonObject() const;
     void appendJsonObject(
       JsonnetJsonValue *object, std::string const &field, JsonnetJsonValue *value) const;
+    void destroyJson(JsonnetJsonValue *json) const noexcept;
     std::optional<std::string_view> extractJsonString(JsonnetJsonValue const *json) const;
     std::optional<double> extractJsonNumber(JsonnetJsonValue const *json) const;
     std::optional<bool> extractJsonBool(JsonnetJsonValue const *json) const;

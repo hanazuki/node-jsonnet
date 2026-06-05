@@ -14,6 +14,14 @@ namespace nodejsonnet {
     JsonnetJsonValue *toJsonnetJson(Napi::Value v) const;
 
   private:
+    class JsonnetJsonDeleter {
+      JsonnetVm *vm;
+
+    public:
+      explicit JsonnetJsonDeleter(JsonnetVm *vm) noexcept;
+      void operator()(JsonnetJsonValue *p) const noexcept;
+    };
+
     std::shared_ptr<JsonnetVm> vm;
     JsonnetJsonValue *toJsonnetJsonImpl(Napi::Value v, std::vector<Napi::Object> &ancestors) const;
   };
