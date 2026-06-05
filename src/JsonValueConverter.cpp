@@ -6,6 +6,13 @@
 
 namespace nodejsonnet {
 
+  JsonValueConverter::JsonnetJsonDeleter::JsonnetJsonDeleter(JsonnetVm *vm) noexcept: vm{vm} {
+  }
+
+  void JsonValueConverter::JsonnetJsonDeleter::operator()(JsonnetJsonValue *p) const noexcept {
+    vm->destroyJson(p);
+  }
+
   JsonValueConverter::JsonValueConverter(std::shared_ptr<JsonnetVm> vm): vm{std::move(vm)} {
   }
 
@@ -59,12 +66,13 @@ namespace nodejsonnet {
         throw Napi::TypeError::New(array.Env(), "Converting circular structure to JSON");
       }
       ancestors.push_back(array);
-      auto const json = vm->makeJsonArray();
+      auto json = std::unique_ptr<JsonnetJsonValue, JsonnetJsonDeleter>(
+        vm->makeJsonArray(), JsonnetJsonDeleter{vm.get()});
       for(size_t i = 0, len = array.Length(); i < len; ++i) {
-        vm->appendJsonArray(json, toJsonnetJsonImpl(array[i], ancestors));
+        vm->appendJsonArray(json.get(), toJsonnetJsonImpl(array[i], ancestors));
       }
       ancestors.pop_back();
-      return json;
+      return json.release();
     }
     if(v.IsObject()) {
       auto const object = v.As<Napi::Object>();
@@ -73,16 +81,17 @@ namespace nodejsonnet {
         throw Napi::TypeError::New(object.Env(), "Converting circular structure to JSON");
       }
       ancestors.push_back(object);
-      auto const json = vm->makeJsonObject();
+      auto json = std::unique_ptr<JsonnetJsonValue, JsonnetJsonDeleter>(
+        vm->makeJsonObject(), JsonnetJsonDeleter{vm.get()});
       auto const props = object.GetPropertyNames();
       for(size_t i = 0, len = props.Length(); i < len; ++i) {
         auto const prop = props[i].ToString();
         if(object.HasOwnProperty(prop)) {
-          vm->appendJsonObject(json, prop, toJsonnetJsonImpl(object.Get(prop), ancestors));
+          vm->appendJsonObject(json.get(), prop, toJsonnetJsonImpl(object.Get(prop), ancestors));
         }
       }
       ancestors.pop_back();
-      return json;
+      return json.release();
     }
     return vm->makeJsonNull();
   }

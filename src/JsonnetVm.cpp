@@ -168,6 +168,10 @@ namespace nodejsonnet {
     ::jsonnet_json_object_append(vm, object, field.c_str(), value);
   }
 
+  void JsonnetVm::destroyJson(JsonnetJsonValue *json) const noexcept {
+    ::jsonnet_json_destroy(vm, json);
+  }
+
   std::optional<std::string_view> JsonnetVm::extractJsonString(JsonnetJsonValue const *json) const {
     if(auto const p = ::jsonnet_json_extract_string(vm, json)) {
       return p;
