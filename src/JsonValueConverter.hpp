@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <memory>
+#include <optional>
 #include <vector>
 #include <napi.h>
 #include "JsonnetVm.hpp"
@@ -23,7 +24,8 @@ namespace nodejsonnet {
     };
 
     std::shared_ptr<JsonnetVm> vm;
-    JsonnetJsonValue *toJsonnetJsonImpl(Napi::Value v, std::vector<Napi::Object> &ancestors) const;
+    std::optional<JsonnetJsonValue *> toJsonnetJsonImpl(
+      Napi::Value v, std::vector<Napi::Object> &ancestors, bool callToJSON = true) const;
   };
 
 }

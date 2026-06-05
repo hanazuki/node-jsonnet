@@ -2,6 +2,7 @@
 #include "JsonValueConverter.hpp"
 #include <algorithm>
 #include <memory>
+#include <optional>
 #include <utility>
 
 namespace nodejsonnet {
@@ -38,11 +39,12 @@ namespace nodejsonnet {
 
   JsonnetJsonValue *JsonValueConverter::toJsonnetJson(Napi::Value v) const {
     std::vector<Napi::Object> ancestors;
-    return toJsonnetJsonImpl(v, ancestors);
+    auto result = toJsonnetJsonImpl(v, ancestors);
+    return result ? *result : vm->makeJsonNull();
   }
 
-  JsonnetJsonValue *JsonValueConverter::toJsonnetJsonImpl(
-    Napi::Value v, std::vector<Napi::Object> &ancestors) const {
+  std::optional<JsonnetJsonValue *> JsonValueConverter::toJsonnetJsonImpl(
+    Napi::Value v, std::vector<Napi::Object> &ancestors, bool callToJSON) const {
     if(v.IsBoolean()) {
       return vm->makeJsonBool(v.As<Napi::Boolean>());
     }
@@ -52,12 +54,14 @@ namespace nodejsonnet {
     if(v.IsString()) {
       return vm->makeJsonString(v.As<Napi::String>());
     }
-    if(v.IsDate()) {
-      auto const toISOString = v.As<Napi::Object>().Get("toISOString").As<Napi::Function>();
-      return vm->makeJsonString(toISOString.Call(v, {}).As<Napi::String>());
+    if(callToJSON && v.IsObject()) {
+      auto const toJSON = v.As<Napi::Object>().Get("toJSON");
+      if(toJSON.IsFunction()) {
+        return toJsonnetJsonImpl(toJSON.As<Napi::Function>().Call(v, {}), ancestors, false);
+      }
     }
-    if(v.IsFunction() || v.IsSymbol()) {
-      return vm->makeJsonNull();
+    if(v.IsFunction()) {
+      return std::nullopt;
     }
     if(v.IsArray()) {
       auto const array = v.As<Napi::Array>();
@@ -69,7 +73,9 @@ namespace nodejsonnet {
       auto json = std::unique_ptr<JsonnetJsonValue, JsonnetJsonDeleter>(
         vm->makeJsonArray(), JsonnetJsonDeleter{vm.get()});
       for(size_t i = 0, len = array.Length(); i < len; ++i) {
-        vm->appendJsonArray(json.get(), toJsonnetJsonImpl(array[i], ancestors));
+        // SerializeJSONArray: undefined result from SerializeJSONProperty -> "null"
+        auto elem = toJsonnetJsonImpl(array[i], ancestors);
+        vm->appendJsonArray(json.get(), elem ? *elem : vm->makeJsonNull());
       }
       ancestors.pop_back();
       return json.release();
@@ -83,17 +89,18 @@ namespace nodejsonnet {
       ancestors.push_back(object);
       auto json = std::unique_ptr<JsonnetJsonValue, JsonnetJsonDeleter>(
         vm->makeJsonObject(), JsonnetJsonDeleter{vm.get()});
-      auto const props = object.GetPropertyNames();
-      for(size_t i = 0, len = props.Length(); i < len; ++i) {
-        auto const prop = props[i].ToString();
-        if(object.HasOwnProperty(prop)) {
-          vm->appendJsonObject(json.get(), prop, toJsonnetJsonImpl(object.Get(prop), ancestors));
+      for(auto const [key, value]: object) {
+        if(object.HasOwnProperty(key)) {
+          // SerializeJSONObject: undefined result from SerializeJSONProperty -> omit
+          if(auto member = toJsonnetJsonImpl(value, ancestors)) {
+            vm->appendJsonObject(json.get(), key.ToString(), *member);
+          }
         }
       }
       ancestors.pop_back();
       return json.release();
     }
-    return vm->makeJsonNull();
+    return std::nullopt;
   }
 
 }

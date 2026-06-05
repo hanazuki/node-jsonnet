@@ -212,6 +212,53 @@ describe('binding', () => {
     expect(j).toBeJSON(null);
   });
 
+  it('calls toJSON on an object', async () => {
+    const jsonnet = new Jsonnet();
+
+    const objWithToJSON = { toJSON() { return "from toJSON" } };
+    jsonnet.nativeCallback("objWithToJSON", () => objWithToJSON);
+    j = await jsonnet.evaluateSnippet(`std.native("objWithToJSON")()`);
+    expect(j).toBeJSON("from toJSON");
+  });
+
+  it('calls toJSON on an array', async () => {
+    const jsonnet = new Jsonnet();
+
+    const aryWithToJSON = [1, 2, 3];
+    aryWithToJSON.toJSON = () => "from toJSON";
+    jsonnet.nativeCallback("aryWithToJSON", () => aryWithToJSON);
+    j = await jsonnet.evaluateSnippet(`std.native("aryWithToJSON")()`);
+    expect(j).toBeJSON("from toJSON");
+  });
+
+  it('calls toJSON on a function', async () => {
+    const jsonnet = new Jsonnet();
+
+    const funWithToJSON = () => { return 1; };
+    funWithToJSON.toJSON = () => "from toJSON";
+    jsonnet.nativeCallback("funWithToJSON", () => funWithToJSON);
+    j = await jsonnet.evaluateSnippet(`std.native("funWithToJSON")()`);
+    expect(j).toBeJSON("from toJSON");
+  });
+
+  it('calls toJSON only once', async () => {
+    const jsonnet = new Jsonnet();
+
+    const obj = {
+      x: 1,
+      toJSON() {
+        return {
+          x: 2,
+          toJSON() { return "inner"; }
+        };
+      }
+    };
+
+    jsonnet.nativeCallback("toJSONChained", () => obj);
+    j = await jsonnet.evaluateSnippet(`std.native("toJSONChained")()`);
+    expect(j).toBeJSON({ x: 2 });
+  })
+
   it('does not expose non-enumerable properties of objects returned from native callbacks', async () => {
     const jsonnet = new Jsonnet();
     const obj = { visible: 1 };
