@@ -222,7 +222,7 @@ namespace nodejsonnet {
   }
 
   JsonnetJsonValue *JsonnetVm::nativeTrampoline(
-    void *ctx, JsonnetJsonValue const *const *argv, int *success) {
+    void *ctx, JsonnetJsonValue const *const *argv, int *success) noexcept {
     auto const &entry = *static_cast<NativeCallbackEntry *>(ctx);
 
     try {
@@ -235,8 +235,8 @@ namespace nodejsonnet {
     }
   }
 
-  int JsonnetVm::importTrampoline(
-    void *ctx, const char *base, const char *rel, char **found_here, char **buf, size_t *buflen) {
+  int JsonnetVm::importTrampoline(void *ctx, const char *base, const char *rel, char **found_here,
+    char **buf, size_t *buflen) noexcept {
     auto &entry = *static_cast<ImportCallbackEntry *>(ctx);
     try {
       auto r = entry.callback(entry.vm->shared_from_this(), base, rel);
