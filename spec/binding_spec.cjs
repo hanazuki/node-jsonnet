@@ -256,6 +256,25 @@ describe('binding', () => {
       .toBeRejectedWithError(JsonnetError, /getter threw/);
   });
 
+  it('serializes holes in arrays returned from native callbacks', async () => {
+    const jsonnet = new Jsonnet();
+    const sparse = [0, , 2, ,];  // 4 elements
+    jsonnet.nativeCallback('sparse', () => sparse);
+
+    const j = await jsonnet.evaluateSnippet(`std.native("sparse")()`);
+    expect(j).toBeJSON([0, null, 2, null]);  // should match JSON.stringify
+  });
+
+  it('serializes non-enumerable numeric-keyed property in array returned from native callbacks', async () => {
+    const jsonnet = new Jsonnet();
+    const sparse = [0];
+    Object.defineProperty(sparse, '2', { value: 2, enumerable: false });
+    jsonnet.nativeCallback('sparse', () => sparse);
+
+    const j = await jsonnet.evaluateSnippet(`std.native("sparse")()`);
+    expect(j).toBeJSON([0, null, 2]);  // should match JSON.stringify
+  });
+
   it('supports top-level arguments for native callbacks', async () => {
     const jsonnet = new Jsonnet().tlaString("var1", "test").tlaCode("var2", "2");
     jsonnet.nativeCallback("func1", (var1, var2) => var1 + var2, "var1", "var2")
