@@ -212,6 +212,50 @@ describe('binding', () => {
     expect(j).toBeJSON(null);
   });
 
+  it('does not expose non-enumerable properties of objects returned from native callbacks', async () => {
+    const jsonnet = new Jsonnet();
+    const obj = { visible: 1 };
+    Object.defineProperty(obj, 'hidden', { value: 2, enumerable: false });
+    jsonnet.nativeCallback('obj', () => obj);
+
+    const j = await jsonnet.evaluateSnippet(`std.native("obj")()`);
+    expect(j).toBeJSON({ visible: 1 });
+  });
+
+  it('does not expose prototype properties of objects returned from native callbacks', async () => {
+    const jsonnet = new Jsonnet();
+    const proto = { inherited: 99 };
+    const obj = Object.create(proto);
+    obj.own = 1;
+    jsonnet.nativeCallback('obj', () => obj);
+
+    const j = await jsonnet.evaluateSnippet(`std.native("obj")()`);
+    expect(j).toBeJSON({ own: 1 });
+  });
+
+  it('does not expose symbol-keyed properties of objects returned from native callbacks', async () => {
+    const jsonnet = new Jsonnet();
+    const sym = Symbol('secret');
+    const obj = { visible: 1, [sym]: 2 };
+    jsonnet.nativeCallback('obj', () => obj);
+
+    const j = await jsonnet.evaluateSnippet(`std.native("obj")()`);
+    expect(j).toBeJSON({ visible: 1 });
+  });
+
+  it('propagates error when native callback result object has a throwing getter', async () => {
+    const jsonnet = new Jsonnet();
+    const obj = {};
+    Object.defineProperty(obj, 'bad', {
+      get() { throw new Error('getter threw'); },
+      enumerable: true,
+    });
+    jsonnet.nativeCallback('obj', () => obj);
+
+    await expectAsync(jsonnet.evaluateSnippet(`std.native("obj")()`))
+      .toBeRejectedWithError(JsonnetError, /getter threw/);
+  });
+
   it('supports top-level arguments for native callbacks', async () => {
     const jsonnet = new Jsonnet().tlaString("var1", "test").tlaCode("var2", "2");
     jsonnet.nativeCallback("func1", (var1, var2) => var1 + var2, "var1", "var2")
