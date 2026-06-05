@@ -2,7 +2,8 @@
 
 ## UNRELEASED
 
-- Now circular references in the object returned from a native function are detected and reported as an exception, instead of crashing the VM from stack overflow.
+- Cyclic references in values returned from a native callback are now detected and reported as an exception, instead of crashing the VM with a stack overflow.
+- Native callbacks now honor `toJSON()` on returned values; values that are not serializable (functions, symbols) are omitted from objects or serialized as `null` in arrays, consistent with `JSON.stringify` semantics.
 
 ## v3.3.1 (2026-05-24)
 
