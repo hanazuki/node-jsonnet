@@ -111,9 +111,9 @@ namespace nodejsonnet {
 
     Buffer buffer(char *buf) const;
     static JsonnetJsonValue *nativeTrampoline(
-      void *ctx, JsonnetJsonValue const *const *argv, int *success);
-    static int importTrampoline(
-      void *ctx, const char *base, const char *rel, char **found_here, char **buf, size_t *buflen);
+      void *ctx, JsonnetJsonValue const *const *argv, int *success) noexcept;
+    static int importTrampoline(void *ctx, const char *base, const char *rel, char **found_here,
+      char **buf, size_t *buflen) noexcept;
   };
 
 }
