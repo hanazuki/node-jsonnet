@@ -4,7 +4,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include "JsonnetWorker.hpp"
 #include "libjsonnet.h"
 
 namespace nodejsonnet {
@@ -73,75 +72,50 @@ namespace nodejsonnet {
     return info.This();
   }
 
-  Napi::Value Jsonnet::evaluateFile(const Napi::CallbackInfo &info) {
-    auto const env = info.Env();
-    auto filename = info[0].As<Napi::String>().Utf8Value();
-
-    auto const worker = new JsonnetWorker(
-      env, *this, std::make_unique<JsonnetWorker::EvaluateFileOp>(std::move(filename)));
+  Napi::Value Jsonnet::evaluate(Napi::Env const &env, std::unique_ptr<JsonnetWorker::Op> op) {
+    auto const worker = new JsonnetWorker(env, *this, std::move(op));
     auto const promise = worker->Promise();
-    worker->Queue();
+    worker->Queue();  // worker is deleted when it is done
     return promise;
+  }
+
+  Napi::Value Jsonnet::evaluateFile(const Napi::CallbackInfo &info) {
+    auto filename = info[0].As<Napi::String>().Utf8Value();
+    return evaluate(
+      info.Env(), std::make_unique<JsonnetWorker::EvaluateFileOp>(std::move(filename)));
   }
 
   Napi::Value Jsonnet::evaluateSnippet(const Napi::CallbackInfo &info) {
-    auto const env = info.Env();
     auto snippet = info[0].As<Napi::String>().Utf8Value();
     auto filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
-
-    auto const worker = new JsonnetWorker(env, *this,
+    return evaluate(info.Env(),
       std::make_unique<JsonnetWorker::EvaluateSnippetOp>(std::move(snippet), std::move(filename)));
-    auto const promise = worker->Promise();
-    worker->Queue();
-    return promise;
   }
 
   Napi::Value Jsonnet::evaluateFileMulti(const Napi::CallbackInfo &info) {
-    auto const env = info.Env();
     auto filename = info[0].As<Napi::String>().Utf8Value();
-
-    auto const worker = new JsonnetWorker(
-      env, *this, std::make_unique<JsonnetWorker::EvaluateFileMultiOp>(std::move(filename)));
-    auto const promise = worker->Promise();
-    worker->Queue();
-    return promise;
+    return evaluate(
+      info.Env(), std::make_unique<JsonnetWorker::EvaluateFileMultiOp>(std::move(filename)));
   }
 
   Napi::Value Jsonnet::evaluateSnippetMulti(const Napi::CallbackInfo &info) {
-    auto const env = info.Env();
     auto snippet = info[0].As<Napi::String>().Utf8Value();
     auto filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
-
-    auto const worker = new JsonnetWorker(env, *this,
-      std::make_unique<JsonnetWorker::EvaluateSnippetMultiOp>(
-        std::move(snippet), std::move(filename)));
-    auto const promise = worker->Promise();
-    worker->Queue();
-    return promise;
+    return evaluate(info.Env(), std::make_unique<JsonnetWorker::EvaluateSnippetMultiOp>(
+                                  std::move(snippet), std::move(filename)));
   }
 
   Napi::Value Jsonnet::evaluateFileStream(const Napi::CallbackInfo &info) {
-    auto const env = info.Env();
     auto filename = info[0].As<Napi::String>().Utf8Value();
-
-    auto const worker = new JsonnetWorker(
-      env, *this, std::make_unique<JsonnetWorker::EvaluateFileStreamOp>(std::move(filename)));
-    auto const promise = worker->Promise();
-    worker->Queue();
-    return promise;
+    return evaluate(
+      info.Env(), std::make_unique<JsonnetWorker::EvaluateFileStreamOp>(std::move(filename)));
   }
 
   Napi::Value Jsonnet::evaluateSnippetStream(const Napi::CallbackInfo &info) {
-    auto const env = info.Env();
     auto snippet = info[0].As<Napi::String>().Utf8Value();
     auto filename = info.Length() < 2 ? "(snippet)" : info[1].As<Napi::String>().Utf8Value();
-
-    auto const worker = new JsonnetWorker(env, *this,
-      std::make_unique<JsonnetWorker::EvaluateSnippetStreamOp>(
-        std::move(snippet), std::move(filename)));
-    auto const promise = worker->Promise();
-    worker->Queue();
-    return promise;
+    return evaluate(info.Env(), std::make_unique<JsonnetWorker::EvaluateSnippetStreamOp>(
+                                  std::move(snippet), std::move(filename)));
   }
 
   Napi::Value Jsonnet::extString(const Napi::CallbackInfo &info) {

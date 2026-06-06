@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
+#include <memory>
 #include <napi.h>
 #include "JsonnetVmParam.hpp"
+#include "JsonnetWorker.hpp"
 
 namespace nodejsonnet {
 
@@ -34,6 +36,8 @@ namespace nodejsonnet {
     Napi::Value addJpath(const Napi::CallbackInfo &info);
     Napi::Value nativeCallback(const Napi::CallbackInfo &info);
     Napi::Value importCallback(const Napi::CallbackInfo &info);
+
+    Napi::Value evaluate(Napi::Env const &env, std::unique_ptr<JsonnetWorker::Op> op);
   };
 
 }
