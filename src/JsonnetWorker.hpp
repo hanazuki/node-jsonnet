@@ -77,13 +77,14 @@ namespace nodejsonnet {
     void OnError(Napi::Error const &error) override;
 
   private:
-    static std::shared_ptr<JsonnetVm> createVm(Napi::Env const &env, JsonnetVmParam const &param);
+    std::shared_ptr<JsonnetVm> createVm(Napi::Env const &env, JsonnetVmParam const &param);
 
     std::shared_ptr<JsonnetVm> vm;
     std::unique_ptr<Op> op;
     Napi::Promise::Deferred deferred;
     std::optional<JsonnetVm::Buffer> result;
     ErrorType errorType = ErrorType::Generic;
+    std::shared_ptr<Napi::ObjectReference> jsError;
   };
 
 }

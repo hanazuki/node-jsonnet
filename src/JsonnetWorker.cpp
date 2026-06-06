@@ -60,19 +60,29 @@ namespace nodejsonnet {
 
       vm->addNativeCallback(
         name,
-        [callback = std::make_shared<JsonnetNativeCallback>(env, fun.Value())](
+        [this, callback = std::make_shared<JsonnetNativeCallback>(env, fun.Value())](
           std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args) {
-          return callback->call(std::move(vm), std::move(args));
+          try {
+            return callback->call(std::move(vm), std::move(args));
+          } catch(CallbackError &e) {
+            this->jsError = std::move(e.jsError);
+            throw;
+          }
         },
         params);
     }
 
     if(param.importCallbackParam) {
       vm->setImportCallback(
-        [callback = std::make_shared<JsonnetImportCallback>(
-           env, param.importCallbackParam->fun.Value())](
+        [this, callback = std::make_shared<JsonnetImportCallback>(
+                 env, param.importCallbackParam->fun.Value())](
           std::shared_ptr<JsonnetVm> vm, std::string const &base, std::string const &rel) {
-          return callback->call(std::move(vm), base, rel);
+          try {
+            return callback->call(std::move(vm), base, rel);
+          } catch(CallbackError &e) {
+            this->jsError = std::move(e.jsError);
+            throw;
+          }
         });
     }
 
@@ -98,12 +108,17 @@ namespace nodejsonnet {
     switch(errorType) {
     case ErrorType::Generic:
       break;
-    case ErrorType::Jsonnet:
-      e = JsonnetAddon::getInstance(e.Env())
-            .getExport("JsonnetError")
-            .As<Napi::Function>()
-            .New({e.Get("message")});
+    case ErrorType::Jsonnet: {
+      auto const env = e.Env();
+      auto const ctor =
+        JsonnetAddon::getInstance(env).getExport("JsonnetError").As<Napi::Function>();
+      auto options = Napi::Object::New(env);
+      if(jsError) {
+        options.Set("cause", jsError->Value());
+      }
+      e = ctor.New({e.Get("message"), options});
       break;
+    }
     default:
       abort();  // unreachable
     }

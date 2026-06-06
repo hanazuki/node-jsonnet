@@ -2,6 +2,7 @@
 
 ## UNRELEASED
 
+- When a `nativeCallback` or `importCallback` function throws (synchronously or asynchronously), the `JsonnetError` rejection now carries the original JavaScript error as its `cause` property.
 - Cyclic references in values returned from a native callback are now detected and reported as an exception, instead of crashing the VM with a stack overflow.
 - Native callbacks now honor `toJSON()` on returned values; values that are not serializable (functions, symbols) are omitted from objects or serialized as `null` in arrays, consistent with `JSON.stringify` semantics.
 - Fix: `evaluateSnippetMulti` and `evaluateFileMulti` now correctly preserve a file key named `__proto__` in the returned object (no security impact: the key was silently dropped rather than causing prototype pollution).
