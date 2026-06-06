@@ -351,18 +351,18 @@ describe('binding', () => {
 
   it('propagates rejection from thenable returned by native callback', async () => {
     const jsonnet = new Jsonnet();
-    jsonnet.nativeCallback("fail", (msg) => ({ then: (_, reject) => reject(msg) }), "msg");
+    jsonnet.nativeCallback("fail", (msg) => ({ then: (_, reject) => reject(new Error(msg)) }), "msg");
 
     await expectAsync(jsonnet.evaluateSnippet(`std.native("fail")("kimagure")`))
-      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: kimagure/);
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR:.* kimagure/);
   });
 
   it('propagates synchronous throw from .then() on promise returned by native callback', async () => {
     const jsonnet = new Jsonnet();
-    jsonnet.nativeCallback("fail", () => ({ then: () => { throw "then threw"; } }));
+    jsonnet.nativeCallback("fail", () => ({ then: () => { throw new Error("then threw"); } }));
 
     await expectAsync(jsonnet.evaluateSnippet(`std.native("fail")()`))
-      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: then threw/);
+      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR:.* then threw/);
   });
 
   it('uses the native callback added most recently for the same name', async () => {
@@ -389,10 +389,15 @@ describe('binding', () => {
   it('reports throwing native callback', async () => {
     const jsonnet = new Jsonnet();
 
-    jsonnet.nativeCallback("fail", (msg) => { throw msg; }, "msg");
+    jsonnet.nativeCallback("fail", (msg) => { throw new TypeError(msg); }, "msg");
     await expectAsync(jsonnet.evaluateSnippet(`std.native("fail")("kimagure")`))
-      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: kimagure/);
-
+      .toBeRejectedWithMatching(err => {
+        expect(err).toBeInstanceOf(JsonnetError);
+        expect(err.message).toMatch(/^RUNTIME ERROR:.* kimagure/);
+        expect(err.cause).toBeInstanceOf(TypeError);
+        expect(err.cause.message).toEqual("kimagure");
+        return true;
+      });
   });
 
   it('propagates error when native callback result object has a throwing ownKeys trap', async () => {
@@ -430,9 +435,15 @@ describe('binding', () => {
   it('reports throwing async native callback', async () => {
     const jsonnet = new Jsonnet();
 
-    jsonnet.nativeCallback("failAsync", async (msg) => { throw msg; }, "msg");
+    jsonnet.nativeCallback("failAsync", async (msg) => { throw new Error(msg); }, "msg");
     await expectAsync(jsonnet.evaluateSnippet(`std.native("failAsync")("kimagure")`))
-      .toBeRejectedWithError(JsonnetError, /^RUNTIME ERROR: kimagure/);
+      .toBeRejectedWithMatching(err => {
+        expect(err).toBeInstanceOf(JsonnetError);
+        expect(err.message).toMatch(/^RUNTIME ERROR:.* kimagure/);
+        expect(err.cause).toBeInstanceOf(Error);
+        expect(err.cause.message).toEqual("kimagure");
+        return true;
+      });
   });
 
   it('reports syntax error in snippet with filename', async () => {
@@ -658,7 +669,7 @@ describe('binding', () => {
 
     it('propagates synchronous throw from .then() on promise returned by import callback', async () => {
       const jsonnet = new Jsonnet()
-        .importCallback(() => ({ then: () => { throw "then threw"; } }));
+        .importCallback(() => ({ then: () => { throw new Error("then threw"); } }));
       await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
         .toBeRejectedWithError(JsonnetError, /then threw/);
     });
@@ -695,16 +706,26 @@ describe('binding', () => {
       const jsonnet = new Jsonnet()
         .importCallback((base, rel) => { throw new Error(`missing: ${rel}`); });
       await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
-        .toBeRejectedWithError(JsonnetError,
-          /missing: x\.jsonnet/);
+        .toBeRejectedWithMatching(err => {
+          expect(err).toBeInstanceOf(JsonnetError);
+          expect(err.message).toMatch(/missing: x\.jsonnet/);
+          expect(err.cause).toBeInstanceOf(Error);
+          expect(err.cause.message).toEqual('missing: x.jsonnet');
+          return true;
+        });
     });
 
     it('propagates async rejection as JsonnetError', async () => {
       const jsonnet = new Jsonnet()
         .importCallback(async (base, rel) => { throw new Error(`missing: ${rel}`); });
       await expectAsync(jsonnet.evaluateSnippet('import "x.jsonnet"'))
-        .toBeRejectedWithError(JsonnetError,
-          /missing: x\.jsonnet/);
+        .toBeRejectedWithMatching(err => {
+          expect(err).toBeInstanceOf(JsonnetError);
+          expect(err.message).toMatch(/missing: x\.jsonnet/);
+          expect(err.cause).toBeInstanceOf(Error);
+          expect(err.cause.message).toEqual('missing: x.jsonnet');
+          return true;
+        });
     });
 
     it('takes precedence over addJpath', async () => {

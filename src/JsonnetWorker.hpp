@@ -5,6 +5,7 @@
 #include <string>
 #include <napi.h>
 #include "JsonnetVm.hpp"
+#include "JsonnetVmParam.hpp"
 
 namespace nodejsonnet {
 
@@ -64,7 +65,7 @@ namespace nodejsonnet {
       Jsonnet,
     };
 
-    JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> op);
+    JsonnetWorker(Napi::Env env, JsonnetVmParam const &param, std::unique_ptr<Op> op);
 
     Napi::Promise Promise() {
       return deferred.Promise();
@@ -76,11 +77,14 @@ namespace nodejsonnet {
     void OnError(Napi::Error const &error) override;
 
   private:
+    std::shared_ptr<JsonnetVm> createVm(Napi::Env const &env, JsonnetVmParam const &param);
+
     std::shared_ptr<JsonnetVm> vm;
     std::unique_ptr<Op> op;
     Napi::Promise::Deferred deferred;
     std::optional<JsonnetVm::Buffer> result;
     ErrorType errorType = ErrorType::Generic;
+    std::shared_ptr<Napi::ObjectReference> jsError;
   };
 
 }

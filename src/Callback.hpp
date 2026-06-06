@@ -11,6 +11,12 @@
 
 namespace nodejsonnet {
 
+  // Wrap Napi::Error in plain C++ error so it can safely pass throgh non-JS thread
+  struct CallbackError: std::runtime_error {
+    explicit CallbackError(std::string const &resourceName, Napi::Error e);
+    std::shared_ptr<Napi::Error> jsError;
+  };
+
   template <typename Result> struct CallbackPayload {
     explicit CallbackPayload(std::shared_ptr<JsonnetVm> vm): vm{std::move(vm)} {
     }
@@ -74,12 +80,12 @@ namespace nodejsonnet {
 
         auto const on_success = Napi::Function::New(
           env,
-          [](Napi::CallbackInfo const &info) {
+          [](Napi::CallbackInfo const &info) noexcept {
             auto const p = static_cast<PayloadType *>(info.Data());
             try {
               p->resolveResult(info[0]);
             } catch(Napi::Error const &e) {
-              p->setError(std::make_exception_ptr(std::runtime_error(e.Message())));
+              p->setError(std::make_exception_ptr(CallbackError{PayloadType::resourceName, e}));
             } catch(...) {
               p->setError(std::current_exception());
             }
@@ -88,13 +94,11 @@ namespace nodejsonnet {
 
         auto const on_failure = Napi::Function::New(
           env,
-          [](Napi::CallbackInfo const &info) {
+          [](Napi::CallbackInfo const &info) noexcept {
             auto const p = static_cast<PayloadType *>(info.Data());
             try {
-              auto const error = info[0].ToString();
-              p->setError(std::make_exception_ptr(std::runtime_error(error)));
-            } catch(Napi::Error const &e) {
-              p->setError(std::make_exception_ptr(std::runtime_error(e.Message())));
+              p->setError(std::make_exception_ptr(
+                CallbackError{PayloadType::resourceName, Napi::Error(info.Env(), info[0])}));
             } catch(...) {
               p->setError(std::current_exception());
             }
@@ -103,7 +107,7 @@ namespace nodejsonnet {
 
         result.template As<Napi::Promise>().Then(on_success, on_failure);
       } catch(Napi::Error const &e) {
-        payload->setError(std::make_exception_ptr(std::runtime_error(e.Message())));
+        payload->setError(std::make_exception_ptr(CallbackError{PayloadType::resourceName, e}));
       } catch(...) {
         payload->setError(std::current_exception());
       }

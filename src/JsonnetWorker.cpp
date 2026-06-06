@@ -5,12 +5,88 @@
 #include <utility>
 #include <vector>
 #include "JsonnetAddon.hpp"
+#include "JsonnetImportCallback.hpp"
+#include "JsonnetNativeCallback.hpp"
 
 namespace nodejsonnet {
 
-  JsonnetWorker::JsonnetWorker(Napi::Env env, std::shared_ptr<JsonnetVm> vm, std::unique_ptr<Op> op)
-    : Napi::AsyncWorker(env, "jsonnet"), vm(std::move(vm)), op(std::move(op)),
+  JsonnetWorker::JsonnetWorker(Napi::Env env, JsonnetVmParam const &param, std::unique_ptr<Op> op)
+    : Napi::AsyncWorker(env, "jsonnet"), vm(createVm(env, param)), op(std::move(op)),
       deferred(Napi::Promise::Deferred::New(env)) {
+  }
+
+  std::shared_ptr<JsonnetVm> JsonnetWorker::createVm(
+    Napi::Env const &env, JsonnetVmParam const &param) {
+    auto vm = JsonnetVm::make();
+
+    if(param.maxStack) {
+      vm->maxStack(*param.maxStack);
+    }
+    if(param.maxTrace) {
+      vm->maxTrace(*param.maxTrace);
+    }
+    if(param.gcMinObjects) {
+      vm->gcMinObjects(*param.gcMinObjects);
+    }
+    if(param.gcGrowthTrigger) {
+      vm->gcGrowthTrigger(*param.gcGrowthTrigger);
+    }
+    vm->stringOutput(param.stringOutput);
+    vm->trailingNewline(param.trailingNewline);
+
+    for(auto const &[name, var]: param.ext) {
+      if(var.isCode) {
+        vm->extCode(name, var.value);
+      } else {
+        vm->extVar(name, var.value);
+      }
+    }
+
+    for(auto const &[name, var]: param.tla) {
+      if(var.isCode) {
+        vm->tlaCode(name, var.value);
+      } else {
+        vm->tlaVar(name, var.value);
+      }
+    }
+
+    for(auto const &x: param.jpath) {
+      vm->jpathAdd(x);
+    }
+
+    for(auto const &[name, cb]: param.nativeCallbacks) {
+      auto const &fun = cb.fun;
+      auto const &params = cb.params;
+
+      vm->addNativeCallback(
+        name,
+        [this, callback = std::make_shared<JsonnetNativeCallback>(env, fun.Value())](
+          std::shared_ptr<JsonnetVm> vm, std::vector<JsonnetJsonValue const *> args) {
+          try {
+            return callback->call(std::move(vm), std::move(args));
+          } catch(CallbackError &e) {
+            this->jsError = std::move(e.jsError);
+            throw;
+          }
+        },
+        params);
+    }
+
+    if(param.importCallbackParam) {
+      vm->setImportCallback(
+        [this, callback = std::make_shared<JsonnetImportCallback>(
+                 env, param.importCallbackParam->fun.Value())](
+          std::shared_ptr<JsonnetVm> vm, std::string const &base, std::string const &rel) {
+          try {
+            return callback->call(std::move(vm), base, rel);
+          } catch(CallbackError &e) {
+            this->jsError = std::move(e.jsError);
+            throw;
+          }
+        });
+    }
+
+    return vm;
   }
 
   void JsonnetWorker::Execute() {
@@ -32,12 +108,17 @@ namespace nodejsonnet {
     switch(errorType) {
     case ErrorType::Generic:
       break;
-    case ErrorType::Jsonnet:
-      e = JsonnetAddon::getInstance(e.Env())
-            .getExport("JsonnetError")
-            .As<Napi::Function>()
-            .New({e.Get("message")});
+    case ErrorType::Jsonnet: {
+      auto const env = e.Env();
+      auto const ctor =
+        JsonnetAddon::getInstance(env).getExport("JsonnetError").As<Napi::Function>();
+      auto options = Napi::Object::New(env);
+      if(jsError) {
+        options.Set("cause", jsError->Value());
+      }
+      e = ctor.New({e.Get("message"), options});
       break;
+    }
     default:
       abort();  // unreachable
     }

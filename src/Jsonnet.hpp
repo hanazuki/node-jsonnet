@@ -1,41 +1,12 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
-#include <map>
 #include <memory>
-#include <string>
-#include <vector>
 #include <napi.h>
-#include "JsonnetVm.hpp"
+#include "JsonnetVmParam.hpp"
+#include "JsonnetWorker.hpp"
 
 namespace nodejsonnet {
-
-  struct JsonnetVmParam {
-    struct Variable {
-      bool isCode;
-      std::string value;
-    };
-
-    struct NativeCallbackParam {
-      Napi::FunctionReference fun;
-      std::vector<std::string> params;
-    };
-
-    struct ImportCallbackParam {
-      Napi::FunctionReference fun;
-    };
-
-    std::optional<unsigned> maxStack, maxTrace;
-    std::optional<unsigned> gcMinObjects;
-    std::optional<double> gcGrowthTrigger;
-    bool stringOutput = false;
-    bool trailingNewline = true;
-
-    std::map<std::string, Variable> ext, tla;
-    std::vector<std::string> jpath;
-    std::map<std::string, NativeCallbackParam> nativeCallbacks;
-    std::optional<ImportCallbackParam> importCallbackParam;
-  };
 
   class Jsonnet: public Napi::ObjectWrap<Jsonnet>, private JsonnetVmParam {
   public:
@@ -66,7 +37,7 @@ namespace nodejsonnet {
     Napi::Value nativeCallback(const Napi::CallbackInfo &info);
     Napi::Value importCallback(const Napi::CallbackInfo &info);
 
-    std::shared_ptr<JsonnetVm> createVm(Napi::Env const &env);
+    Napi::Value evaluate(Napi::Env const &env, std::unique_ptr<JsonnetWorker::Op> op);
   };
 
 }
