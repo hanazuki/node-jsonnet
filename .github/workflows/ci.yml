@@ -144,7 +144,7 @@ jobs:
         node-version: lts/*
         cache: npm
     - name: Install
-      run: npm install --ignore-scripts
+      run: npm ci --ignore-scripts
     - name: Test
       run: npm run typetest
     - name: Typecheck scripts
@@ -163,7 +163,7 @@ jobs:
         node-version: lts/*
         cache: npm
     - name: Install
-      run: npm install --ignore-scripts
+      run: npm ci --ignore-scripts
     - name: Generate docs
       run: |
         cd types
