@@ -201,7 +201,7 @@ jobs:
 
   publish:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [test-finish, typetest, build]
+    needs: [test-finish, test-windows, typetest, build]
     runs-on: ubuntu-slim
     permissions:
       contents: write
