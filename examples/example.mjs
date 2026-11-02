@@ -20,7 +20,7 @@ const files = {
 };
 const json3 = await new Jsonnet()
   .importCallback((base, rel) => {
-    const key = path.join(base, rel);
+    const key = path.posix.join(base, rel);
     if (!(key in files)) throw new Error(`not found: ${rel}`);
     return { foundHere: key, content: files[key] };
   })

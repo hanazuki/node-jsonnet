@@ -25,8 +25,10 @@ The library is documented in the TypeScript type definitions at [`types/index.d.
 ## Installation Requirements
 
 - [Node.js](https://nodejs.org/) v20 or later
-- [GCC](https://gcc.gnu.org/projects/cxx-status.html#cxx17) or [Clang](https://clang.llvm.org/cxx_status.html#cxx17) C++ compiler that supports C++17
+- A C++17 compiler: [GCC](https://gcc.gnu.org/projects/cxx-status.html#cxx17), [Clang](https://clang.llvm.org/cxx_status.html#cxx17), or MSVC (Windows)
 - CMake 3.15 or later
+
+On Windows, install [Visual Studio Build Tools](https://learn.microsoft.com/en-us/cpp/overview/acquire-msvc) with the **Desktop development with C++** workload, including MSVC, the Windows SDK, and **C++ CMake tools for Windows**.
 
 ## License
 **@hanazuki/node-jsonnet** is licensed under the MIT License (See [LICENSE](LICENSE) file for the terms). **libjsonnet**, whose source code is bundled in the distributed NPM packages of @hanazuki/node-jsonnet, is licensed under the Apache License, Version 2.0 (See [third_party/jsonnet/LICENSE in this package](third_party/jsonnet/LICENSE) or [LICENSE file in the original repository](https://github.com/google/jsonnet/blob/master/LICENSE)). libjsonnet also bundles third-party software that is subject to other OSS licenses.

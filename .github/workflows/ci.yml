@@ -28,6 +28,9 @@ jobs:
     - run: mkdir -p pkg
     - name: Package
       run: npm pack --pack-destination pkg
+      env:
+        GIT_COMMITTER_NAME: github-actions[bot]
+        GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
     - id: attest
       uses: actions/attest@v4.2.2
       with:
@@ -119,6 +122,33 @@ jobs:
         flag-name: ${{ matrix.os }}-${{ matrix.node }}
         parallel: true
 
+  test-windows:
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24, 26]
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@v7.0.1
+      with:
+        persist-credentials: false
+    - uses: actions/setup-node@v7.1.0
+      with:
+        node-version: ${{ matrix.node }}
+        cache: npm
+    - uses: actions/download-artifact@v8.0.2
+      with:
+        artifact-ids: ${{ needs.build.outputs.artifact-id }}
+        path: pkg/
+    - name: Test with MSVC
+      shell: bash
+      run: ./scripts/test-packaging.sh pkg/*.tgz
+      env:
+        CMAKE_BUILD_PARALLEL_LEVEL: '4'
+
   test-finish:
     needs: test
     runs-on: ubuntu-latest
@@ -171,7 +201,7 @@ jobs:
 
   publish:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [test-finish, typetest, build]
+    needs: [test-finish, test-windows, typetest, build]
     runs-on: ubuntu-slim
     permissions:
       contents: write

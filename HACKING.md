@@ -36,6 +36,7 @@ node-jsonnet should maintain compatibility with:
     - Debian: the two latest major releases (stable and oldstable)
     - Ubuntu: the two latest LTS releases
     - MacOS: the latest release (Clang from Apple and GCC from Homebrew)
+  - MSVC on Windows, tested with the `windows-latest` GitHub Actions runner
 - TypeScript: reasonably new versions
 
 ## Release

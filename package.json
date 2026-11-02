@@ -54,7 +54,7 @@
   ],
   "scripts": {
     "install": "cmake-js configure --CDCMAKE_EXPORT_COMPILE_COMMANDS=1 && cmake-js build",
-    "prepare": "if test -f ./scripts/apply-patches.sh; then ./scripts/apply-patches.sh; fi",
+    "prepare": "node -e \"if (require('node:fs').existsSync('./scripts/apply-patches.sh')) require('node:child_process').execFileSync('bash', ['./scripts/apply-patches.sh'], { stdio: 'inherit' });\"",
     "version": "./scripts/bump-version.cjs",
     "test": "jasmine",
     "typetest": "tstyche --target '>=5.0'",
