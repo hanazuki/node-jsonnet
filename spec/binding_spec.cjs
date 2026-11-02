@@ -1,6 +1,8 @@
 const { Jsonnet, JsonnetError } = require("../");
 const { Worker } = require('node:worker_threads');
 const path = require('node:path');
+const fs = require('node:fs').promises;
+const os = require('node:os');
 
 describe('binding', () => {
   beforeEach(function () {
@@ -129,6 +131,18 @@ describe('binding', () => {
 
     const j = await jsonnet.evaluateSnippet(`importstr "🦔.jsonnet"`);
     expect(j).toBeJSON('"🦔"\n');
+  });
+
+  it('preserves binary import bytes through Unicode paths', async () => {
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'node-jsonnet-🦔-'));
+    const bytes = Buffer.from([0, 13, 10, 26, 255]);
+    try {
+      await fs.writeFile(path.join(dir, '🦔.bin'), bytes);
+      const j = await new Jsonnet().addJpath(dir).evaluateSnippet('importbin "🦔.bin"');
+      expect(j).toBeJSON([...bytes]);
+    } finally {
+      await fs.rm(dir, { recursive: true, force: true });
+    }
   });
 
   it('supports top-level arguments', async () => {

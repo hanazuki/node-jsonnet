@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kasumi Hanazuki <kasumi@rollingapple.net>
+Date: Mon, 2 Nov 2026 17:48:00 +0000
+Subject: [PATCH] vm: use 64-bit conversion for bitwise complement
+
+Windows uses 32-bit long even on x64. Use the same checked 64-bit
+conversion as binary bitwise operators to preserve safe integers.
+
+Assisted-by: Codex:gpt-6.1-sol
+---
+diff --git i/core/vm.cpp w/core/vm.cpp
+index 2eeda92..0463d11 100644
+--- i/core/vm.cpp
++++ w/core/vm.cpp
+@@ -3245,7 +3245,7 @@ class Interpreter {
+                                 case UOP_MINUS: scratch = makeNumber(-scratch.v.d); break;
+ 
+                                 case UOP_BITWISE_NOT:
+-                                    scratch = makeNumber(~(long)(scratch.v.d));
++                                    scratch = makeNumber(~safeDoubleToInt64(scratch.v.d, ast.location));
+                                     break;
+ 
+                                 default:
+

@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kasumi Hanazuki <kasumi@rollingapple.net>
+Date: Mon, 2 Nov 2026 17:48:00 +0000
+Subject: [PATCH] libjsonnet: preserve Unicode paths and file bytes
+
+Open UTF-8 filenames through C++17 filesystem paths so MSVC uses wide
+Windows paths. Read files in binary mode to preserve CRLF, NUL, and
+Ctrl-Z bytes in source files and imports.
+
+Assisted-by: Codex:gpt-6.1-sol
+---
+diff --git i/core/libjsonnet.cpp w/core/libjsonnet.cpp
+index 375cf00..f876fa7 100644
+--- i/core/libjsonnet.cpp
++++ w/core/libjsonnet.cpp
+@@ -19,6 +19,7 @@ limitations under the License.
+ #include <cstring>
+ 
+ #include <exception>
++#include <filesystem>
+ #include <fstream>
+ #include <iostream>
+ #include <sstream>
+@@ -264,7 +265,7 @@ static enum ImportStatus try_path(const std::string &dir, const std::string &rel
+     }
+ 
+     std::ifstream f;
+-    f.open(abs_path.c_str());
++    f.open(std::filesystem::u8path(abs_path), std::ios::binary);
+     if (!f.good())
+         return IMPORT_STATUS_FILE_NOT_FOUND;
+     try {
+@@ -509,7 +510,7 @@ char *jsonnet_fmt_file(JsonnetVm *vm, const char *filename, int *error)
+ {
+     TRY
+         std::ifstream f;
+-        f.open(filename);
++        f.open(std::filesystem::u8path(filename), std::ios::binary);
+         if (!f.good()) {
+             std::stringstream ss;
+             ss << "Opening input file: " << filename << ": " << strerror(errno);
+@@ -688,7 +689,7 @@ static char *jsonnet_evaluate_file_aux(JsonnetVm *vm, const char *filename, int
+                                        EvalKind kind)
+ {
+     std::ifstream f;
+-    f.open(filename);
++    f.open(std::filesystem::u8path(filename), std::ios::binary);
+     if (!f.good()) {
+         std::stringstream ss;
+         ss << "Opening input file: " << filename << ": " << strerror(errno);
+
