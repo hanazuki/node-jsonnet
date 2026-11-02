@@ -18,18 +18,18 @@ jobs:
       id-token: write
       attestations: write
     steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - uses: actions/checkout@v7.0.1
       with:
         submodules: recursive
         persist-credentials: false
-    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+    - uses: actions/setup-node@v7.1.0
       with:
         node-version: lts/*
     - run: mkdir -p pkg
     - name: Package
       run: npm pack --pack-destination pkg
     - id: attest
-      uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+      uses: actions/attest@v4.2.2
       with:
         subject-path: pkg/*
     - name: Copy attestation bundle
@@ -38,7 +38,7 @@ jobs:
       env:
         BUNDLE: ${{ steps.attest.outputs.bundle-path }}
     - id: upload
-      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: package
         path: pkg/
@@ -56,7 +56,7 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - uses: actions/checkout@v7.0.1
       with:
         persist-credentials: false
     - name: Install
@@ -69,11 +69,11 @@ jobs:
         elif type brew >/dev/null; then
           brew install lcov
         fi
-    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+    - uses: actions/setup-node@v7.1.0
       with:
         node-version: ${{ matrix.node }}
         cache: npm
-    - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+    - uses: actions/cache@v6.1.0
       with:
         path: /home/runner/.cmake-js
         key: node-${{ matrix.node }}-cmake-js
@@ -85,7 +85,7 @@ jobs:
         ln -sf g++-12 g++
         ln -sf gcov-12 gcov
         ln -sf /Library/Developer/CommandLineTools/usr/bin/llvm-cov .
-    - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+    - uses: actions/download-artifact@v8.0.2
       with:
         artifact-ids: ${{ needs.build.outputs.artifact-id }}
         path: pkg/
@@ -113,7 +113,7 @@ jobs:
         NODE_JSONNET_ENABLE_COVERAGE: clang
     - name: Coveralls
       continue-on-error: true
-      uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
+      uses: coverallsapp/github-action@v2.3.8
       with:
         github-token: ${{ secrets.github_token }}
         flag-name: ${{ matrix.os }}-${{ matrix.node }}
@@ -126,7 +126,7 @@ jobs:
     steps:
     - name: Upload to Coveralls
       continue-on-error: true
-      uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
+      uses: coverallsapp/github-action@v2.3.8
       with:
         github-token: ${{ secrets.github_token }}
         parallel-finished: true
@@ -136,10 +136,10 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - uses: actions/checkout@v7.0.1
       with:
         persist-credentials: false
-    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+    - uses: actions/setup-node@v7.1.0
       with:
         node-version: lts/*
         cache: npm
@@ -155,10 +155,10 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - uses: actions/checkout@v7.0.1
       with:
         persist-credentials: false
-    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+    - uses: actions/setup-node@v7.1.0
       with:
         node-version: lts/*
         cache: npm
@@ -178,19 +178,19 @@ jobs:
       id-token: write
     environment: npmjs.com
     steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - uses: actions/checkout@v7.0.1
       with:
         persist-credentials: false
-    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+    - uses: actions/setup-node@v7.1.0
       with:
         node-version: lts/*
-    - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+    - uses: actions/download-artifact@v8.0.2
       with:
         artifact-ids: ${{ needs.build.outputs.artifact-id }}
         path: pkg/
     - id: release
       name: Upload to GitHub releases
-      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      uses: actions/github-script@v9.0.0
       with:
         script: await require("./.github/scripts/release.cjs")({ github, context, core });
     - name: Publish to npmjs
