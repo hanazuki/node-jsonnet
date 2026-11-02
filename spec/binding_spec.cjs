@@ -638,7 +638,7 @@ describe('binding', () => {
       };
       const jsonnet = new Jsonnet()
         .importCallback((base, rel) => {
-          const key = path.join(base, rel);
+          const key = path.posix.join(base, rel);
           if (!(key in files)) throw new Error(`not found: ${key}`);
           return { foundHere: key, content: files[key] };
         });
