@@ -86,7 +86,7 @@
   },
   "devDependencies": {
     "@types/node": "20",
-    "glob": "^13.0.0",
+    "glob": "^14.0.3",
     "jasmine": "^7.0.0",
     "tsx": "^4.22.3",
     "tstyche": "^7.0.0",
