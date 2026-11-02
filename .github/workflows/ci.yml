@@ -127,7 +127,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [26]
+        node: [20, 22, 24, 26]
     runs-on: windows-latest
     permissions:
       contents: read
