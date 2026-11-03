@@ -31,10 +31,16 @@ jobs:
       env:
         GIT_COMMITTER_NAME: github-actions[bot]
         GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+    - name: Identify npm provenance subject
+      id: subject
+      uses: actions/github-script@v9.0.0
+      with:
+        script: await require("./.github/scripts/provenance-subject.cjs")({ core });
     - id: attest
       uses: actions/attest@v4.2.2
       with:
-        subject-path: pkg/*
+        subject-name: ${{ steps.subject.outputs.name }}
+        subject-digest: ${{ steps.subject.outputs.digest }}
     - name: Copy attestation bundle
       run: |
         cp "$BUNDLE" pkg/provenance.json
