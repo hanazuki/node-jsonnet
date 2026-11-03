@@ -294,6 +294,17 @@ describe('binding', () => {
     expect(j).toBeJSON({ own: 1 });
   });
 
+  it('preserves an own __proto__ property of objects returned from native callbacks', async () => {
+    const jsonnet = new Jsonnet();
+    const obj = { ['__proto__']: { v: 1 } };
+    jsonnet.nativeCallback('obj', () => obj);
+
+    const j = await jsonnet.evaluateSnippet(`std.native("obj")()`);
+    const result = JSON.parse(j);
+    expect(Object.hasOwn(result, '__proto__')).toBeTrue();
+    expect(result['__proto__']).toEqual({ v: 1 });
+  });
+
   it('does not expose symbol-keyed properties of objects returned from native callbacks', async () => {
     const jsonnet = new Jsonnet();
     const sym = Symbol('secret');
