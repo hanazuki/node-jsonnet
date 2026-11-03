@@ -2,6 +2,7 @@
 
 ## UNRELEASED
 
+- The package can now be installed on Windows ([#63](https://github.com/hanazuki/node-jsonnet/issues/63)).
 - When a `nativeCallback` or `importCallback` function throws (synchronously or asynchronously), the `JsonnetError` rejection now carries the original JavaScript error as its `cause` property.
 - Cyclic references in values returned from a native callback are now detected and reported as an exception, instead of crashing the VM with a stack overflow.
 - Native callbacks now honor `toJSON()` on returned values; values that are not serializable (functions, symbols) are omitted from objects or serialized as `null` in arrays, consistent with `JSON.stringify` semantics.
