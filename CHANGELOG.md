@@ -2,6 +2,8 @@
 
 ## UNRELEASED
 
+## v3.4.1 (2026-11-03)
+
 - Release engineering only: fix build provenance generation for npm publishing after the v3.4.0 publish failed. No library changes since v3.4.0.
 
 ## v3.4.0 (2026-11-03)
